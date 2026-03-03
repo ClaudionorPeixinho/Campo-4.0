@@ -3,20 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Campo 4.0 | Sistema Corporativo</title>
+<title>Campo 4.0 | Sistema</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-
 body{
     margin:0;
-    font-family: 'Segoe UI', sans-serif;
+    font-family:'Segoe UI';
     background:#eef1f4;
 }
 
-/* ===== SIDEBAR ===== */
 .sidebar{
     position:fixed;
     width:250px;
@@ -24,11 +23,6 @@ body{
     background:#1e2a2f;
     color:#fff;
     padding-top:20px;
-    transition:0.3s;
-}
-
-.sidebar.closed{
-    width:70px;
 }
 
 .logo{
@@ -36,11 +30,9 @@ body{
     font-size:18px;
     font-weight:600;
     padding-bottom:20px;
-    border-bottom:1px solid rgba(255,255,255,0.1);
 }
 
-.sidebar a,
-.sidebar button{
+.sidebar a, .sidebar button{
     display:flex;
     align-items:center;
     gap:12px;
@@ -50,75 +42,18 @@ body{
     background:none;
     color:#cfd8dc;
     text-decoration:none;
-    font-size:14px;
-    transition:0.2s;
+    cursor:pointer;
+    transition:0.3s;
 }
 
-.sidebar a:hover,
-.sidebar button:hover{
+.sidebar a:hover, .sidebar button:hover{
     background:#219963;
     color:white;
 }
 
-.sidebar i{
-    font-size:18px;
-}
-
-.sidebar.closed span{
-    display:none;
-}
-
-.dropdown-container{
-    display:none;
-    background:#175d39;
-}
-
-.dropdown-container a{
-    padding-left:45px;
-    font-size:13px;
-}
-
-/* ===== MAIN ===== */
 .main{
     margin-left:250px;
-    padding:25px 30px;
-    transition:0.3s;
-}
-
-.main.closed{
-    margin-left:70px;
-}
-
-/* ===== TOPBAR ===== */
-.topbar{
-    background:white;
-    padding:15px 25px;
-    border-radius:10px;
-    box-shadow:0 3px 10px rgba(0,0,0,0.05);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-}
-
-.btn-toggle{
-    border:none;
-    background:#1e2a2f;
-    color:white;
-    padding:6px 12px;
-    border-radius:6px;
-}
-
-.user-info{
-    font-size:14px;
-    color:#555;
-}
-
-/* ===== DASHBOARD CARDS ===== */
-.dashboard{
-    display:grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-    gap:20px;
+    padding:30px;
 }
 
 .card-dashboard{
@@ -126,171 +61,140 @@ body{
     padding:20px;
     border-radius:12px;
     box-shadow:0 4px 15px rgba(0,0,0,0.06);
-    transition:0.2s;
 }
 
-.card-dashboard:hover{
-    transform:translateY(-4px);
+.dashboard{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:20px;
+    margin-top:20px;
 }
 
-.card-dashboard h6{
-    font-size:13px;
-    color:#777;
-}
-
-.card-dashboard h3{
-    margin:0;
-    font-weight:600;
-    color:#1e2a2f;
-}
-
-/* ===== HERO SECTION ===== */
-.hero{
+.topbar{
     background:white;
-    padding:30px;
-    margin-top:15px;
-    border-radius:12px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.05);
-    text-align:center;
+    padding:15px;
+    border-radius:10px;
+    display:flex;
+    justify-content:space-between;
+    margin-bottom:20px;
 }
-
-.hero img{
-    max-width:98%;
-    border-radius:12px;
-    margin-top:10px;
-}
-
-.footer{
-    margin-top:30px;
-    text-align:center;
-    font-size:12px;
-    color:#888;
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
+<div class="sidebar">
+<div class="logo">🌿 Campo 4.0</div>
 
-<div class="logo">
-    🌿 Campo 4.0
-</div>
+<a href="home.html"><i class="bi bi-house"></i> Home</a>
+<a href="apontamento.html"><i class="bi bi-clock-history"></i> Apontamento</a>
+<a href="cadastro_colaboradores.html"><i class="bi bi-people"></i> Colaboradores</a>
+<a href="equipamentos.html"><i class="bi bi-truck"></i> Equipamentos</a>
+<a href="relatorios.html"><i class="bi bi-bar-chart"></i> Relatórios</a>
 
-<a href="home.html"><i class="bi bi-house"></i> <span>Agro Notícias</span></a>
-
-<button class="dropdown-btn">
-    <i class="bi bi-clock-history"></i> <span>Ponto Digital</span>
+<button id="menuAdmin" style="display:none;">
+<i class="bi bi-gear"></i> Painel Admin
 </button>
-<div class="dropdown-container">
-    <a href="pontodigital.html">Lançamentos</a>
-</div>
 
-<button class="dropdown-btn">
-    <i class="bi bi-pencil-square"></i> <span>Apontamentos</span>
+<hr>
+
+<button id="btnSair">
+<i class="bi bi-box-arrow-right"></i> Sair do Sistema
 </button>
-<div class="dropdown-container">
-    <a href="apontamento.html">Apontamentos Entregas</a>
-    <a href="cadastro_colaboradores.html">Cadastro Colaboradores</a>
-</div>
-
-<button class="dropdown-btn">
-    <i class="bi bi-truck"></i> <span>Equipamentos</span>
-</button>
-<div class="dropdown-container">
-    <a href="equipamentos.html">Cadastro Equipamentos</a>
-</div>
-
-<button class="dropdown-btn">
-    <i class="bi bi-truck"></i> <span>Link's Externos</span>
-</button>
-<div class="dropdown-container">
-    <a href="https://www.climatempo.com.br/">
-    <i class="bi bi-box-arrow-right"></i> <span>Previsão Clima Tempo</span>   
-</a>
-    <a href="equipamentos.html">
-    <i class="bi bi-box-arrow-right"></i> <span>Site DJI Drones</span>   
-</a>
-    <a href="equipamentos.html">
-    <i class="bi bi-box-arrow-right"></i> <span>Site Operations Center</span>   
-</a>
-   
-</div>
-
-<a href="https://www.canalrural.com.br/">
-    <i class="bi bi-box-arrow-right"></i> <span>Sair</span>
-</a>
 
 </div>
 
-<!-- MAIN -->
-<div class="main" id="main">
+<div class="main">
 
 <div class="topbar">
-    <button class="btn-toggle" onclick="toggleSidebar()">
-        <i class="bi bi-list"></i>
-    </button>
-
-    <div class="user-info">
-        <i class="bi bi-person-circle"></i> Administrador
-    </div>
+<div><strong>Dashboard</strong></div>
+<div id="usuarioInfo"></div>
 </div>
 
-<!-- DASHBOARD -->
 <div class="dashboard">
 
 <div class="card-dashboard">
-    <h6>Total Colaboradores</h6>
-    <h3>12</h3>
+<h6>Total Usuários</h6>
+<h3 id="totalUsuarios">0</h3>
 </div>
 
 <div class="card-dashboard">
-    <h6>Equipamentos Ativos</h6>
-    <h3>22</h3>
+<h6>Total Equipamentos</h6>
+<h3 id="totalEquipamentos">0</h3>
 </div>
 
-<div class="card-dashboard">
-    <h6>Apontamentos Hoje</h6>
-    <h3>15</h3>
-</div>
-
-<div class="card-dashboard">
-    <h6>Pontos Lançados</h6>
-    <h3>63</h3>
-</div>
-
-</div>
-
-<div class="hero">
-    <h4>Sistema Integrado de Gestão Agrícola</h4>
-    <p>Controle operacional inteligente com tecnologia aplicada ao campo.</p>
-    <img src="Img/tecnologia01.jpg" alt="Tecnologia no Campo">
-</div>
-
-<div class="footer">
-    © 2026 Campo 4.0 - Sistema Corporativo Empresarial
 </div>
 
 </div>
 
 <script>
+const supabaseUrl = "https://szzfqkhibuejhodhkvjj.supabase.co";
+const supabaseKey = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
+const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-function toggleSidebar(){
-    document.getElementById("sidebar").classList.toggle("closed");
-    document.getElementById("main").classList.toggle("closed");
+let usuarioAtual;
+
+// 🔒 Verifica login ao carregar
+document.addEventListener("DOMContentLoaded", async () => {
+
+    const { data:{session} } = await supabaseClient.auth.getSession();
+
+    if(!session){
+        window.location.href = "login.html";
+        return;
+    }
+
+    usuarioAtual = session.user;
+
+    document.getElementById("usuarioInfo").innerHTML =
+    `<i class="bi bi-person-circle"></i> ${usuarioAtual.email}`;
+
+    // Buscar nível do usuário
+    const { data } = await supabaseClient
+    .from("usuarios")
+    .select("*")
+    .eq("id", usuarioAtual.id)
+    .single();
+
+    if(data?.nivel === "admin"){
+        document.getElementById("menuAdmin").style.display="flex";
+    }
+
+    carregarDashboard();
+});
+
+// 📊 Dashboard
+async function carregarDashboard(){
+
+    const { count:usuarios } = await supabaseClient
+    .from("usuarios")
+    .select("*",{count:"exact",head:true});
+
+    document.getElementById("totalUsuarios").innerText = usuarios || 0;
+
+    const { count:equip } = await supabaseClient
+    .from("equipamentos")
+    .select("*",{count:"exact",head:true});
+
+    document.getElementById("totalEquipamentos").innerText = equip || 0;
 }
 
-var dropdown = document.getElementsByClassName("dropdown-btn");
+// 🔓 BOTÃO SAIR (AGORA FUNCIONANDO CORRETAMENTE)
+document.getElementById("btnSair").addEventListener("click", async function(){
 
-for(let i=0;i<dropdown.length;i++){
-    dropdown[i].addEventListener("click", function(){
-        var content = this.nextElementSibling;
-        content.style.display = content.style.display === "block" ? "none" : "block";
-    });
-}
+    const confirmar = confirm("Deseja realmente sair do sistema?");
+    if(!confirmar) return;
 
+    try{
+        await supabaseClient.auth.signOut();
+        localStorage.clear();
+        sessionStorage.clear();
+        window.location.replace("login.html");
+    }catch(error){
+        alert("Erro ao sair: " + error.message);
+    }
+
+});
 </script>
 
 </body>

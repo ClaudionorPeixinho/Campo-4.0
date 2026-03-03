@@ -1,42 +1,95 @@
-var menuItem= document.querySelectorAll('.item-menu')
+document.addEventListener("DOMContentLoaded", function () {
 
-function selectlink(){
+    // =========================
+    // MENU ATIVO
+    // =========================
+    var menuItem = document.querySelectorAll('.item-menu');
 
-menuItem.forEach((item)=>
-   item.classList.remove('ativo')
+    function selectlink() {
+        menuItem.forEach((item) =>
+            item.classList.remove('ativo')
+        );
+        this.classList.add('ativo');
+    }
 
-)
+    menuItem.forEach((item) =>
+        item.addEventListener('click', selectlink)
+    );
 
-this.classList.add('ativo')
+    // =========================
+    // EXPANDIR MENU
+    // =========================
+    var btnExp = document.querySelector('#btn-exp');
+    var menuSide = document.querySelector('.menu-lateral');
 
+    if (btnExp) {
+        btnExp.addEventListener('click', function () {
+            menuSide.classList.toggle('expandir');
+        });
+    }
 
-}
+    // =========================
+    // LOGIN TRANSITION
+    // =========================
+    var btnSignin = document.querySelector("#signin");
+    var btnSignup = document.querySelector("#signup");
+    var body = document.querySelector("body");
 
-menuItem.forEach((item)=>
+    if (btnSignin) {
+        btnSignin.addEventListener("click", function () {
+            body.className = "sign-in-js";
+        });
+    }
 
-  item.addEventListener('click',selectlink)
+    if (btnSignup) {
+        btnSignup.addEventListener("click", function () {
+            body.className = "sign-up-js";
+        });
+    }
 
-)
+    // =========================
+    // LOGOUT DO SISTEMA
+    // =========================
+    var btnLogout = document.querySelector("#btnLogout");
 
+    if (btnLogout) {
+        btnLogout.addEventListener("click", async function () {
 
-var btnExp = document.querySelector('#btn-exp')
-var menuSide = document.querySelector('.menu-lateral')
+            if (confirm("Deseja realmente sair do sistema?")) {
 
-btnExp.addEventListener('click',function(){
-    menuSide.classList.toggle('expandir')
-})
+                if (window.supabaseClient) {
+                    await supabaseClient.auth.signOut();
+                }
 
+                window.location.href = "login.html";
+            }
+        });
+    }
 
-var btnSignin = document.querySelector("#signin");
-var btnSignup = document.querySelector("#signup");
+    // =========================
+    // FECHAR APLICATIVO
+    // =========================
+    var btnFechar = document.querySelector("#btnFechar");
 
-var body = document.querySelector("body");
+    if (btnFechar) {
+        btnFechar.addEventListener("click", function () {
 
+            if (confirm("Deseja fechar o aplicativo?")) {
 
-btnSignin.addEventListener("click", function () {
-   body.className = "sign-in-js"; 
+                // Para PWA ou navegador compatível
+                window.close();
+
+                // Fallback (caso não feche)
+                setTimeout(() => {
+                    window.location.href = "login.html";
+                }, 300);
+
+            }
+        });
+    }
+
 });
 
-btnSignup.addEventListener("click", function () {
-    body.className = "sign-up-js";
-})
+
+
+
