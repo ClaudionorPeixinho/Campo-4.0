@@ -1,6 +1,7 @@
 Tela de Login
 
-<img width="1824" height="903" alt="login" src="https://github.com/user-attachments/assets/a406e5a5-ad0c-472a-b2ad-633f5a818f85" />
+<img width="1898" height="902" alt="login" src="https://github.com/user-attachments/assets/75604f14-b745-4967-9b41-50aeaf7aaa6e" />
+
 
 
 
