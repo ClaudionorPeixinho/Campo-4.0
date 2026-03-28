@@ -1,0 +1,22 @@
+body {
+  background: #e8f5e9;
+}
+
+.header {
+  background: #2e7d32;
+  color: white;
+  padding: 15px;
+  border-radius: 10px;
+}
+
+.card {
+  border-radius: 12px;
+}
+
+.btn-primary {
+  background-color: #1565c0;
+}
+
+.hidden {
+  display: none;
+}

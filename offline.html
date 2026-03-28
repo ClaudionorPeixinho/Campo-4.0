@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline - Campo 4.0</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#198754">
+    <link rel="stylesheet" href="css/app-base.css">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: #f4f4f4;
+            margin: 0;
+            color: #333;
+            text-align: center;
+        }
+        .offline-card {
+            background: #fff;
+            padding: 2rem;
+            max-width: 420px;
+            border-radius: 16px;
+            box-shadow: 0 12px 28px rgba(0,0,0,.14);
+        }
+        .offline-card h1 {
+            margin: 0 0 1rem;
+            font-size: 1.5rem;
+        }
+        .offline-card p {
+            margin: 0 0 1.5rem;
+            line-height: 1.5;
+        }
+        .offline-card a {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 0.85rem 1.4rem;
+            background: #198754;
+            color: #fff;
+            border-radius: 999px;
+            text-decoration: none;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <div class="offline-card">
+        <h1>Você está offline</h1>
+        <p>O aplicativo não conseguiu carregar a página solicitada, mas você ainda pode retornar ao menu principal ou tentar novamente quando estiver online.</p>
+        <a href="/index_menu.html">Voltar ao app</a>
+        <button id="retryButton">Tentar novamente</button>
+    </div>
+    <script>
+        document.getElementById('retryButton').addEventListener('click', function() {
+            window.location.reload();
+        });
+    </script>
+</body>
+</html>

@@ -168,7 +168,7 @@
     top: 0;
     background-color: #87cd87e0;
     min-width: 200px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    box-shadow: 0 8px 16px rgba(60, 124, 81, 0.959);
 }
 
 .menu-lateral ul ul.submenu li {

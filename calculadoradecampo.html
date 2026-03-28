@@ -3,6 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#198754">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Campo 4.0">
+<link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
+<link rel="stylesheet" href="css/app-base.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <title>Calculadora de Herbicidas</title>
     <style>
@@ -111,5 +117,15 @@
                 'Tempo estimado por bico (60 seg): ' + litros60Segundos.toFixed(2) + ' litros';
         }
     </script>
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(err => console.warn('SW registration falhou:', err));
+    });
+}
+</script>
 </body>
 </html>
+
+

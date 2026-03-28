@@ -1,0 +1,54 @@
+/* FUNDO */
+body {
+  background: #e8f5e9;
+}
+
+/* NAVBAR */
+.navbar-custom {
+  background: #1f7a3e;
+}
+
+.navbar-custom .navbar-brand {
+  color: white;
+  font-weight: 600;
+}
+
+/* CARD */
+.card-custom {
+  border-radius: 12px;
+  border-left: 5px solid #1f7a3e;
+}
+
+/* CAMPOS PADRÃO */
+.form-control, .form-select {
+  height: 42px;
+  font-size: 14px;
+}
+
+label {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* BOTÕES */
+.btn {
+  font-size: 14px;
+  padding: 6px 12px;
+}
+
+/* TABELA */
+.table th, .table td {
+  font-size: 13px;
+}
+
+/* RESPONSIVO */
+@media (max-width: 768px) {
+  .btn {
+    width: 100%;
+    margin-top: 5px;
+  }
+
+  .navbar-brand {
+    font-size: 14px;
+  }
+}

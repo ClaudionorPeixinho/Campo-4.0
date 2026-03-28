@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#198754">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Campo 4.0">
+<link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
+<link rel="stylesheet" href="css/app-base.css">
+<meta charset="UTF-8">
+<title>Controle de Perdas</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+
+<link rel="stylesheet" href="css/style_perdas.css">
+</head>
+
+<body>
+
+<header class="topo d-flex justify-content-between align-items-center">
+  <h5 class="m-0">
+    <i class="bi bi-clipboard-data"></i> Controle de Perdas
+  </h5>
+  <button class="btn btn-light btn-sm" onclick="sair()">Sair</button>
+</header>
+
+<div class="container mt-3">
+
+<div class="card p-3">
+
+<!-- FORM -->
+<div id="formulario">
+
+<h5 class="mb-3"><i class="bi bi-pencil-square"></i> Registrar Perdas</h5>
+
+<div class="grid">
+
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-calendar"></i></span>
+<input type="date" id="data">
+</div>
+
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-file-earmark-text"></i></span>
+<input type="text" id="liberacao" placeholder="Liberação (O.S)">
+</div>
+
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-box"></i></span>
+<input type="text" id="lote" placeholder="Lote">
+</div>
+
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-grid"></i></span>
+<input type="text" id="quadra" placeholder="Quadra">
+</div>
+
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-truck"></i></span>
+<input type="text" id="equipamento" placeholder="Equipamento">
+</div>
+
+<div class="input-group">
+<span class="input-group-text"><i class="bi bi-person"></i></span>
+<input type="text" id="operador" placeholder="Operador">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">Tc</span>
+<input type="number" id="tocos" placeholder="Tocos">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">Pt</span>
+<input type="number" id="pontas" placeholder="Pontas">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">Ls</span>
+<input type="number" id="lascas" placeholder="Lascas">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">Pd</span>
+<input type="number" id="pedacos" placeholder="Pedaços">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">In</span>
+<input type="number" id="inteiras" placeholder="Inteiras">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">Tl</span>
+<input type="number" id="toletes" placeholder="Toletes">
+</div>
+
+<div class="input-group">
+<span class="input-group-text">Pm</span>
+<input type="number" id="palmitos" placeholder="Palmitos">
+</div>
+
+<div class="input-group full">
+<span class="input-group-text"><i class="bi bi-chat-left-text"></i></span>
+<input type="text" id="observacao" placeholder="Observação">
+</div>
+
+</div>
+
+<div class="d-flex justify-content-end gap-2 mt-3">
+  <button class="btn btn-success" onclick="salvar()">Salvar</button>
+  <button class="btn btn-secondary" onclick="limpar()">Cancelar</button>
+  <button class="btn btn-primary" onclick="abrirRegistros()">Registros</button>
+</div>
+
+</div>
+
+<!-- REGISTROS -->
+<div id="registros" style="display:none;">
+
+<div class="d-flex justify-content-between align-items-center">
+  <h5><i class="bi bi-table"></i> Registros</h5>
+  <button class="btn btn-danger btn-sm" onclick="fecharRegistros()">Fechar</button>
+</div>
+
+<div class="grid mt-3">
+  <input type="text" id="fEquipamento" placeholder="Equipamento">
+  <input type="text" id="fLote" placeholder="Lote">
+  <input type="text" id="fOperador" placeholder="Operador">
+</div>
+
+<div class="mt-2 d-flex gap-2">
+  <button class="btn btn-primary btn-sm" onclick="filtrar()">Pesquisar</button>
+  <button class="btn btn-secondary btn-sm" onclick="limparFiltro()">Limpar</button>
+</div>
+
+<table class="table table-sm mt-3">
+<thead>
+<tr>
+<th>Data</th>
+<th>Equipamento</th>
+<th>Lote</th>
+<th>Operador</th>
+<th>Total</th>
+<th>Ações</th>
+</tr>
+</thead>
+<tbody id="tabela"></tbody>
+</table>
+
+<div class="text-end fw-bold">
+Total Geral: <span id="totalGeral">0</span>
+</div>
+
+</div>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script type="module" src="js/perdas.js"></script>
+
+
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(err => console.warn('SW registration falhou:', err));
+    });
+}
+</script>
+</body>
+</html>
+

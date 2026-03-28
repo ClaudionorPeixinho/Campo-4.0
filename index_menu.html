@@ -7,20 +7,66 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#198754">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Campo 4.0">
+<link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
+<link rel="stylesheet" href="css/app-base.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 body{
+    
     margin:0;
     font-family:'Segoe UI';
-    background:#eef1f4;
+
+    background-image: url("img/tecnologia-futuro.png");/* Link da imagem do fundo */
+
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+
+}
+
+.offline-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+    background: #d63333;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+    z-index: 9999;
+    transform: translateY(-100%);
+    transition: transform 0.3s ease;
+}
+
+.offline-banner.visible {
+    transform: translateY(0);
+}
+
+.offline-banner button {
+    border: none;
+    background: rgba(255,255,255,0.2);
+    color: white;
+    padding: 0.55rem 0.85rem;
+    border-radius: 999px;
+    cursor: pointer;
 }
 
 .sidebar{
     position:fixed;
     width:250px;
     height:100vh;
-    background:#1e2a2f;
+    background:#32755b;
     color:#fff;
     padding-top:20px;
 }
@@ -47,7 +93,7 @@ body{
 }
 
 .sidebar a:hover, .sidebar button:hover{
-    background:#219963;
+    background:#10442d;
     color:white;
 }
 
@@ -60,7 +106,7 @@ body{
     background:white;
     padding:20px;
     border-radius:12px;
-    box-shadow:0 4px 15px rgba(0,0,0,0.06);
+    box-shadow:0 4px 15px rgba(31, 97, 64, 0.952);
 }
 
 .dashboard{
@@ -78,18 +124,43 @@ body{
     justify-content:space-between;
     margin-bottom:20px;
 }
-</style>
-</head>
 
-<body>
+    @media (max-width: 768px) {
+        .sidebar {
+            width: 100%;
+            position: relative;
+            height: auto;
+            padding: 16px 12px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+        }
 
-<div class="sidebar">
-<div class="logo">🌿 Campo 4.0</div>
+        .sidebar a, .sidebar button {
+            width: auto;
+            justify-content: center;
+            padding: 12px 16px;
+        }
 
+        .main {
+            margin-left: 0;
+            padding: 18px 12px;
+        }
+
+        .topbar {
+            flex-direction: column;
+            align-items: stretch;
+            gap: 12px;
+        }
+    }
 <a href="home.html"><i class="bi bi-house"></i> Home</a>
-<a href="apontamento.html"><i class="bi bi-clock-history"></i> Apontamento</a>
+<a href="apontamentos.html"><i class="bi bi-clock-history"></i> Apontamento Cargas</a>
 <a href="cadastro_colaboradores.html"><i class="bi bi-people"></i> Colaboradores</a>
 <a href="equipamentos.html"><i class="bi bi-truck"></i> Equipamentos</a>
+<a href="pontodigital.html"><i class="bi bi-bar-chart"></i> Ponto Digital</a>
+<a href="calculadoradecampo.html"><i class="bi bi-bar-chart"></i> Pulverização Agrícola</a>
+<a href="abastecimentos.html"><i class="bi bi-bar-chart"></i> Abastecimentos</a>
 <a href="relatorios.html"><i class="bi bi-bar-chart"></i> Relatórios</a>
 
 <button id="menuAdmin" style="display:none;">
@@ -103,6 +174,11 @@ body{
 </button>
 
 </div>
+
+    <div class="offline-banner" id="offlineBanner">
+        Você está offline. Alguns recursos podem não funcionar.
+        <button type="button" id="retryConnection">Tentar novamente</button>
+    </div>
 
 <div class="main">
 
@@ -195,7 +271,41 @@ document.getElementById("btnSair").addEventListener("click", async function(){
     }
 
 });
+
+function updateOfflineBanner() {
+    const banner = document.getElementById('offlineBanner');
+    if (!banner) return;
+    if (navigator.onLine) {
+        banner.classList.remove('visible');
+    } else {
+        banner.classList.add('visible');
+    }
+}
+
+window.addEventListener('online', updateOfflineBanner);
+window.addEventListener('offline', updateOfflineBanner);
+
+document.addEventListener('DOMContentLoaded', () => {
+    const retryButton = document.getElementById('retryConnection');
+    if (retryButton) {
+        retryButton.addEventListener('click', () => {
+            updateOfflineBanner();
+            if (navigator.onLine) {
+                window.location.reload();
+            }
+        });
+    }
+    updateOfflineBanner();
+});
+
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(err => console.warn('SW registration falhou:', err));
+    });
+}
 </script>
 
 </body>
 </html>
+

@@ -1,6 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
+  <link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#198754">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Campo 4.0">
+<link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
+<link rel="stylesheet" href="css/app-base.css">
 <meta charset="UTF-8">
 <title>Ponto Digital</title>
 <link rel="stylesheet" href="css/style_Ponto.css">
@@ -156,5 +162,14 @@
 <script src="js/supabase.js"></script>
 <script defer src="js/pontodigital.js"></script>
 
+<script>
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+            .catch(err => console.warn('SW registration falhou:', err));
+    });
+}
+</script>
 </body>
 </html>
+
