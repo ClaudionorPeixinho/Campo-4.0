@@ -119,6 +119,17 @@
       box-shadow: 0 5px 20px rgba(39, 174, 96, 0.3);
     }
 
+    .btn-sair {
+      background: #95a5a6;
+      color: white;
+    }
+
+    .btn-sair:hover {
+      background: #7f8c8d;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 20px rgba(149, 165, 166, 0.3);
+    }
+
     /* FILTROS */
     .filtros {
       background: white;
@@ -559,6 +570,9 @@
         </button>
         <button class="btn-excel" onclick="exportarExcel()">
           <i class="fas fa-file-excel"></i> Excel
+        </button>
+        <button class="btn-sair" onclick="window.location.href='index_menu.html'">
+          <i class="fas fa-sign-out-alt"></i> Sair
         </button>
       </div>
     </div>
