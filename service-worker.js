@@ -1,15 +1,15 @@
 const CACHE_NAME = 'campo-4-0-cache-v1';
 const ASSETS_TO_CACHE = [
-  'index_menu.html',
-  'home.html',
-  'login.html',
-  'offline.html',
-  'manifest.json',
-  'css/app-base.css',
-  'css/style_home.css',
-  'css/style_Menu.css',
-  'css/estilo.css',
-  'Img/tecnologia-campo5.png'
+  './index_menu.html',
+  './home.html',
+  './login.html',
+  './offline.html',
+  './manifest.json',
+  './css/app-base.css',
+  './css/style_home.css',
+  './css/style_Menu.css',
+  './css/estilo.css',
+  './Img/tecnologia-campo5.png'
 ];
 
 self.addEventListener('install', event => {

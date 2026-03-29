@@ -19,7 +19,7 @@
 <style>
 /* IMAGEM DE FUNDO */
 body{
-background-image: url("img/homem-digital.jpeg");
+background-image: url("Img/homem-digital.jpeg");
 
 background-size: cover;
 background-position: center;
@@ -168,7 +168,7 @@ body { background:#f4f6f9; }
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
             .catch(err => console.warn('SW registration falhou:', err));
     });
 }

@@ -21,7 +21,7 @@ body{
     margin:0;
     font-family:'Segoe UI';
 
-    background-image: url("img/tecnologia-futuro.png");/* Link da imagem do fundo */
+    background-image: url("Img/tecnologia-futuro.png");/* Link da imagem do fundo */
 
     background-size: cover;
     background-position: center;
@@ -154,6 +154,14 @@ body{
             gap: 12px;
         }
     }
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+<div class="logo">🌿 Campo 4.0</div>
+
 <a href="home.html"><i class="bi bi-house"></i> Home</a>
 <a href="apontamentos.html"><i class="bi bi-clock-history"></i> Apontamento Cargas</a>
 <a href="cadastro_colaboradores.html"><i class="bi bi-people"></i> Colaboradores</a>
@@ -300,7 +308,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
             .catch(err => console.warn('SW registration falhou:', err));
     });
 }

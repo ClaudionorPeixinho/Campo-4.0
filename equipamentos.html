@@ -24,7 +24,7 @@
 
 /* IMAGEM DE FUNDO */
 body{
-background-image: url("img/tecnologia01.jpg");
+background-image: url("Img/tecnologia01.jpg");
 
 background-size: cover;
 background-position: center;
@@ -185,7 +185,7 @@ z-index:-1;
 <script>
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
             .catch(err => console.warn('SW registration falhou:', err));
     });
 }

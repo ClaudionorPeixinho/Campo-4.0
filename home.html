@@ -191,7 +191,7 @@
             overflow: hidden;
             border-radius: 0;
             box-shadow: none;
-            background: linear-gradient(180deg, rgba(15, 76, 31, 0.95), rgba(0, 0, 0, 0.5)), url('img/agro-5-0-990x550.jpg') center/cover no-repeat;
+            background: linear-gradient(180deg, rgba(15, 76, 31, 0.95), rgba(0, 0, 0, 0.5)), url('Img/agro-5-0-990x550.jpg') center/cover no-repeat;
             border: none;
         }
 
@@ -426,7 +426,7 @@
     <main id="mainContent">
         <section class="content" id="importancia">
             <div class="image">
-                <img src="img/tecnologia01.jpg" alt="Tecnologia no campo">
+                <img src="Img/tecnologia01.jpg" alt="Tecnologia no campo">
             </div>
             <div class="text">
                 <h2>Importância da Tecnologia no Campo</h2>
@@ -435,7 +435,7 @@
         </section>
         <section class="content" id="evolucao">
             <div class="image">
-                <img src="img/todas-tecnologias.png" alt="Evolução do agro">
+                <img src="Img/todas-tecnologias.png" alt="Evolução do agro">
             </div>
             <div class="text">
                 <h2>Evoluções do Agro ao Longo do Tempo</h2>
@@ -522,9 +522,25 @@
             select.selectedIndex = 0;
         }
 
-        function navigateToPage(url) {
-            const destination = new URL(url, window.location.href).href;
-            window.location.assign(destination);
+        function navigateToLink(selectElement) {
+            const url = selectElement.value;
+            if (!url) return;
+
+            const iframeView = document.getElementById('iframeView');
+            const mainContent = document.getElementById('mainContent');
+            const homeButton = document.getElementById('homeButton');
+
+            if (url.startsWith('http')) {
+                currentUrl = url;
+                iframeView.style.display = 'block';
+                mainContent.classList.add('hidden');
+                homeButton.classList.remove('hidden');
+                showInternalPage(url);
+            } else if (url === 'index_menu.html') {
+                window.location.href = url;
+            }
+
+            selectElement.selectedIndex = 0;
         }
 
         document.querySelectorAll('.external-link-btn').forEach(button => {
@@ -546,7 +562,7 @@
             if (event) {
                 event.preventDefault();
             }
-            navigateToPage('index_menu.html');
+            window.location.href = 'index_menu.html';
         }
 
         function updateOfflineBanner() {
@@ -577,7 +593,7 @@
 
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/service-worker.js', { scope: '/' })
+                navigator.serviceWorker.register('./service-worker.js', { scope: './' })
                     .catch(err => console.warn('SW registration falhou:', err));
             });
         }
