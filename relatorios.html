@@ -130,6 +130,11 @@
       box-shadow: 0 5px 20px rgba(149, 165, 166, 0.3);
     }
 
+    /* SPA Mode - Esconder header */
+    body.spa-mode .header {
+      display: none;
+    }
+
     /* FILTROS */
     .filtros {
       background: white;
@@ -547,6 +552,22 @@
 
 <body>
 
+  <script>
+    // Detectar SPA Mode
+    const isSPAMode = new URLSearchParams(window.location.search).get('spa') === 'true';
+    if(isSPAMode) {
+      document.body.classList.add('spa-mode');
+    }
+    
+    window.sair = () => {
+      if(isSPAMode && window.parent && window.parent.app) {
+        window.parent.app.returnToDashboard();
+      } else {
+        window.location.href = "index_menu.html";
+      }
+    }
+  </script>
+
   <div class="container-fluid">
 
     <!-- ERROR MESSAGE -->
@@ -571,7 +592,7 @@
         <button class="btn-excel" onclick="exportarExcel()">
           <i class="fas fa-file-excel"></i> Excel
         </button>
-        <button class="btn-sair" onclick="window.location.href='index_menu.html'">
+        <button class="btn-sair" onclick="sair()">
           <i class="fas fa-sign-out-alt"></i> Sair
         </button>
       </div>

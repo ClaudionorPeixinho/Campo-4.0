@@ -75,7 +75,7 @@ body.dark {
     background: var(--primary-dark);
 }
 
-/* Sidebar Moderna */
+/* Sidebar Moderna - SEMPRE VISÍVEL */
 .sidebar {
     position: fixed;
     width: 280px;
@@ -84,10 +84,23 @@ body.dark {
     backdrop-filter: blur(10px);
     color: white;
     padding: 0;
-    transition: var(--transition);
+    transition: transform 0.3s ease;
     z-index: 1000;
     box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
+    transform: translateX(0);
+}
+
+/* Mobile: Sidebar retrátil */
+@media (max-width: 768px) {
+    .sidebar {
+        transform: translateX(-100%);
+        width: 280px;
+    }
+    
+    .sidebar.open {
+        transform: translateX(0);
+    }
 }
 
 .sidebar-header {
@@ -170,6 +183,13 @@ body.dark {
     padding: 20px 30px;
     min-height: 100vh;
     transition: var(--transition);
+}
+
+@media (max-width: 768px) {
+    .main {
+        margin-left: 0;
+        padding: 15px;
+    }
 }
 
 /* Topbar Moderno */
@@ -449,9 +469,14 @@ body.dark .table-custom td {
 @media (max-width: 768px) {
     .sidebar {
         transform: translateX(-100%);
+        width: 280px;
     }
     
-    .sidebar.active {
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
+    .sidebar.open {
         transform: translateX(0);
     }
     
@@ -559,14 +584,18 @@ body.dark .table-custom td {
             <li data-form="relatorio">
                 <i class="bi bi-graph-up"></i>
                 <span>Relatórios</span>
-            </li>
-            <li data-form="calculadora">
-                <i class="bi bi-calculator-fill"></i>
-                <span>Calculadora de Campo</span>
+            </li>            
+            <li data-form="pulverizacao">
+                <i class="bi bi-droplet-fill"></i>
+                <span>Pulverização</span>
             </li>
             <li data-form="ponto">
                 <i class="bi bi-clock-fill"></i>
                 <span>Ponto Digital</span>
+            </li>
+            <li data-form="perdas">
+                <i class="bi bi-graph-down"></i>
+                <span>Controle de Perdas</span>
             </li>
             <li id="logout">
                 <i class="bi bi-box-arrow-right"></i>
@@ -631,13 +660,15 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Alternar menu mobile
     menuToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("active");
+        sidebar.classList.toggle("open");
+        sidebar.classList.toggle("collapsed");
     });
 
     // Fechar menu ao clicar fora no mobile
     document.addEventListener("click", (e) => {
         if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-            sidebar.classList.remove("active");
+            sidebar.classList.remove("open");
+            sidebar.classList.add("collapsed");
         }
     });
 
@@ -1186,7 +1217,7 @@ document.addEventListener("DOMContentLoaded", async () => {
         `;
     }
 
-    // Função para carregar conteúdo
+    // Função para carregar conteúdo (SPA Mode)
     async function loadContent(formType) {
         let html = '';
         let title = '';
@@ -1198,31 +1229,59 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return;
             case 'apontamento':
                 title = 'Apontamentos';
-                html = `<iframe src="apontamentos.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+                html = `<div style="position: relative;">
+                    <iframe src="apontamentos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
             case 'cadastro':
                 title = 'Cadastro de Colaboradores';
-                html = `<iframe src="cadastro_colaboradores.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+                html = `<div style="position: relative;">
+                    <iframe src="cadastro_colaboradores.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
             case 'equipamento':
                 title = 'Equipamentos';
-                html = `<iframe src="equipamentos.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+                html = `<div style="position: relative;">
+                    <iframe src="equipamentos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
             case 'abastecimento':
                 title = 'Abastecimentos';
-                html = `<iframe src="abastecimentos.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+                html = `<div style="position: relative;">
+                    <iframe src="abastecimentos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
             case 'relatorio':
                 title = 'Relatórios';
-                html = `<iframe src="relatorios.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+                html = `<div style="position: relative;">
+                    <iframe src="relatorios.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
-            case 'calculadora':
-                title = 'Calculadora de Campo';
-                html = `<iframe src="calculadoradecampo.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+            case 'pulverizacao':
+                title = 'Calculadora de Pulverização de Herbicidas';
+                html = `<div style="position: relative;">
+                    <iframe src="pulverizacao_herbicidas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
             case 'ponto':
                 title = 'Ponto Digital';
-                html = `<iframe src="pontodigital.html" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>`;
+                html = `<div style="position: relative;">
+                    <iframe src="pontodigital.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
+                break;
+            case 'perdas':
+                title = 'Controle de Perdas';
+                html = `<div style="position: relative;">
+                    <iframe src="perdas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
                 break;
         }
 
@@ -1232,6 +1291,27 @@ document.addEventListener("DOMContentLoaded", async () => {
         // Scroll suave para o topo
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
+    // Função global para voltar ao dashboard
+    window.app = {
+        returnToDashboard: function() {
+            loadContent('home');
+            
+            // Ativar item dashboard no menu
+            menuItems.forEach(item => {
+                if(item.getAttribute('data-form') === 'home') {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+            
+            // Fechar sidebar em mobile
+            if(window.innerWidth < 768) {
+                sidebar.classList.add('collapsed');
+            }
+        }
+    };
 
     // Carregar conteúdo ao clicar no menu
     menuItems.forEach(item => {
@@ -1245,10 +1325,8 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Carregar conteúdo
             await loadContent(formType);
             
-            // Fechar sidebar no mobile
-            if(window.innerWidth <= 768) {
-                sidebar.classList.remove("active");
-            }
+            // Fechar sidebar (móvel e desktop após abrir formulário)
+            sidebar.classList.add("collapsed");
         });
     });
     
