@@ -38,22 +38,27 @@
     <div class="row g-3" id="formCampos">
 
       <div class="col-md-3">
-        <input placeholder="Equipamento" id="equipamento" class="form-control">
+        <label class="form-label">Equipamento</label>
+        <input type="text" id="equipamento" class="form-control">
       </div>
 
       <div class="col-md-3">
-        <input placeholder="Operador" id="operador" class="form-control">
+        <label class="form-label">Operador</label>
+        <input type="text" id="operador" class="form-control">
       </div>
 
       <div class="col-md-3">
-        <input placeholder="Local" id="local" class="form-control">
+        <label class="form-label">Local</label>
+        <input type="text" id="local" class="form-control">
       </div>
 
       <div class="col-md-3">
-        <input placeholder="Abastecedor" id="abastecedor" class="form-control">
+        <label class="form-label">Abastecedor</label>
+        <input type="text" id="abastecedor" class="form-control">
       </div>
 
       <div class="col-md-2">
+        <label class="form-label">Combustível</label>
         <select id="combustivel" class="form-control">
           <option>Diesel</option>
           <option>Gasolina</option>
@@ -61,19 +66,23 @@
       </div>
 
       <div class="col-md-2">
-        <input type="number" placeholder="Quantidade" id="quantidade" class="form-control">
+        <label class="form-label">Quantidade</label>
+        <input type="number" id="quantidade" class="form-control">
       </div>
 
       <div class="col-md-3">
+        <label class="form-label">Data/Hora</label>
         <input type="datetime-local" id="data" class="form-control">
       </div>
 
       <div class="col-md-2">
-        <input type="number" placeholder="KM/Horímetro" id="horimetro" class="form-control">
+        <label class="form-label">KM/Horímetro</label>
+        <input type="number" id="horimetro" class="form-control">
       </div>
 
       <div class="col-md-12">
-        <input placeholder="Observações" id="obs" class="form-control">
+        <label class="form-label">Observações</label>
+        <input type="text" id="obs" class="form-control">
       </div>
 
     </div>
@@ -104,14 +113,17 @@
     <div id="filtros" class="row g-2 mb-3">
 
       <div class="col-md-3">
-        <input id="filtroEquipamento" placeholder="Equipamento" class="form-control">
+        <label class="form-label">Equipamento</label>
+        <input type="text" id="filtroEquipamento" class="form-control">
       </div>
 
       <div class="col-md-3">
-        <input id="filtroOperador" placeholder="Operador" class="form-control">
+        <label class="form-label">Operador</label>
+        <input type="text" id="filtroOperador" class="form-control">
       </div>
 
       <div class="col-md-3">
+        <label class="form-label">Combustível</label>
         <select id="filtroCombustivel" class="form-control">
           <option value="">Todos</option>
           <option>Diesel</option>

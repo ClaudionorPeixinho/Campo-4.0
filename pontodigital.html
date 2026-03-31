@@ -8,169 +8,384 @@
 <link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
 <link rel="stylesheet" href="css/app-base.css">
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Ponto Digital</title>
-<link rel="stylesheet" href="css/style_Ponto.css">
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 <script src="js/spa-utils.js"></script>
+
+<style>
+  body { 
+    background: #f4f6f9; 
+    padding: 1rem;
+  }
+  .container {
+    max-width: 1200px;
+  }
+
+  /* Responsividade Mobile */
+  @media (max-width: 768px) {
+    body {
+      padding: 0.75rem;
+    }
+
+    .container {
+      padding: 0;
+    }
+
+    .card {
+      border-radius: 10px;
+      margin-bottom: 1rem !important;
+    }
+
+    .header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem !important;
+    }
+
+    .header h3 {
+      font-size: 1.25rem;
+      margin: 0;
+      width: 100%;
+    }
+
+    .header .btn {
+      align-self: flex-end;
+      width: auto;
+    }
+
+    .card.p-4 {
+      padding: 1rem !important;
+    }
+
+    h5 {
+      font-size: 1.1rem;
+      margin-bottom: 1rem !important;
+    }
+
+    .row.g-3 {
+      margin-bottom: 1rem;
+    }
+
+    .row.g-3 > [class*="col-"] {
+      padding-left: 0;
+      padding-right: 0;
+    }
+
+    .col-md-2, 
+    .col-md-3,
+    .col-md-12 {
+      flex: 0 0 100%;
+      max-width: 100% !important;
+    }
+
+    .form-label {
+      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .form-control,
+    .form-select {
+      font-size: 16px;
+      padding: 0.6rem 0.75rem;
+      width: 100%;
+    }
+
+    .text-end {
+      text-align: left !important;
+      display: flex !important;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .mt-3 {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      margin-top: 1rem !important;
+    }
+
+    .btn {
+      width: 100%;
+      font-size: 0.9rem;
+      padding: 0.6rem 1rem;
+    }
+
+    .table {
+      font-size: 0.85rem;
+      margin-bottom: 0;
+    }
+
+    .table th, 
+    .table td {
+      padding: 0.5rem;
+    }
+
+    .table thead th {
+      font-size: 0.8rem;
+      padding: 0.6rem 0.4rem;
+    }
+
+    #filtros {
+      gap: 0.75rem;
+      margin-bottom: 1rem !important;
+    }
+
+    #filtros .col-md-2,
+    #filtros .col-md-3 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
+    #filtros .btn {
+      width: 100%;
+      font-size: 0.85rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .table thead {
+      background-color: #f8f9fa;
+    }
+  }
+
+  @media (max-width: 576px) {
+    .header h3 {
+      font-size: 1.1rem;
+    }
+
+    .btn-sm {
+      font-size: 0.75rem;
+      padding: 0.4rem 0.6rem;
+    }
+
+    .table {
+      font-size: 0.75rem;
+    }
+
+    .table th,
+    .table td {
+      padding: 0.4rem;
+    }
+  }
+
+  .hidden {
+    display: none !important;
+  }
+</style>
+
 </head>
 
-<body>
+<body class="p-4">
 
-<div class="topo">
-    <h1>🌿 Campo 4.0 - A Tecnologia no alcance da sua mão!</h1>
+<div class="container">
 
-    <a href="javascript:void(0)" onclick="sair()" class="btn-sair">
-        <i class="bi bi-box-arrow-left"></i> Sair
-    </a>
-</div>
+  <!-- HEADER -->
+  <div class="header d-flex justify-content-between align-items-center mb-4">
+    <h3><i class="bi bi-clock-fill"></i> Campo 4.0 - Ponto Digital</h3>
 
-<div class="container-form">
+    <button class="btn btn-light" onclick="sair()">
+      <i class="bi bi-box-arrow-left"></i> Sair
+    </button>
+  </div>
 
-    <div class="titulo">
-        ⏱️ PONTO DIGITAL
-    </div>
+  <!-- FORM -->
+  <div id="formTela" class="card p-4 mb-4">
+
+    <h5><i class="bi bi-pencil-square"></i> Registrar Ponto</h5>
 
     <form id="formPonto">
 
-        <div class="form-grid">
+      <div class="row g-3" id="formCampos">
 
-            <!-- Linha 1 -->
-            <div class="form-group">
-                <label>Data Lançamento</label>
-                <input type="date" name="data_lancamento" required>
-            </div>
-
-            <div class="form-group">
-                <label>Hora Inicial Jornada</label>
-                <input type="time" name="hi_jornada" required>
-            </div>
-
-            <div class="form-group">
-                <label>Hora Final Jornada</label>
-                <input type="time" name="hf_jornada" required>
-            </div>
-
-            <!-- Linha 2 -->
-            <div class="form-group">
-                <label>Nome Colaborador</label>
-                <input type="text" name="colaborador" required>
-            </div>
-
-            <div class="form-group">
-                <label>Matrícula</label>
-                <input type="text" name="matricula">
-            </div>
-
-            <div class="form-group">
-                <label>Função</label>
-                <input type="text" name="funcao">
-            </div>
-
-            <!-- Linha 3 -->
-            <div class="form-group">
-                <label>Nº Frota</label>
-                <input type="text" name="frota">
-            </div>
-
-            <div class="form-group">
-                <label>Km Inicial</label>
-                <input type="number" name="kmi">
-            </div>
-
-            <div class="form-group">
-                <label>Km Final</label>
-                <input type="number" name="kmf">
-            </div>
-
-            <!-- Linha 4 -->
-            <div class="form-group">
-                <label>Fazenda / Lote</label>
-                <input type="text" name="fazenda_lote">
-            </div>
-
-            <div class="form-group">
-                <label>Turno</label>
-                <input type="text" name="turno">
-            </div>
-
-            <div class="form-group">
-                <label>Líder da Frente</label>
-                <input type="text" name="lider">
-            </div>
-
-            <!-- Linha 5 -->
-            <div class="form-group full">
-                <label>Informações Adicionais</label>
-                <textarea name="informacao" rows="3"></textarea>
-            </div>
-
+        <div class="col-md-2">
+          <label class="form-label">Data Lançamento</label>
+          <input type="date" id="data_lancamento" name="data_lancamento" class="form-control" required>
         </div>
 
-        <div class="botoes">
-            <button type="submit" class="btn-registrar">Registrar</button>
-            <button type="reset" class="btn-cancelar">Cancelar</button>
+        <div class="col-md-2">
+          <label class="form-label">Hora Inicial</label>
+          <input type="time" id="hi_jornada" name="hi_jornada" class="form-control" required>
         </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Hora Final</label>
+          <input type="time" id="hf_jornada" name="hf_jornada" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Colaborador</label>
+          <input type="text" id="colaborador" name="colaborador" class="form-control" required>
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Matrícula</label>
+          <input type="text" id="matricula" name="matricula" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Função</label>
+          <input type="text" id="funcao" name="funcao" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Nº Frota</label>
+          <input type="text" id="frota" name="frota" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">KM Inicial</label>
+          <input type="number" id="kmi" name="kmi" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">KM Final</label>
+          <input type="number" id="kmf" name="kmf" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Fazenda/Lote</label>
+          <input type="text" id="fazenda_lote" name="fazenda_lote" class="form-control">
+        </div>
+
+        <div class="col-md-2">
+          <label class="form-label">Turno</label>
+          <input type="text" id="turno" name="turno" class="form-control">
+        </div>
+
+        <div class="col-md-3">
+          <label class="form-label">Líder da Frente</label>
+          <input type="text" id="lider" name="lider" class="form-control">
+        </div>
+
+        <div class="col-md-12">
+          <label class="form-label">Informações Adicionais</label>
+          <textarea id="informacao" name="informacao" class="form-control" rows="2"></textarea>
+        </div>
+
+      </div>
+
+      <!-- BOTÕES -->
+      <div class="mt-3 text-end">
+
+        <button type="submit" class="btn btn-success" onclick="salvar(event)">
+          <i class="bi bi-save"></i> Salvar
+        </button>
+
+        <button type="reset" class="btn btn-secondary" onclick="limparFormulario()">
+          Cancelar
+        </button>
+
+        <button type="button" class="btn btn-primary" onclick="mostrarTabela()">
+          Registros
+        </button>
+
+      </div>
 
     </form>
 
-    <!-- ============================= -->
-    <!-- TABELA FORA DO MODAL (CORRETO) -->
-    <!-- ============================= -->
+  </div>
 
-    <hr style="margin:40px 0;">
+  <!-- TABELA -->
+  <div id="tabelaCard" class="card p-4 hidden">
 
-    <div class="lista-registros">
-        <h2>📋 Registros Lançados</h2>
-        <table id="tabelaRegistros">
-            <thead>
-                <tr>
-                    <th>Data</th>
-                    <th>Colaborador</th>
-                    <th>Frota</th>
-                    <th>KM Inicial</th>
-                    <th>KM Final</th>
-                    <th>KM Rodado</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody></tbody>
-        </table>
+    <!-- FILTROS -->
+    <div id="filtros" class="row g-2 mb-3">
+
+      <div class="col-md-3">
+        <label class="form-label">Colaborador</label>
+        <input type="text" id="filtroColaborador" class="form-control">
+      </div>
+
+      <div class="col-md-2">
+        <label class="form-label">Frota</label>
+        <input type="text" id="filtroFrota" class="form-control">
+      </div>
+
+      <div class="col-md-3">
+        <label class="form-label">Data</label>
+        <input type="date" id="filtroData" class="form-control">
+      </div>
+
+      <div class="col-md-4 text-end">
+        <button class="btn btn-primary" onclick="carregar()">Buscar</button>
+        <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+        <button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
+      </div>
+
     </div>
 
-</div>
+    <!-- TABELA -->
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Colaborador</th>
+          <th>Frota</th>
+          <th>KM Inicial</th>
+          <th>KM Final</th>
+          <th>KM Rodado</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tabelaDados"></tbody>
+    </table>
 
-<!-- ============================= -->
-<!-- MODAL (SOMENTE MODAL) -->
-<!-- ============================= -->
-
-<div id="modalConfirm" class="modal">
-  <div class="modal-content">
-      <h3>Confirmar Registro</h3>
-      <p>Deseja salvar esse registro?</p>
-      <div class="modal-buttons">
-          <button id="btnConfirmSim" class="btn-registrar">Sim</button>
-          <button id="btnConfirmNao" class="btn-cancelar">Não</button>
-      </div>
   </div>
+
 </div>
 
-<!-- Loader -->
-<div id="loader" class="loader-overlay">
-    <div class="spinner"></div>
-</div>
-
-<!-- Scripts no final -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
+
+<style>
+  /* Funções de controle de formulário */
+  function mostrarTabela() {
+    document.getElementById('formTela').classList.add('hidden');
+    document.getElementById('tabelaCard').classList.remove('hidden');
+    carregar();
+  }
+
+  function voltarFormulario() {
+    document.getElementById('tabelaCard').classList.add('hidden');
+    document.getElementById('formTela').classList.remove('hidden');
+    limparFormulario();
+  }
+
+  function limparFiltros() {
+    document.getElementById('filtroColaborador').value = '';
+    document.getElementById('filtroFrota').value = '';
+    document.getElementById('filtroData').value = '';
+    carregar();
+  }
+
+  function limparFormulario() {
+    document.getElementById('formPonto').reset();
+  }
+
+  function carregar() {
+    // será preenchido pelo arquivo pontodigital.js
+  }
+
+  function salvar(event) {
+    event.preventDefault();
+    // será preenchido pelo arquivo pontodigital.js
+  }
+</style>
+
 <script defer src="js/pontodigital.js"></script>
 
 <script>
-if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./service-worker.js', { scope: './' })
-            .catch(err => console.warn('SW registration falhou:', err));
+      navigator.serviceWorker.register('./service-worker.js', { scope: './' })
+        .catch(err => console.warn('SW registration falhou:', err));
     });
-}
+  }
 </script>
+
 </body>
 </html>
 

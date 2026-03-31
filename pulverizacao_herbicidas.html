@@ -113,6 +113,10 @@
             .main-content {
                 grid-template-columns: 1fr;
             }
+
+            .results-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
         }
 
         .card {
@@ -504,33 +508,181 @@
         }
 
         @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
             .header h1 {
-                font-size: 1.5rem;
+                font-size: 1.4rem;
+                width: 100%;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
             }
 
             .card {
-                padding: 20px;
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+
+            .label-hint {
+                font-size: 0.75rem;
+                margin-top: 3px;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .input-group input,
+            .input-group select,
+            .unit {
+                width: 100%;
+            }
+
+            .unit {
+                padding: 10px;
+                font-size: 0.85rem;
+                min-width: auto;
+            }
+
+            input, select {
+                padding: 11px 12px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 15px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                width: 100%;
+                flex: none;
             }
 
             .results-grid {
-                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+
+            .result-item {
+                padding: 15px;
             }
 
             .result-value {
                 font-size: 1.3rem;
             }
 
-            .btn {
-                padding: 12px 20px;
+            .tabs {
+                overflow-x: auto;
+                gap: 5px;
+                margin-bottom: 15px;
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+            }
+
+            .tab-btn {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+
+            .info-box {
+                padding: 12px;
+                margin-bottom: 12px;
+                font-size: 0.85rem;
+            }
+
+            .presets-group {
+                display: flex;
+                gap: 8px;
+                margin-top: 12px;
+                flex-wrap: wrap;
+            }
+
+            .preset-btn {
+                flex: 1;
+                min-width: 80px;
+                padding: 10px 8px;
+                font-size: 0.8rem;
+            }
+
+            footer {
+                padding: 15px;
+                text-align: center;
                 font-size: 0.9rem;
             }
 
-            .main-content {
-                gap: 15px;
+            footer p {
+                font-size: 0.8rem;
             }
 
-            input, select {
-                font-size: 16px;
+            .back-link {
+                padding: 10px 16px;
+            }
+
+            .summary-table {
+                margin-top: 10px;
+            }
+
+            .summary-table th,
+            .summary-table td {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            .summary-table th {
+                font-size: 0.75rem;
+            }
+
+            .warning-box {
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+
+            .presets-group {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+                margin-top: 10px;
+            }
+
+            .preset-btn {
+                padding: 8px 6px;
+                font-size: 0.75rem;
             }
         }
     </style>
