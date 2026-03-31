@@ -269,7 +269,7 @@
       <!-- BOTÕES -->
       <div class="mt-3 text-end">
 
-        <button type="submit" class="btn btn-success" onclick="salvar(event)">
+        <button type="submit" class="btn btn-success">
           <i class="bi bi-save"></i> Salvar
         </button>
 
@@ -338,41 +338,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
-
-<style>
-  /* Funções de controle de formulário */
-  function mostrarTabela() {
-    document.getElementById('formTela').classList.add('hidden');
-    document.getElementById('tabelaCard').classList.remove('hidden');
-    carregar();
-  }
-
-  function voltarFormulario() {
-    document.getElementById('tabelaCard').classList.add('hidden');
-    document.getElementById('formTela').classList.remove('hidden');
-    limparFormulario();
-  }
-
-  function limparFiltros() {
-    document.getElementById('filtroColaborador').value = '';
-    document.getElementById('filtroFrota').value = '';
-    document.getElementById('filtroData').value = '';
-    carregar();
-  }
-
-  function limparFormulario() {
-    document.getElementById('formPonto').reset();
-  }
-
-  function carregar() {
-    // será preenchido pelo arquivo pontodigital.js
-  }
-
-  function salvar(event) {
-    event.preventDefault();
-    // será preenchido pelo arquivo pontodigital.js
-  }
-</style>
 
 <script defer src="js/pontodigital.js"></script>
 
