@@ -98,8 +98,13 @@ body.dark {
         width: 280px;
     }
     
+    .sidebar.collapsed {
+        transform: translateX(-100%);
+    }
+    
     .sidebar.open {
         transform: translateX(0);
+        box-shadow: 2px 0 30px rgba(0, 0, 0, 0.3);
     }
 }
 
@@ -222,6 +227,48 @@ body.dark .topbar {
     cursor: pointer;
     font-size: 24px;
     transition: var(--transition);
+    padding: 0;
+    background: transparent;
+    color: var(--primary-color);
+    border: none;
+    border-radius: 0;
+    width: auto;
+    height: auto;
+    margin-right: 0;
+}
+
+.menu-toggle:hover {
+    background: var(--primary-dark);
+}
+
+.menu-toggle:active {
+    transform: scale(0.95);
+}
+
+/* Backdrop para fechar menu ao clicar */
+.sidebar-backdrop {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+    animation: fadeIn 0.3s ease;
+}
+
+.sidebar-backdrop.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
 }
 
 .page-title {
@@ -308,6 +355,12 @@ body.dark .topbar {
     bottom: -20px;
     font-size: 150px;
     opacity: 0.1;
+}
+
+@media (max-width: 768px) {
+    .welcome-card::before {
+        display: none;
+    }
 }
 
 .welcome-card h2 {
@@ -470,6 +523,7 @@ body.dark .table-custom td {
     .sidebar {
         transform: translateX(-100%);
         width: 280px;
+        transition: transform 0.3s ease;
     }
     
     .sidebar.collapsed {
@@ -478,6 +532,7 @@ body.dark .table-custom td {
     
     .sidebar.open {
         transform: translateX(0);
+        box-shadow: 2px 0 30px rgba(0, 0, 0, 0.3);
     }
     
     .main {
@@ -486,7 +541,29 @@ body.dark .table-custom td {
     }
     
     .menu-toggle {
-        display: block;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px !important;
+        width: auto;
+        height: auto;
+        padding: 8px 12px;
+        margin-right: 10px;
+        background: transparent;
+        color: var(--primary-color) !important;
+        border-radius: 8px;
+        cursor: pointer;
+        border: none;
+        transition: var(--transition);
+    }
+    
+    .menu-toggle:hover {
+        background: rgba(46, 125, 50, 0.1);
+        transform: scale(1.1);
+    }
+    
+    .menu-toggle:active {
+        transform: scale(0.95);
     }
     
     .topbar {
@@ -499,10 +576,17 @@ body.dark .table-custom td {
     
     .welcome-card {
         padding: 25px;
+        position: relative;
     }
     
     .welcome-card h2 {
         font-size: 1.5rem;
+    }
+    
+    .welcome-card p {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        margin: 0;
     }
 }
 
@@ -552,6 +636,9 @@ body.dark .table-custom td {
 </style>
 </head>
 <body class="light">
+
+<!-- Backdrop para fechar menu -->
+<div class="sidebar-backdrop" id="sidebarBackdrop"></div>
 
 <!-- Sidebar Modernizada -->
 <aside class="sidebar" id="sidebar">
@@ -608,7 +695,7 @@ body.dark .table-custom td {
 <div class="main">
     <div class="topbar">
         <div class="topbar-left">
-            <i class="bi bi-list menu-toggle" id="menuToggle"></i>
+            <i class="bi bi-list menu-toggle" id="menuToggle" title="Abrir/Fechar Menu"></i>
             <span class="page-title" id="pageTitle">Dashboard</span>
         </div>
         <div class="topbar-right">
@@ -657,18 +744,47 @@ document.addEventListener("DOMContentLoaded", async () => {
     const menuToggle = document.getElementById("menuToggle");
     const sidebar = document.getElementById("sidebar");
     const pageTitle = document.getElementById("pageTitle");
+    const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 
-    // Alternar menu mobile
-    menuToggle.addEventListener("click", () => {
-        sidebar.classList.toggle("open");
-        sidebar.classList.toggle("collapsed");
+    // Função para fechar o menu com sincronização
+    function closeMenuMobile() {
+        sidebar.classList.remove("open");
+        sidebar.classList.add("collapsed");
+        if(sidebarBackdrop) {
+            sidebarBackdrop.classList.remove("active");
+        }
+    }
+
+    // Função para abrir o menu com sincronização
+    function openMenuMobile() {
+        sidebar.classList.add("open");
+        sidebar.classList.remove("collapsed");
+        if(sidebarBackdrop && window.innerWidth <= 768) {
+            sidebarBackdrop.classList.add("active");
+        }
+    }
+
+    // Alternar menu mobile com suporte a backdrop
+    menuToggle.addEventListener("click", (e) => {
+        e.stopPropagation();
+        if(sidebar.classList.contains("open")) {
+            closeMenuMobile();
+        } else {
+            openMenuMobile();
+        }
     });
+
+    // Fechar menu ao clicar no backdrop
+    if(sidebarBackdrop) {
+        sidebarBackdrop.addEventListener("click", () => {
+            closeMenuMobile();
+        });
+    }
 
     // Fechar menu ao clicar fora no mobile
     document.addEventListener("click", (e) => {
-        if (window.innerWidth <= 768 && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
-            sidebar.classList.remove("open");
-            sidebar.classList.add("collapsed");
+        if (window.innerWidth <= 768 && sidebar.classList.contains("open") && !sidebar.contains(e.target) && !menuToggle.contains(e.target)) {
+            closeMenuMobile();
         }
     });
 
@@ -1325,8 +1441,14 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Carregar conteúdo
             await loadContent(formType);
             
-            // Fechar sidebar (móvel e desktop após abrir formulário)
-            sidebar.classList.add("collapsed");
+            // Fechar sidebar em mobile apenas
+            if(window.innerWidth <= 768) {
+                sidebar.classList.add("collapsed");
+                sidebar.classList.remove("open");
+                if(sidebarBackdrop) {
+                    sidebarBackdrop.classList.remove("active");
+                }
+            }
         });
     });
     
