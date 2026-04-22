@@ -1,6 +1,13 @@
 document.addEventListener("DOMContentLoaded", () => {
 
 const supabase = window.supabaseClient;
+
+if (!supabase) {
+    alert("Supabase não está carregado!");
+    console.error("supabaseClient não encontrado no window.");
+    return;
+}
+
 const form = document.getElementById("formEquipamento");
 const tabela = document.getElementById("tabelaDados");
 const areaTabela = document.getElementById("areaTabela");
@@ -21,27 +28,38 @@ form.addEventListener("submit", async (e)=>{
         categoria: document.getElementById("categoria").value
     };
 
-    if(editandoId){
-        if (!window.isOnline()) {
-            alert('A edição de equipamentos requer internet. Tente novamente quando conectado.');
-            return;
-        }
-        await supabase.from("equipamentos")
-        .update(dados)
-        .eq("id", editandoId);
-        editandoId = null;
-        alert('Equipamento atualizado com sucesso!');
-    } else {
-        const resultado = await window.saveRecord('equipamentos', dados);
-        if (!resultado.success) {
-            alert('Erro ao salvar equipamento: ' + (resultado.error?.message || 'Desconhecido'));
-            return;
-        }
-        alert(resultado.offline ? 'Sem internet: equipamento enfileirado para sincronização.' : 'Equipamento salvo com sucesso!');
-    }
+    try {
 
-    form.reset();
-    carregarTabela();
+        if(editandoId){
+
+            const { error } = await supabase
+                .from("equipamentos")
+                .update(dados)
+                .eq("id", editandoId);
+
+            if (error) throw error;
+
+            alert("Equipamento atualizado com sucesso!");
+            editandoId = null;
+
+        } else {
+
+            const { error } = await supabase
+                .from("equipamentos")
+                .insert([dados]);
+
+            if (error) throw error;
+
+            alert("Equipamento salvo com sucesso!");
+        }
+
+        form.reset();
+        carregarTabela();
+
+    } catch (err) {
+        console.error("ERRO AO SALVAR:", err);
+        alert("Erro ao salvar: " + err.message);
+    }
 });
 
 /* ============================= */
@@ -53,36 +71,49 @@ document.getElementById("btnMostrar").addEventListener("click", ()=>{
 });
 
 /* ============================= */
-/* CARREGAR */
+/* CARREGAR TABELA */
 /* ============================= */
 async function carregarTabela(){
 
-    const { data } = await supabase
-        .from("equipamentos")
-        .select("*")
-        .order("frota");
+    try {
+        const { data, error } = await supabase
+            .from("equipamentos")
+            .select("*")
+            .order("frota", { ascending: true });
 
-    tabela.innerHTML="";
+        if (error) throw error;
 
-    data.forEach(item=>{
-        tabela.innerHTML+=`
-        <tr>
-            <td>${item.frota}</td>
-            <td>${item.modelo}</td>
-            <td>${item.operacao}</td>
-            <td>${item.tag || ""}</td>
-            <td>${item.categoria}</td>
-            <td>
-                <button class="btn btn-warning btn-sm" onclick="editar('${item.id}')">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" onclick="excluir('${item.id}')">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        </tr>
-        `;
-    });
+        tabela.innerHTML = "";
+
+        if (!data || data.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="6">Nenhum registro encontrado</td></tr>`;
+            return;
+        }
+
+        data.forEach(item=>{
+            tabela.innerHTML += `
+            <tr>
+                <td>${item.frota || ""}</td>
+                <td>${item.modelo || ""}</td>
+                <td>${item.operacao || ""}</td>
+                <td>${item.tag || ""}</td>
+                <td>${item.categoria || ""}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editar('${item.id}')">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="excluir('${item.id}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
+
+    } catch (err) {
+        console.error("ERRO AO CARREGAR:", err);
+        alert("Erro ao carregar dados: " + err.message);
+    }
 }
 
 /* ============================= */
@@ -90,75 +121,108 @@ async function carregarTabela(){
 /* ============================= */
 window.editar = async function(id){
 
-    const { data } = await supabase
-        .from("equipamentos")
-        .select("*")
-        .eq("id", id)
-        .single();
+    try {
+        const { data, error } = await supabase
+            .from("equipamentos")
+            .select("*")
+            .eq("id", id)
+            .single();
 
-    document.getElementById("frota").value = data.frota;
-    document.getElementById("modelo").value = data.modelo;
-    document.getElementById("operacao").value = data.operacao;
-    document.getElementById("tag").value = data.tag;
-    document.getElementById("categoria").value = data.categoria;
+        if (error) throw error;
 
-    editandoId = id;
-    window.scrollTo({top:0,behavior:"smooth"});
+        document.getElementById("frota").value = data.frota || "";
+        document.getElementById("modelo").value = data.modelo || "";
+        document.getElementById("operacao").value = data.operacao || "";
+        document.getElementById("tag").value = data.tag || "";
+        document.getElementById("categoria").value = data.categoria || "";
+
+        editandoId = id;
+
+        window.scrollTo({top:0, behavior:"smooth"});
+
+    } catch (err) {
+        console.error("ERRO AO EDITAR:", err);
+        alert("Erro ao carregar registro: " + err.message);
+    }
 }
 
 /* ============================= */
 /* EXCLUIR */
 /* ============================= */
 window.excluir = async function(id){
-    if(confirm("Deseja excluir este equipamento?")){
-        await supabase.from("equipamentos")
-        .delete()
-        .eq("id", id);
+
+    if(!confirm("Deseja excluir este equipamento?")) return;
+
+    try {
+        const { error } = await supabase
+            .from("equipamentos")
+            .delete()
+            .eq("id", id);
+
+        if (error) throw error;
+
+        alert("Excluído com sucesso!");
         carregarTabela();
+
+    } catch (err) {
+        console.error("ERRO AO EXCLUIR:", err);
+        alert("Erro ao excluir: " + err.message);
     }
 }
 
 /* ============================= */
-/* FILTROS */
+/* FILTRAR */
 /* ============================= */
 document.getElementById("btnFiltrar").addEventListener("click", async ()=>{
 
     const frota = document.getElementById("filtroFrota").value;
     const modelo = document.getElementById("filtroModelo").value;
 
-    let query = supabase.from("equipamentos").select("*");
+    try {
 
-    if(frota) query = query.ilike("frota", `%${frota}%`);
-    if(modelo) query = query.ilike("modelo", `%${modelo}%`);
+        let query = supabase.from("equipamentos").select("*");
 
-    const { data } = await query;
+        if(frota) query = query.ilike("frota", `%${frota}%`);
+        if(modelo) query = query.ilike("modelo", `%${modelo}%`);
 
-    tabela.innerHTML="";
+        const { data, error } = await query;
 
-    data.forEach(item=>{
-        tabela.innerHTML+=`
-        <tr>
-            <td>${item.frota}</td>
-            <td>${item.modelo}</td>
-            <td>${item.operacao}</td>
-            <td>${item.tag || ""}</td>
-            <td>${item.categoria}</td>
-            <td>
-                <button class="btn btn-warning btn-sm" onclick="editar('${item.id}')">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-danger btn-sm" onclick="excluir('${item.id}')">
-                    <i class="bi bi-trash"></i>
-                </button>
-            </td>
-        </tr>
-        `;
-    });
+        if (error) throw error;
+
+        tabela.innerHTML = "";
+
+        data.forEach(item=>{
+            tabela.innerHTML += `
+            <tr>
+                <td>${item.frota || ""}</td>
+                <td>${item.modelo || ""}</td>
+                <td>${item.operacao || ""}</td>
+                <td>${item.tag || ""}</td>
+                <td>${item.categoria || ""}</td>
+                <td>
+                    <button class="btn btn-warning btn-sm" onclick="editar('${item.id}')">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-danger btn-sm" onclick="excluir('${item.id}')">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
+
+    } catch (err) {
+        console.error("ERRO AO FILTRAR:", err);
+        alert("Erro ao filtrar: " + err.message);
+    }
 });
 
+/* ============================= */
+/* LIMPAR FILTRO */
+/* ============================= */
 document.getElementById("btnLimparFiltro").addEventListener("click", ()=>{
-    document.getElementById("filtroFrota").value="";
-    document.getElementById("filtroModelo").value="";
+    document.getElementById("filtroFrota").value = "";
+    document.getElementById("filtroModelo").value = "";
     carregarTabela();
 });
 
