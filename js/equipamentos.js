@@ -1,229 +1,186 @@
 document.addEventListener("DOMContentLoaded", () => {
-
 const supabase = window.supabaseClient;
 
 if (!supabase) {
-    alert("Supabase não está carregado!");
-    console.error("supabaseClient não encontrado no window.");
-    return;
+alert("Supabase não está carregado.");
+console.error("supabaseClient não encontrado no window.");
+return;
 }
 
 const form = document.getElementById("formEquipamento");
+const formTela = document.getElementById("formTela");
+const tabelaTela = document.getElementById("tabelaTela");
 const tabela = document.getElementById("tabelaDados");
-const areaTabela = document.getElementById("areaTabela");
+const btnToggle = document.getElementById("btnToggle");
+const btnFecharTabela = document.getElementById("btnFecharTabela");
+const btnBuscarTabela = document.getElementById("btnBuscarTabela");
+const btnLimparFiltros = document.getElementById("btnLimparFiltros");
+const filtroFrota = document.getElementById("filtroFrota");
+const filtroModelo = document.getElementById("filtroModelo");
 
 let editandoId = null;
 
-/* ============================= */
-/* SALVAR */
-/* ============================= */
-form.addEventListener("submit", async (e)=>{
-    e.preventDefault();
+const campos = form.querySelectorAll("#formCampos input, #formCampos select");
 
-    const dados = {
-        frota: document.getElementById("frota").value,
-        modelo: document.getElementById("modelo").value,
-        operacao: document.getElementById("operacao").value,
-        tag: document.getElementById("tag").value,
-        categoria: document.getElementById("categoria").value
-    };
+campos.forEach((campo, index) => {
+campo.addEventListener("keydown", (e) => {
+if (e.key !== "Enter") return;
 
-    try {
-
-        if(editandoId){
-
-            const { error } = await supabase
-                .from("equipamentos")
-                .update(dados)
-                .eq("id", editandoId);
-
-            if (error) throw error;
-
-            alert("Equipamento atualizado com sucesso!");
-            editandoId = null;
-
-        } else {
-
-            const { error } = await supabase
-                .from("equipamentos")
-                .insert([dados]);
-
-            if (error) throw error;
-
-            alert("Equipamento salvo com sucesso!");
-        }
-
-        form.reset();
-        carregarTabela();
-
-    } catch (err) {
-        console.error("ERRO AO SALVAR:", err);
-        alert("Erro ao salvar: " + err.message);
-    }
+e.preventDefault();
+const proximoCampo = campos[index + 1];
+if (proximoCampo) proximoCampo.focus();
+});
 });
 
-/* ============================= */
-/* MOSTRAR REGISTROS */
-/* ============================= */
-document.getElementById("btnMostrar").addEventListener("click", ()=>{
-    areaTabela.style.display="block";
-    carregarTabela();
-});
-
-/* ============================= */
-/* CARREGAR TABELA */
-/* ============================= */
-async function carregarTabela(){
-
-    try {
-        const { data, error } = await supabase
-            .from("equipamentos")
-            .select("*")
-            .order("frota", { ascending: true });
-
-        if (error) throw error;
-
-        tabela.innerHTML = "";
-
-        if (!data || data.length === 0) {
-            tabela.innerHTML = `<tr><td colspan="6">Nenhum registro encontrado</td></tr>`;
-            return;
-        }
-
-        data.forEach(item=>{
-            tabela.innerHTML += `
-            <tr>
-                <td>${item.frota || ""}</td>
-                <td>${item.modelo || ""}</td>
-                <td>${item.operacao || ""}</td>
-                <td>${item.tag || ""}</td>
-                <td>${item.categoria || ""}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm" onclick="editar('${item.id}')">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm" onclick="excluir('${item.id}')">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            `;
-        });
-
-    } catch (err) {
-        console.error("ERRO AO CARREGAR:", err);
-        alert("Erro ao carregar dados: " + err.message);
-    }
+function limparFormulario() {
+form.reset();
+editandoId = null;
 }
 
-/* ============================= */
-/* EDITAR */
-/* ============================= */
-window.editar = async function(id){
-
-    try {
-        const { data, error } = await supabase
-            .from("equipamentos")
-            .select("*")
-            .eq("id", id)
-            .single();
-
-        if (error) throw error;
-
-        document.getElementById("frota").value = data.frota || "";
-        document.getElementById("modelo").value = data.modelo || "";
-        document.getElementById("operacao").value = data.operacao || "";
-        document.getElementById("tag").value = data.tag || "";
-        document.getElementById("categoria").value = data.categoria || "";
-
-        editandoId = id;
-
-        window.scrollTo({top:0, behavior:"smooth"});
-
-    } catch (err) {
-        console.error("ERRO AO EDITAR:", err);
-        alert("Erro ao carregar registro: " + err.message);
-    }
+function limparFiltros() {
+filtroFrota.value = "";
+filtroModelo.value = "";
+carregarTabela();
 }
 
-/* ============================= */
-/* EXCLUIR */
-/* ============================= */
-window.excluir = async function(id){
-
-    if(!confirm("Deseja excluir este equipamento?")) return;
-
-    try {
-        const { error } = await supabase
-            .from("equipamentos")
-            .delete()
-            .eq("id", id);
-
-        if (error) throw error;
-
-        alert("Excluído com sucesso!");
-        carregarTabela();
-
-    } catch (err) {
-        console.error("ERRO AO EXCLUIR:", err);
-        alert("Erro ao excluir: " + err.message);
-    }
+function preencherFormulario(item) {
+document.getElementById("frota").value = item.frota || "";
+document.getElementById("modelo").value = item.modelo || "";
+document.getElementById("operacao").value = item.operacao || "";
+document.getElementById("tag").value = item.tag || "";
+document.getElementById("categoria").value = item.categoria || "";
 }
 
-/* ============================= */
-/* FILTRAR */
-/* ============================= */
-document.getElementById("btnFiltrar").addEventListener("click", async ()=>{
+async function mostrarTabela() {
+formTela.style.display = "none";
+tabelaTela.style.display = "block";
+await carregarTabela();
+}
 
-    const frota = document.getElementById("filtroFrota").value;
-    const modelo = document.getElementById("filtroModelo").value;
+function voltarFormulario() {
+tabelaTela.style.display = "none";
+formTela.style.display = "block";
+}
 
-    try {
+function montarLinha(item) {
+const tr = document.createElement("tr");
 
-        let query = supabase.from("equipamentos").select("*");
+tr.innerHTML = `
+<td>${item.frota || ""}</td>
+<td>${item.modelo || ""}</td>
+<td>${item.operacao || ""}</td>
+<td>${item.tag || ""}</td>
+<td>${item.categoria || ""}</td>
+<td class="acoes-tabela">
+<button type="button" class="btn btn-warning btn-sm btn-editar" title="Editar" aria-label="Editar">
+<i class="bi bi-pencil-square"></i>
+</button>
+<button type="button" class="btn btn-danger btn-sm btn-excluir" title="Excluir" aria-label="Excluir">
+<i class="bi bi-trash"></i>
+</button>
+</td>
+`;
 
-        if(frota) query = query.ilike("frota", `%${frota}%`);
-        if(modelo) query = query.ilike("modelo", `%${modelo}%`);
-
-        const { data, error } = await query;
-
-        if (error) throw error;
-
-        tabela.innerHTML = "";
-
-        data.forEach(item=>{
-            tabela.innerHTML += `
-            <tr>
-                <td>${item.frota || ""}</td>
-                <td>${item.modelo || ""}</td>
-                <td>${item.operacao || ""}</td>
-                <td>${item.tag || ""}</td>
-                <td>${item.categoria || ""}</td>
-                <td>
-                    <button class="btn btn-warning btn-sm" onclick="editar('${item.id}')">
-                        <i class="bi bi-pencil"></i>
-                    </button>
-                    <button class="btn btn-danger btn-sm" onclick="excluir('${item.id}')">
-                        <i class="bi bi-trash"></i>
-                    </button>
-                </td>
-            </tr>
-            `;
-        });
-
-    } catch (err) {
-        console.error("ERRO AO FILTRAR:", err);
-        alert("Erro ao filtrar: " + err.message);
-    }
+tr.querySelector(".btn-editar").addEventListener("click", () => {
+preencherFormulario(item);
+editandoId = item.id;
+voltarFormulario();
+window.scrollTo({ top: 0, behavior: "smooth" });
 });
 
-/* ============================= */
-/* LIMPAR FILTRO */
-/* ============================= */
-document.getElementById("btnLimparFiltro").addEventListener("click", ()=>{
-    document.getElementById("filtroFrota").value = "";
-    document.getElementById("filtroModelo").value = "";
-    carregarTabela();
+tr.querySelector(".btn-excluir").addEventListener("click", async () => {
+if (!confirm("Deseja excluir este equipamento?")) return;
+
+const { error } = await supabase
+.from("equipamentos")
+.delete()
+.eq("id", item.id);
+
+if (error) {
+console.error("Erro ao excluir equipamento:", error);
+alert("Erro ao excluir o registro.");
+return;
+}
+
+await carregarTabela();
 });
 
+return tr;
+}
+
+async function carregarTabela() {
+let query = supabase
+.from("equipamentos")
+.select("*")
+.order("id", { ascending: false });
+
+const frota = filtroFrota.value.trim();
+const modelo = filtroModelo.value.trim();
+
+if (frota) query = query.ilike("frota", `%${frota}%`);
+if (modelo) query = query.ilike("modelo", `%${modelo}%`);
+
+const { data, error } = await query;
+
+if (error) {
+console.error("Erro ao carregar equipamentos:", error);
+alert("Erro ao carregar os registros.");
+return;
+}
+
+tabela.innerHTML = "";
+
+if (!data || data.length === 0) {
+tabela.innerHTML = '<tr><td colspan="6" class="text-center py-3">Nenhum registro encontrado.</td></tr>';
+return;
+}
+
+data.forEach((item) => {
+tabela.appendChild(montarLinha(item));
+});
+}
+
+async function salvar(e) {
+e.preventDefault();
+
+const dados = {
+frota: document.getElementById("frota").value,
+modelo: document.getElementById("modelo").value,
+operacao: document.getElementById("operacao").value,
+tag: document.getElementById("tag").value,
+categoria: document.getElementById("categoria").value
+};
+
+const operacao = editandoId
+? supabase.from("equipamentos").update(dados).eq("id", editandoId)
+: supabase.from("equipamentos").insert([dados]);
+
+const { error } = await operacao;
+
+if (error) {
+console.error("Erro ao salvar equipamento:", error);
+alert("Erro ao salvar o equipamento.");
+return;
+}
+
+limparFormulario();
+voltarFormulario();
+}
+
+form.addEventListener("submit", salvar);
+btnToggle?.addEventListener("click", mostrarTabela);
+btnFecharTabela?.addEventListener("click", voltarFormulario);
+btnBuscarTabela?.addEventListener("click", carregarTabela);
+btnLimparFiltros?.addEventListener("click", limparFiltros);
+
+[filtroFrota, filtroModelo].forEach((campo) => {
+campo?.addEventListener("input", carregarTabela);
+});
+
+window.mostrarTabela = mostrarTabela;
+window.voltarFormulario = voltarFormulario;
+window.limparFormulario = limparFormulario;
+
+limparFormulario();
+voltarFormulario();
 });
