@@ -13,7 +13,11 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.min.js"></script>
+<script>
+    // Garantir que ApexCharts esteja disponível globalmente
+    window.apexCharts = window.ApexCharts;
+</script>
 
 <style>
 * {
@@ -724,6 +728,13 @@ body.dark .table-custom td {
 
 <script>
 document.addEventListener("DOMContentLoaded", async () => {
+    // Aguardar Supabase carregar
+    if (typeof supabaseClient === 'undefined') {
+        console.error('Supabase não carregado!')
+        document.getElementById('conteudoPrincipal').innerHTML = '<div class="alert alert-danger">Erro: Supabase não carregou. Recarregue a página.</div>';
+        return;
+    }
+
     // Verificar usuário logado
     const { data: { session } } = await supabaseClient.auth.getSession();
     if (!session) {
@@ -733,10 +744,14 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Exibir nome do usuário
     const user = session.user;
-    const { data: userData } = await supabaseClient.from("usuarios").select("nome").eq("id", user.id).single();
-    const userName = userData?.nome || user.email;
-    document.querySelector(".user-info span").textContent = userName;
-    document.querySelector(".user-avatar").textContent = userName.charAt(0).toUpperCase();
+    try {
+        const { data: userData } = await supabaseClient.from("usuarios").select("nome").eq("id", user.id).single();
+        const userName = userData?.nome || user.email;
+        document.querySelector(".user-info span").textContent = userName;
+        document.querySelector(".user-avatar").textContent = userName.charAt(0).toUpperCase();
+    } catch (e) {
+        console.warn('Erro ao buscar usuário:', e);
+    }
 
     const menuItems = document.querySelectorAll(".sidebar ul li");
     const conteudo = document.getElementById("conteudoPrincipal");
@@ -909,148 +924,214 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     // Função para carregar dados do dashboard
     async function loadDashboardData() {
+        conteudo.innerHTML = '<div class="text-center p-5"><div class="loading"></div><p>Carregando dados...</p></div>';
+        
         try {
-            // Buscar dados das tabelas (dados reais, conforme pedido)
-            const [apontamentosRes, abastecimentosRes, pontoRes, equipamentosRes] = await Promise.all([
-                supabaseClient.from("apontamentos_entrega").select("*").order("data", { ascending: false }).limit(10),
-                supabaseClient.from("abastecimentos").select("*"),
-                supabaseClient.from("ponto_digital").select("*"),
-                supabaseClient.from("equipamentos").select("*")
+            // Buscar dados diretamente das tabelas
+            const results = await Promise.allSettled([
+                supabaseClient.from("apontamentos_entrega").select("*").limit(100),
+                supabaseClient.from("abastecimentos").select("*").limit(100),
+                supabaseClient.from("colaboradores").select("*").limit(50),
+                supabaseClient.from("equipamentos").select("*").limit(50)
             ]);
 
-            const apontamentos = apontamentosRes.data || [];
-            const abastecimentos = abastecimentosRes.data || [];
-            const ponto = pontoRes.data || [];
-            const equipamentos = equipamentosRes.data || [];
+            const [apontRes, abastRes, colabRes, equipRes] = results;
 
-            console.log('Dados carregados:', { apontamentos: apontamentos.length, equipamentos: equipamentos.length });
-            console.log('Primeiro apontamento:', apontamentos[0]);
+            let apontamentos = [];
+            let abastecimentos = [];
+            let colaboradores = [];
+            let equipamentos = [];
 
-            // Cache local para modo offline
-            localStorage.setItem('cacheDashboardData', JSON.stringify({
-                apontamentos,
-                abastecimentos,
-                ponto,
-                equipamentos,
-                updatedAt: new Date().toISOString()
-            }));
+            if (apontRes.status === 'fulfilled' && apontRes.value.data) {
+                apontamentos = apontRes.value.data;
+            }
 
-            // Calcular estatísticas
-            const totalApontamentos = apontamentos.length;
-            const totalAbastecimentos = abastecimentos.length;
-            const totalRegistrosPonto = ponto.length;
-            const totalHoras = apontamentos.reduce((sum, a) => sum + (a.horas || 0), 0);
-            const totalLitros = abastecimentos.reduce((sum, a) => sum + (a.litros || 0), 0);
-            const totalHorasPonto = ponto.reduce((sum, p) => sum + (p.horas || 0), 0);
+            if (abastRes.status === 'fulfilled' && abastRes.value.data) {
+                abastecimentos = abastRes.value.data;
+            }
 
-            // Contar colaboradores únicos
-            const colaboradoresSet = new Set();
-            apontamentos.forEach(a => { if (a.colaborador) colaboradoresSet.add(a.colaborador); });
-            ponto.forEach(p => { if (p.colaborador) colaboradoresSet.add(p.colaborador); });
-            const totalColaboradores = colaboradoresSet.size;
+            if (colabRes.status === 'fulfilled' && colabRes.value.data) {
+                colaboradores = colabRes.value.data;
+            }
 
-            // Contar equipamentos reais
-            const totalEquipamentos = equipamentos.length;
+            if (equipRes.status === 'fulfilled' && equipRes.value.data) {
+                equipamentos = equipRes.value.data;
+            }
 
-            // Gerar HTML do dashboard
+            console.log('=== DEBUG DADOS ===');
+            console.log('Apontamentos:', apontamentos.length);
+            console.log('Abastecimentos:', abastecimentos.length);
+            console.log('Primeiro apontamento:', JSON.stringify(apontamentos[0], null, 2));
+            console.log('Primeiro abastecimento:', JSON.stringify(abastecimentos[0], null, 2));
+            console.log('Primeiro colaborador:', JSON.stringify(colaboradores[0], null, 2));
+            console.log('Primeiro equipamento:', JSON.stringify(equipamentos[0], null, 2));
+
+            // Função helper para obter valor de forma segura
+            const getVal = (obj, keys) => {
+                for (let k of keys) {
+                    if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
+                }
+                return null;
+            };
+
+            // Calcular totais
+            const getNumber = (val) => {
+                const n = parseFloat(val);
+                return isNaN(n) ? 0 : n;
+            };
+            
+            // KM e Peso dos apontamentos - tentar diferentes nomes de campos
+            const totalKm = apontamentos.reduce((s, a) => {
+                return s + getNumber(getVal(a, ['km_rodados', 'km', 'kmrodados'])) || 0;
+            }, 0);
+            
+            const totalPeso = apontamentos.reduce((s, a) => {
+                return s + getNumber(getVal(a, ['peso_liquido', 'peso', 'pesoliquido'])) || 0;
+            }, 0);
+            
+            const totalHoras = apontamentos.reduce((s, a) => {
+                return s + getNumber(getVal(a, ['horas', 'hora_trabalhadas'])) || 0;
+            }, 0);
+            
+            // Litros dos abastecimentos
+            const totalLitros = abastecimentos.reduce((s, a) => {
+                return s + getNumber(getVal(a, ['litros', 'litros_abastecidos'])) || 0;
+            }, 0);
+
+            console.log('Totais calculados:', { km: totalKm, peso: totalPeso, horas: totalHoras, litros: totalLitros });
+
+            // Função auxiliar para renderizar linha de tabela - adapter para différents campos
+            const renderRow = (a) => {
+                const data = getVal(a, ['data', 'data_apontamento', 'data_entrega', 'created_at']) || '-';
+                const frota = getVal(a, ['frota', 'veiculo', 'equipamento']) || '-';
+                const motorista = getVal(a, ['motorista', 'colaborador', 'motorista_nome']) || '-';
+                const km = getVal(a, ['km_rodados', 'km', 'kmrodados']) || '0';
+                const peso = getVal(a, ['peso_liquido', 'peso', 'pesoliquido']) || '0';
+                
+                return `<tr>
+                    <td>${data}</td>
+                    <td>${frota}</td>
+                    <td>${motorista}</td>
+                    <td>${km}</td>
+                    <td>${peso}</td>
+                </tr>`;
+            };
+
+            // Função para renderizar equipamento
+            const renderEquip = (e) => {
+                const frota = getVal(e, ['frota', 'codigo', 'identificacao']) || '-';
+                const modelo = getVal(e, ['modelo', 'nome', 'descricao']) || '-';
+                const categoria = getVal(e, ['categoria', 'tipo', 'tipo_equipamento']) || '-';
+                
+                return `<tr>
+                    <td>${frota}</td>
+                    <td>${modelo}</td>
+                    <td>${categoria}</td>
+                </tr>`;
+            };
+
+            // Gerar HTML - Dashboard Profissional
+            const dataFormat = (d) => d ? new Date(d).toLocaleDateString('pt-BR') : '-';
+            const numFormat = (n) => Number(n).toLocaleString('pt-BR');
+            
             let html = `
-                <div class="welcome-card">
-                    <h2>Bem-vindo ao Campo 4.0</h2>
-                    <p>Sistema de gestão agrícola inteligente</p>
+                <div class="welcome-card" style="background: linear-gradient(135deg, #1b5e20 0%, #4caf50 100%);">
+                    <h2><i class="bi bi-graph-up"></i> Dashboard Campo 4.0</h2>
+                    <p>Painel de gestão agrícola em tempo real</p>
+                    <small>Última atualização: ${new Date().toLocaleString('pt-BR')}</small>
                 </div>
+                
+                <!-- Stats Principais -->
                 <div class="stats-grid">
-                    <div class="stat-card">
-                        <div class="stat-icon">👨‍🌾</div>
-                        <div class="stat-value">${totalColaboradores}</div>
+                    <div class="stat-card" style="border-left: 4px solid #2196f3;">
+                        <div class="stat-icon"><i class="bi bi-people-fill"></i></div>
+                        <div class="stat-value">${colaboradores.length}</div>
                         <div class="stat-label">Colaboradores</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🚜</div>
-                        <div class="stat-value">${totalEquipamentos}</div>
+                    <div class="stat-card" style="border-left: 4px solid #ff9800;">
+                        <div class="stat-icon"><i class="bi bi-truck"></i></div>
+                        <div class="stat-value">${equipamentos.length}</div>
                         <div class="stat-label">Equipamentos</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">📊</div>
-                        <div class="stat-value">${totalApontamentos}</div>
+                    <div class="stat-card" style="border-left: 4px solid #9c27b0;">
+                        <div class="stat-icon"><i class="bi bi-clipboard-data"></i></div>
+                        <div class="stat-value">${apontamentos.length}</div>
                         <div class="stat-label">Apontamentos</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⏱️</div>
-                        <div class="stat-value">${totalHoras.toFixed(1)}</div>
-                        <div class="stat-label">Horas Trabalhadas</div>
+                    <div class="stat-card" style="border-left: 4px solid #2196f3;">
+                        <div class="stat-icon"><i class="bi bi-signpost-2"></i></div>
+                        <div class="stat-value">${numFormat(totalKm)}</div>
+                        <div class="stat-label">KM Rodados</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">⛽</div>
-                        <div class="stat-value">${totalLitros.toFixed(1)}</div>
+                    <div class="stat-card" style="border-left: 4px solid #ff9800;">
+                        <div class="stat-icon"><i class="bi bi-speedometer2"></i></div>
+                        <div class="stat-value">${numFormat(totalPeso)}</div>
+                        <div class="stat-label">Peso Total (kg)</div>
+                    </div>
+                    <div class="stat-card" style="border-left: 4px solid #4caf50;">
+                        <div class="stat-icon"><i class="bi bi-fuel-pump-fill"></i></div>
+                        <div class="stat-value">${numFormat(totalLitros)}</div>
                         <div class="stat-label">Litros Abastecidos</div>
                     </div>
-                    <div class="stat-card">
-                        <div class="stat-icon">🕒</div>
-                        <div class="stat-value">${totalRegistrosPonto}</div>
-                        <div class="stat-label">Registros Ponto</div>
-                    </div>
                 </div>
+                
+                <!-- Gráficos -->
                 <div class="row mt-4">
                     <div class="col-md-6">
                         <div class="form-container">
-                            <h3 class="form-title">Apontamentos por Mês</h3>
-                            <div id="chartApontamentos" style="height: 300px;"></div>
+                            <h3 class="form-title"><i class="bi bi-bar-chart"></i> KM + Peso por Mês</h3>
+                            <div id="chartApontamentos" style="height: 320px;"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-container">
-                            <h3 class="form-title">Horas por Colaborador</h3>
-                            <div id="chartColaboradores" style="height: 300px;"></div>
+                            <h3 class="form-title"><i class="bi bi-pie-chart"></i> Litros por Frota</h3>
+                            <div id="chartColaboradores" style="height: 320px;"></div>
                         </div>
                     </div>
                 </div>
+                
+                <!-- Tabelas -->
                 <div class="form-container mt-4">
-                    <h3 class="form-title">Atividades Recentes</h3>
-                    <button class="btn btn-secondary btn-custom" data-table="atividadesRecentesTable" style="margin-bottom: 12px;">Abrir/Fechar Atividades</button>
-                    <div id="atividadesRecentesTable" class="table-container" style="display: block;">
+                    <h3 class="form-title"><i class="bi bi-table"></i> Últimos Apontamentos</h3>
+                    <button class="btn btn-secondary btn-custom" data-table="ativTable" style="margin-bottom: 12px;">
+                        <i class="bi bi-eye"></i> Mostrar/Ocultar
+                    </button>
+                    <div id="ativTable" class="table-container" style="display: block;">
                         <table class="table-custom">
-                            <thead>
+                            <thead style="background: #1b5e20; color: white;">
                                 <tr>
-                                    ${apontamentos.length > 0 ? Object.keys(apontamentos[0]).map(key => `<th>${key}</th>`).join('') : '<th>Sem dados</th>'}
+                                    <th><i class="bi bi-calendar"></i> Data</th>
+                                    <th><i class="bi bi-truck"></i> Frota</th>
+                                    <th><i class="bi bi-person"></i> Motorista</th>
+                                    <th><i class="bi bi-signpost"></i> KM</th>
+                                    <th><i class="bi bi-speedometer"></i> Peso</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${apontamentos.length > 0 ? apontamentos.slice(0, 10).map(apont => {
-                                    const rowValues = Object.keys(apontamentos[0]).map(key => `<td>${apont[key] || 'N/A'}</td>`).join('');
-                                    return `<tr>${rowValues}</tr>`;
-                                }).join('') : '<tr><td colspan="20">Nenhuma atividade encontrada.</td></tr>'}
+                                ${apontamentos.length > 0 ? apontamentos.slice(0, 15).map(renderRow).join('') : '<tr><td colspan="5" class="text-center text-muted">Nenhum apontamento encontrado</td></tr>'}
                             </tbody>
                         </table>
                     </div>
                 </div>
-            `;
-
-            // Tabela de equipamentos reais (toggle)
-            html += `
+                
+                <!-- Equipamentos -->
                 <div class="form-container mt-4">
-                    <h3 class="form-title">Equipamentos</h3>
-                    <button class="btn btn-secondary btn-custom" data-table="equipamentosTable" style="margin-bottom: 12px;">Abrir/Fechar Equipamentos</button>
-                    <div id="equipamentosTable" class="table-container" style="display: block;">
+                    <h3 class="form-title"><i class="bi bi-tools"></i> Equipamentos</h3>
+                    <button class="btn btn-secondary btn-custom" data-table="equipTable" style="margin-bottom: 12px;">
+                        <i class="bi bi-eye"></i> Mostrar/Ocultar
+                    </button>
+                    <div id="equipTable" class="table-container" style="display: block;">
                         <table class="table-custom">
-                            <thead>
+                            <thead style="background: #1b5e20; color: white;">
                                 <tr>
-                                    <th>Frota</th>
-                                    <th>Modelo</th>
-                                    <th>Operação</th>
-                                    <th>Tag</th>
-                                    <th>Categoria</th>
+                                    <th><i class="bi bi-hash"></i> Frota</th>
+                                    <th><i class="bi bi-gear"></i> Modelo</th>
+                                    <th><i class="bi bi-tag"></i> Categoria</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                ${equipamentos.slice(0, 8).map(eq => `
-                                    <tr>
-                                        <td>${eq.frota || 'N/A'}</td>
-                                        <td>${eq.modelo || 'N/A'}</td>
-                                        <td>${eq.operacao || 'N/A'}</td>
-                                        <td>${eq.tag || ''}</td>
-                                        <td>${eq.categoria || ''}</td>
-                                    </tr>
-                                `).join('')}
+                                ${equipamentos.length > 0 ? equipamentos.slice(0, 15).map(renderEquip).join('') : '<tr><td colspan="3" class="text-center text-muted">Nenhum equipamento encontrado</td></tr>'}
                             </tbody>
                         </table>
                     </div>
@@ -1060,248 +1141,140 @@ document.addEventListener("DOMContentLoaded", async () => {
             conteudo.innerHTML = html;
             pageTitle.textContent = 'Dashboard';
 
-            // Adicionar event listeners aos botões de toggle
+            // Toggle botões
             document.querySelectorAll('.btn-custom[data-table]').forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tableId = btn.getAttribute('data-table');
-                    toggleTable(tableId);
+                    const el = document.getElementById(tableId);
+                    if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
                 });
             });
 
-            // Gerar gráficos após carregar HTML
+            // Gráficos após renderizar DOM
             setTimeout(() => {
-                generateCharts(apontamentos);
-            }, 100);
+                gerarGraficos(apontamentos, abastecimentos);
+            }, 200);
 
         } catch (error) {
-            console.error("Erro ao carregar dados:", error);
-
-            // fallback offline (cache local)
-            const saved = localStorage.getItem('cacheDashboardData');
-            if (saved) {
-                try {
-                    const parsed = JSON.parse(saved);
-                    const apontamentos = parsed.apontamentos || [];
-                    const abastecimentos = parsed.abastecimentos || [];
-                    const ponto = parsed.ponto || [];
-                    const equipamentos = parsed.equipamentos || [];
-
-                    showNotification('Dados offline carregados do cache local.', 'warning');
-
-                    // Reuso o bloco da renderização com dados em cache
-                    const totalApontamentos = apontamentos.length;
-                    const totalAbastecimentos = abastecimentos.length;
-                    const totalRegistrosPonto = ponto.length;
-                    const totalHoras = apontamentos.reduce((sum, a) => sum + (a.horas || 0), 0);
-                    const totalLitros = abastecimentos.reduce((sum, a) => sum + (a.litros || 0), 0);
-                    const totalHorasPonto = ponto.reduce((sum, p) => sum + (p.horas || 0), 0);
-                    const colaboradoresSet = new Set();
-                    apontamentos.forEach(a => { if (a.colaborador) colaboradoresSet.add(a.colaborador); });
-                    ponto.forEach(p => { if (p.colaborador) colaboradoresSet.add(p.colaborador); });
-                    const totalColaboradores = colaboradoresSet.size;
-                    const totalEquipamentos = equipamentos.length;
-
-                    let html = `
-                        <div class="welcome-card">
-                            <h2>Bem-vindo ao Campo 4.0</h2>
-                            <p>Sistema de gestão agrícola inteligente (offline)</p>
-                        </div>
-                        <div class="stats-grid">
-                            <div class="stat-card">
-                                <div class="stat-icon">👨‍🌾</div>
-                                <div class="stat-value">${totalColaboradores}</div>
-                                <div class="stat-label">Colaboradores</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">🚜</div>
-                                <div class="stat-value">${totalEquipamentos}</div>
-                                <div class="stat-label">Equipamentos</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">📊</div>
-                                <div class="stat-value">${totalApontamentos}</div>
-                                <div class="stat-label">Apontamentos</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">⏱️</div>
-                                <div class="stat-value">${totalHoras.toFixed(1)}</div>
-                                <div class="stat-label">Horas Trabalhadas</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">⛽</div>
-                                <div class="stat-value">${totalLitros.toFixed(1)}</div>
-                                <div class="stat-label">Litros Abastecidos</div>
-                            </div>
-                            <div class="stat-card">
-                                <div class="stat-icon">🕒</div>
-                                <div class="stat-value">${totalRegistrosPonto}</div>
-                                <div class="stat-label">Registros Ponto</div>
-                            </div>
-                        </div>
-                        <div class="row mt-4">
-                            <div class="col-md-6">
-                                <div class="form-container">
-                                    <h3 class="form-title">Apontamentos por Mês</h3>
-                                    <div id="chartApontamentos" style="height: 300px;"></div>
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-container">
-                                    <h3 class="form-title">Horas por Colaborador</h3>
-                                    <div id="chartColaboradores" style="height: 300px;"></div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="form-container mt-4">
-                            <h3 class="form-title">Atividades Recentes</h3>
-                            <button class="btn btn-secondary btn-custom" onclick="toggleTable('atividadesRecentesTable')" style="margin-bottom: 12px;">Abrir/Fechar Atividades</button>
-                            <div id="atividadesRecentesTable" class="table-container" style="display: none;">
-                                <table class="table-custom">
-                                    <thead>
-                                        <tr>
-                                            <th>Data</th>
-                                            <th>Turno</th>
-                                            <th>Frota</th>
-                                            <th>Motorista</th>
-                                            <th>Líder/Gestor</th>
-                                            <th>Saída</th>
-                                            <th>Hora Saída</th>
-                                            <th>Destino</th>
-                                            <th>Hora Chegada</th>
-                                            <th>Peso Líquido</th>
-                                            <th>Peso Bruto</th>
-                                            <th>Observações</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${apontamentos.slice(0, 5).map(apont => `
-                                            <tr>
-                                                <td>${apont.data || 'N/A'}</td>
-                                                <td>${apont.turno || 'N/A'}</td>
-                                                <td>${apont.frota || 'N/A'}</td>
-                                                <td>${apont.motorista || 'N/A'}</td>
-                                                <td>${apont.lider_gestor || apont.lider || 'N/A'}</td>
-                                                <td>${apont.saida || 'N/A'}</td>
-                                                <td>${apont.hora_saida || 'N/A'}</td>
-                                                <td>${apont.destino || 'N/A'}</td>
-                                                <td>${apont.hora_chegada || 'N/A'}</td>
-                                                <td>${apont.peso_liquido || 'N/A'}</td>
-                                                <td>${apont.peso_bruto || 'N/A'}</td>
-                                                <td>${apont.informacoes_adicionais || apont.observacoes || 'N/A'}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                        <div class="form-container mt-4">
-                            <h3 class="form-title">Equipamentos</h3>
-                            <div class="table-container">
-                                <table class="table-custom">
-                                    <thead>
-                                        <tr>
-                                            <th>Frota</th>
-                                            <th>Modelo</th>
-                                            <th>Operação</th>
-                                            <th>Tag</th>
-                                            <th>Categoria</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${equipamentos.slice(0, 8).map(eq => `
-                                            <tr>
-                                                <td>${eq.frota || 'N/A'}</td>
-                                                <td>${eq.modelo || 'N/A'}</td>
-                                                <td>${eq.operacao || 'N/A'}</td>
-                                                <td>${eq.tag || ''}</td>
-                                                <td>${eq.categoria || ''}</td>
-                                            </tr>
-                                        `).join('')}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    `;
-
-                    conteudo.innerHTML = html;
-                    pageTitle.textContent = 'Dashboard (offline)';
-
-                    setTimeout(() => {
-                        generateCharts(apontamentos);
-                    }, 100);
-
-                    return;
-                } catch (parseError) {
-                    console.error('Erro ao processar cache local', parseError);
-                }
-            }
-
-            showNotification('Não há dados locais. Conecte-se à internet para atualizar.', 'error');
+            console.error("Erro completo:", error);
+            conteudo.innerHTML = '<div class="form-container"><h3 class="form-title">Erro ao Carregar</h3><p style="color: red;">' + error.message + '</p></div>';
         }
     }
 
     // Função para gerar gráficos
-    function generateCharts(apontamentos) {
-        // Gráfico de apontamentos por mês
-        const apontPorMes = {};
-        apontamentos.forEach(a => {
-            if (a.data) {
-                const mes = a.data.substring(0, 7); // YYYY-MM
-                apontPorMes[mes] = (apontPorMes[mes] || 0) + 1;
+    function gerarGraficos(apontamentos, abastecimentos) {
+        console.log('=== GERANDO GRÁFICOS ===');
+        console.log('Apontamentos:', apontamentos.length);
+        console.log('Abastecimentos:', abastecimentos.length);
+        
+        const chartApont = document.getElementById("chartApontamentos");
+        const chartColab = document.getElementById("chartColaboradores");
+
+        const Chart = window.ApexCharts;
+        
+        if (!Chart) {
+            console.error("ApexCharts não está disponível!");
+            if (chartApont) chartApont.innerHTML = '<p>Erro: Gráfico não carregou</p>';
+            return;
+        }
+
+        // Helper para obter valor
+        const getVal = (obj, keys) => {
+            for (let k of keys) {
+                if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
             }
-        });
-
-        const optionsApont = {
-            series: [{
-                name: 'Apontamentos',
-                data: Object.values(apontPorMes)
-            }],
-            chart: {
-                type: 'line',
-                height: 300
-            },
-            xaxis: {
-                categories: Object.keys(apontPorMes)
-            },
-            colors: ['#2e7d32']
+            return null;
+        };
+        const getNumber = (val) => {
+            const n = parseFloat(val);
+            return isNaN(n) ? 0 : n;
         };
 
-        const chartApont = new ApexCharts(document.querySelector("#chartApontamentos"), optionsApont);
-        chartApont.render();
-
-        // Gráfico de horas por colaborador
-        const horasPorColab = {};
-        apontamentos.forEach(a => {
-            const colab = a.colaborador || 'Não informado';
-            horasPorColab[colab] = (horasPorColab[colab] || 0) + (a.horas || 0);
+        // Agrupar KM e Peso por Mês
+        const porMes = { km: {}, peso: {} };
+        apontamentos.forEach(a => { 
+            const data = getVal(a, ['data', 'data_apontamento', 'data_entrega', 'created_at']);
+            if (data) { 
+                const mes = data.substring(0, 7); // YYYY-MM
+                porMes.km[mes] = (porMes.km[mes] || 0) + getNumber(getVal(a, ['km_rodados', 'km', 'kmrodados']));
+                porMes.peso[mes] = (porMes.peso[mes] || 0) + getNumber(getVal(a, ['peso_liquido', 'peso', 'pesoliquido']));
+            } 
         });
+        
+        const meses = Object.keys(porMes.km).sort();
+        
+        console.log('Meses trovados:', meses);
+        console.log('KM por mês:', porMes.km);
+        console.log('Peso por mês:', porMes.peso);
 
-        const optionsColab = {
-            series: [{
-                name: 'Horas',
-                data: Object.values(horasPorColab)
-            }],
-            chart: {
-                type: 'bar',
-                height: 300
-            },
-            xaxis: {
-                categories: Object.keys(horasPorColab)
-            },
-            colors: ['#ff9800']
+        // Gráfico 1: KM + Peso por Mês
+        if (chartApont) {
+            if (meses.length > 0) {
+                new Chart(chartApont, {
+                    series: [
+                        { name: 'KM Rodados', data: meses.map(m => Math.round(porMes.km[m])) },
+                        { name: 'Peso (kg)', data: meses.map(m => Math.round(porMes.peso[m])) }
+                    ],
+                    chart: { type: 'bar', height: 300, toolbar: { show: false }, stacked: false },
+                    xaxis: { categories: meses },
+                    colors: ['#2196f3', '#ff9800'],
+                    plotOptions: { bar: { borderRadius: 5, columnWidth: '60%' } },
+                    dataLabels: { enabled: false },
+                    legend: { position: 'top' },
+                    title: { text: 'KM e Peso por Mês', align: 'center' }
+                }).render();
+                console.log('Gráfico 1 renderizado');
+            } else {
+                chartApont.innerHTML = '<p class="text-center p-3 text-muted">Sem dados de apontamentos para exibir</p>';
+            }
+        }
+
+        // Agrupar Litros por Frota
+        const porFrota = {};
+        const getValAbast = (obj, keys) => {
+            for (let k of keys) {
+                if (obj && obj[k] !== undefined && obj[k] !== null) return obj[k];
+            }
+            return null;
         };
+        
+        abastecimentos.forEach(a => { 
+            const f = getValAbast(a, ['frota', 'veiculo', 'equipamento']) || '-';
+            porFrota[f] = (porFrota[f] || 0) + getNumber(getValAbast(a, ['litros', 'litros_abastecidos']));
+        });
+        
+        const frotas = Object.keys(porFrota).sort();
+        
+        console.log('Frotas trovadas:', frotas);
+        console.log('Litros por frota:', porFrota);
 
-        const chartColab = new ApexCharts(document.querySelector("#chartColaboradores"), optionsColab);
-        chartColab.render();
+        // Gráfico 2: Litros por Frota
+        if (chartColab) {
+            if (frotas.length > 0) {
+                new Chart(chartColab, {
+                    series: [{ name: 'Litros', data: frotas.map(f => Math.round(porFrota[f])) }],
+                    chart: { type: 'bar', height: 300, toolbar: { show: false } },
+                    xaxis: { categories: frotas },
+                    colors: ['#2e7d32'],
+                    plotOptions: { bar: { borderRadius: 5, horizontal: true } },
+                    dataLabels: { enabled: false },
+                    title: { text: 'Litros por Equipamento', align: 'center' }
+                }).render();
+                console.log('Gráfico 2 renderizado');
+            } else {
+                chartColab.innerHTML = '<p class="text-center p-3 text-muted">Sem dados de abastecimentos para exibir</p>';
+            }
+        }
+        
+        console.log('=== FIM GRÁFICOS ===');
     }
 
     function toggleTable(tableId) {
         const el = document.getElementById(tableId);
-        if (!el) return;
-        el.style.display = (el.style.display === 'none') ? 'block' : 'none';
+        if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
     }
 
-    // Função para carregar arquivos HTML locais de forma assíncrona
+    // Função para carregar arquivos HTML locais
     async function loadPageHTML(path) {
         try {
             const response = await fetch(path, { cache: 'no-store' });
