@@ -980,48 +980,46 @@ document.addEventListener("DOMContentLoaded", async () => {
                 return isNaN(n) ? 0 : n;
             };
             
-            // KM e Peso dos apontamentos - tentar diferentes nomes de campos
-            const totalKm = apontamentos.reduce((s, a) => {
-                return s + getNumber(getVal(a, ['km_rodados', 'km', 'kmrodados'])) || 0;
-            }, 0);
-            
+            // Peso dos apontamentos (não tem KM no banco)
             const totalPeso = apontamentos.reduce((s, a) => {
-                return s + getNumber(getVal(a, ['peso_liquido', 'peso', 'pesoliquido'])) || 0;
+                return s + getNumber(getVal(a, ['peso_liquido', 'peso'])) || 0;
             }, 0);
             
             const totalHoras = apontamentos.reduce((s, a) => {
-                return s + getNumber(getVal(a, ['horas', 'hora_trabalhadas'])) || 0;
+                // Se houver campo horas, usar, senão contar registros
+                return s + getNumber(getVal(a, ['horas'])) || 0;
             }, 0);
             
             // Litros dos abastecimentos
             const totalLitros = abastecimentos.reduce((s, a) => {
-                return s + getNumber(getVal(a, ['litros', 'litros_abastecidos'])) || 0;
+                return s + getNumber(getVal(a, ['quantidade', 'litros'])) || 0;
             }, 0);
+
+            // Contar registros únicos
+            const totalKm = apontamentos.length; // Usando contagem como indicador
 
             console.log('Totais calculados:', { km: totalKm, peso: totalPeso, horas: totalHoras, litros: totalLitros });
 
-            // Função auxiliar para renderizar linha de tabela - adapter para différents campos
+// Renderizar linha de tabela com campos corretos
             const renderRow = (a) => {
-                const data = getVal(a, ['data', 'data_apontamento', 'data_entrega', 'created_at']) || '-';
-                const frota = getVal(a, ['frota', 'veiculo', 'equipamento']) || '-';
-                const motorista = getVal(a, ['motorista', 'colaborador', 'motorista_nome']) || '-';
-                const km = getVal(a, ['km_rodados', 'km', 'kmrodados']) || '0';
-                const peso = getVal(a, ['peso_liquido', 'peso', 'pesoliquido']) || '0';
+                const data = getVal(a, ['data_lancamento', 'data', 'created_at']) || '-';
+                const frota = getVal(a, ['frota', 'veiculo']) || '-';
+                const motorista = getVal(a, ['motorista', 'colaborador']) || '-';
+                const peso = getVal(a, ['peso_liquido', 'peso']) || '0';
                 
                 return `<tr>
                     <td>${data}</td>
                     <td>${frota}</td>
                     <td>${motorista}</td>
-                    <td>${km}</td>
-                    <td>${peso}</td>
+                    <td>${Number(peso).toLocaleString()}</td>
                 </tr>`;
             };
 
-            // Função para renderizar equipamento
+            // Renderizar equipamento
             const renderEquip = (e) => {
-                const frota = getVal(e, ['frota', 'codigo', 'identificacao']) || '-';
-                const modelo = getVal(e, ['modelo', 'nome', 'descricao']) || '-';
-                const categoria = getVal(e, ['categoria', 'tipo', 'tipo_equipamento']) || '-';
+                const frota = getVal(e, ['frota', 'codigo']) || '-';
+                const modelo = getVal(e, ['modelo', 'nome']) || '-';
+                const categoria = getVal(e, ['categoria', 'tipo']) || '-';
                 
                 return `<tr>
                     <td>${frota}</td>
@@ -1061,7 +1059,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                     <div class="stat-card" style="border-left: 4px solid #2196f3;">
                         <div class="stat-icon"><i class="bi bi-signpost-2"></i></div>
                         <div class="stat-value">${numFormat(totalKm)}</div>
-                        <div class="stat-label">KM Rodados</div>
+                        <div class="stat-label">Apontamentos</div>
                     </div>
                     <div class="stat-card" style="border-left: 4px solid #ff9800;">
                         <div class="stat-icon"><i class="bi bi-speedometer2"></i></div>
@@ -1079,13 +1077,13 @@ document.addEventListener("DOMContentLoaded", async () => {
                 <div class="row mt-4">
                     <div class="col-md-6">
                         <div class="form-container">
-                            <h3 class="form-title"><i class="bi bi-bar-chart"></i> KM + Peso por Mês</h3>
+                            <h3 class="form-title"><i class="bi bi-bar-chart"></i> Apontamentos + Peso por Mês</h3>
                             <div id="chartApontamentos" style="height: 320px;"></div>
                         </div>
                     </div>
                     <div class="col-md-6">
                         <div class="form-container">
-                            <h3 class="form-title"><i class="bi bi-pie-chart"></i> Litros por Frota</h3>
+                            <h3 class="form-title"><i class="bi bi-pie-chart"></i> Abastecimentos por Equipamento</h3>
                             <div id="chartColaboradores" style="height: 320px;"></div>
                         </div>
                     </div>
@@ -1104,8 +1102,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                                     <th><i class="bi bi-calendar"></i> Data</th>
                                     <th><i class="bi bi-truck"></i> Frota</th>
                                     <th><i class="bi bi-person"></i> Motorista</th>
-                                    <th><i class="bi bi-signpost"></i> KM</th>
-                                    <th><i class="bi bi-speedometer"></i> Peso</th>
+                                    <th><i class="bi bi-speedometer"></i> Peso (kg)</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -1190,46 +1187,46 @@ document.addEventListener("DOMContentLoaded", async () => {
             return isNaN(n) ? 0 : n;
         };
 
-        // Agrupar KM e Peso por Mês
-        const porMes = { km: {}, peso: {} };
+        // Agrupar Peso por Mês (não tem KM)
+        const porMes = { peso: {}, count: {} };
         apontamentos.forEach(a => { 
-            const data = getVal(a, ['data', 'data_apontamento', 'data_entrega', 'created_at']);
+            const data = getVal(a, ['data_lancamento', 'data', 'created_at']);
             if (data) { 
                 const mes = data.substring(0, 7); // YYYY-MM
-                porMes.km[mes] = (porMes.km[mes] || 0) + getNumber(getVal(a, ['km_rodados', 'km', 'kmrodados']));
-                porMes.peso[mes] = (porMes.peso[mes] || 0) + getNumber(getVal(a, ['peso_liquido', 'peso', 'pesoliquido']));
+                porMes.peso[mes] = (porMes.peso[mes] || 0) + getNumber(getVal(a, ['peso_liquido', 'peso']));
+                porMes.count[mes] = (porMes.count[mes] || 0) + 1;
             } 
         });
         
-        const meses = Object.keys(porMes.km).sort();
+        const meses = Object.keys(porMes.count).sort();
         
         console.log('Meses trovados:', meses);
-        console.log('KM por mês:', porMes.km);
         console.log('Peso por mês:', porMes.peso);
+        console.log('Apontamentos por mês:', porMes.count);
 
-        // Gráfico 1: KM + Peso por Mês
+        // Gráfico 1: Peso por Mês + Contagem
         if (chartApont) {
             if (meses.length > 0) {
                 new Chart(chartApont, {
                     series: [
-                        { name: 'KM Rodados', data: meses.map(m => Math.round(porMes.km[m])) },
+                        { name: 'Apontamentos', data: meses.map(m => porMes.count[m]) },
                         { name: 'Peso (kg)', data: meses.map(m => Math.round(porMes.peso[m])) }
                     ],
-                    chart: { type: 'bar', height: 300, toolbar: { show: false }, stacked: false },
+                    chart: { type: 'bar', height: 320, toolbar: { show: false }, stacked: false },
                     xaxis: { categories: meses },
                     colors: ['#2196f3', '#ff9800'],
                     plotOptions: { bar: { borderRadius: 5, columnWidth: '60%' } },
                     dataLabels: { enabled: false },
                     legend: { position: 'top' },
-                    title: { text: 'KM e Peso por Mês', align: 'center' }
+                    title: { text: 'Apontamentos + Peso por Mês', align: 'center' }
                 }).render();
                 console.log('Gráfico 1 renderizado');
             } else {
-                chartApont.innerHTML = '<p class="text-center p-3 text-muted">Sem dados de apontamentos para exibir</p>';
+                chartApont.innerHTML = '<p class="text-center p-3 text-muted">Sem dados de apontamentos</p>';
             }
         }
 
-        // Agrupar Litros por Frota
+        // Agrupar Abastecimentos por Equipamento
         const porFrota = {};
         const getValAbast = (obj, keys) => {
             for (let k of keys) {
@@ -1239,33 +1236,33 @@ document.addEventListener("DOMContentLoaded", async () => {
         };
         
         abastecimentos.forEach(a => { 
-            const f = getValAbast(a, ['frota', 'veiculo', 'equipamento']) || '-';
-            porFrota[f] = (porFrota[f] || 0) + getNumber(getValAbast(a, ['litros', 'litros_abastecidos']));
+            const f = getValAbast(a, ['equipamento', 'frota', 'veiculo']) || 'ND';
+            porFrota[f] = (porFrota[f] || 0) + getNumber(getValAbast(a, ['quantidade', 'litros']));
         });
         
         const frotas = Object.keys(porFrota).sort();
         
-        console.log('Frotas trovadas:', frotas);
-        console.log('Litros por frota:', porFrota);
+        console.log('Equipamentos:', frotas);
+        console.log('Litros por equipamento:', porFrota);
 
-        // Gráfico 2: Litros por Frota
+        // Gráfico 2: Abastecimentos por Equipamento
         if (chartColab) {
             if (frotas.length > 0) {
                 new Chart(chartColab, {
                     series: [{ name: 'Litros', data: frotas.map(f => Math.round(porFrota[f])) }],
-                    chart: { type: 'bar', height: 300, toolbar: { show: false } },
+                    chart: { type: 'bar', height: 320, toolbar: { show: false } },
                     xaxis: { categories: frotas },
-                    colors: ['#2e7d32'],
+                    colors: ['#4caf50'],
                     plotOptions: { bar: { borderRadius: 5, horizontal: true } },
                     dataLabels: { enabled: false },
-                    title: { text: 'Litros por Equipamento', align: 'center' }
+                    title: { text: 'Abastecimentos por Equipamento', align: 'center' }
                 }).render();
                 console.log('Gráfico 2 renderizado');
             } else {
-                chartColab.innerHTML = '<p class="text-center p-3 text-muted">Sem dados de abastecimentos para exibir</p>';
+                chartColab.innerHTML = '<p class="text-center p-3 text-muted">Sem dados de abastecimentos</p>';
             }
-        }
-        
+}
+
         console.log('=== FIM GRÁFICOS ===');
     }
 
