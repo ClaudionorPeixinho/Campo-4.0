@@ -110,33 +110,41 @@
   <div id="tabelaBox" class="card p-4 hidden">
 
     <!-- FILTROS -->
-    <div id="filtros" class="row g-2 mb-3">
-
-      <div class="col-md-3">
-        <label class="form-label">Equipamento</label>
-        <input type="text" id="filtroEquipamento" class="form-control">
+    <div id="filtrosAbastecimentoContainer" class="mb-3">
+      <div class="filter-header" onclick="toggleFiltrosAbastecimento()">
+        <i class="bi bi-funnel filter-icon"></i>
+        <span>Filtros de Pesquisa</span>
+        <i class="bi bi-chevron-down toggle-icon"></i>
       </div>
 
-      <div class="col-md-3">
-        <label class="form-label">Operador</label>
-        <input type="text" id="filtroOperador" class="form-control">
-      </div>
+      <div id="filtrosAbastecimentoContent" class="filter-content">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <label class="form-label">Equipamento</label>
+            <input type="text" id="filtroEquipamento" class="form-control">
+          </div>
 
-      <div class="col-md-3">
-        <label class="form-label">Combustível</label>
-        <select id="filtroCombustivel" class="form-control">
-          <option value="">Todos</option>
-          <option>Diesel</option>
-          <option>Gasolina</option>
-        </select>
-      </div>
+          <div class="col-md-3">
+            <label class="form-label">Operador</label>
+            <input type="text" id="filtroOperador" class="form-control">
+          </div>
 
-      <div class="col-md-3 text-end">
-        <button class="btn btn-primary" onclick="carregar()">Buscar</button>
-        <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
-        <button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
-      </div>
+          <div class="col-md-3">
+            <label class="form-label">Combustível</label>
+            <select id="filtroCombustivel" class="form-control">
+              <option value="">Todos</option>
+              <option>Diesel</option>
+              <option>Gasolina</option>
+            </select>
+          </div>
 
+          <div class="col-md-3 text-end">
+            <button class="btn btn-primary" onclick="carregar()">Buscar</button>
+            <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+            <button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- TABELA -->
@@ -163,6 +171,16 @@
 <script src="js/app.js"></script>
 
 <script>
+// Toggle filtros colapsáveis
+function toggleFiltrosAbastecimento() {
+    const header = document.querySelector("#filtrosAbastecimentoContainer .filter-header");
+    const content = document.getElementById("filtrosAbastecimentoContent");
+    if (header && content) {
+        header.classList.toggle("collapsed");
+        content.classList.toggle("collapsed");
+    }
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js', { scope: './' })

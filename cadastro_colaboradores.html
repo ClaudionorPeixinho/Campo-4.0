@@ -142,43 +142,44 @@ Cancelar
 <div id="tabelaTela" class="mt-4" style="display:none;">
 
 <!-- FILTROS -->
-<div class="card p-2 mb-2">
+<div id="filtrosColaboradoresContainer" class="mb-2">
+  <div class="filter-header" onclick="toggleFiltrosColaboradores()">
+    <i class="bi bi-funnel filter-icon"></i>
+    <span>Filtros de Pesquisa</span>
+    <i class="bi bi-chevron-down toggle-icon"></i>
+  </div>
 
-<div class="row g-2">
+  <div id="filtrosColaboradoresContent" class="filter-content">
+    <div class="row g-2 p-2">
+      <div class="col-md-3 col-12">
+        <input id="filtroNome" placeholder="Filtrar por nome" class="form-control">
+      </div>
 
-<div class="col-md-3 col-12">
-<input id="filtroNome" placeholder="Filtrar por nome" class="form-control">
-</div>
+      <div class="col-md-3 col-12">
+        <input id="filtroFuncao" placeholder="Filtrar por função" class="form-control">
+      </div>
 
-<div class="col-md-3 col-12">
-<input id="filtroFuncao" placeholder="Filtrar por função" class="form-control">
-</div>
+      <div class="col-md-3 col-12">
+        <select id="filtroTurno" class="form-control">
+          <option value="">Todos</option>
+          <option>Diurno</option>
+          <option>Noturno</option>
+        </select>
+      </div>
 
-<div class="col-md-3 col-12">
-<select id="filtroTurno" class="form-control">
-<option value="">Todos</option>
-<option>Diurno</option>
-<option>Noturno</option>
-</select>
-</div>
-
-<div class="col-md-3 text-end">
-
-<button type="button" class="btn btn-primary" id="btnBuscarTabela">
-<i class="bi bi-search"></i> Buscar
-</button>
-
-<button type="button" class="btn btn-secondary" id="btnLimparFiltros">
-<i class="bi bi-eraser"></i> Limpar
-</button>
-
-<button type="button" class="btn btn-dark" id="btnFecharTabela">
-<i class="bi bi-x-lg"></i> Fechar
-</button>
-
-</div>
-
-</div>
+      <div class="col-md-3 text-end">
+        <button type="button" class="btn btn-primary" id="btnBuscarTabela">
+          <i class="bi bi-search"></i> Buscar
+        </button>
+        <button type="button" class="btn btn-secondary" id="btnLimparFiltros">
+          <i class="bi bi-eraser"></i> Limpar
+        </button>
+        <button type="button" class="btn btn-dark" id="btnFecharTabela">
+          <i class="bi bi-x-lg"></i> Fechar
+        </button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <!-- TABELA -->
@@ -207,6 +208,16 @@ Cancelar
 <script defer src="js/colaboradores.js"></script>
 
 <script>
+// Toggle filtros colapsáveis
+function toggleFiltrosColaboradores() {
+    const header = document.querySelector("#tabelaTela .filter-header");
+    const content = document.getElementById("filtrosColaboradoresContent");
+    if (header && content) {
+        header.classList.toggle("collapsed");
+        content.classList.toggle("collapsed");
+    }
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js', { scope: './' })

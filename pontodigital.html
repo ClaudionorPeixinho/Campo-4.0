@@ -52,8 +52,8 @@
     }
 
     .header .btn {
-      align-self: flex-end;
-      width: auto;
+      align-self: stretch;
+      width: 100%;
     }
 
     .card.p-4 {
@@ -74,7 +74,7 @@
       padding-right: 0;
     }
 
-    .col-md-2, 
+    .col-md-2,
     .col-md-3,
     .col-md-12 {
       flex: 0 0 100%;
@@ -118,7 +118,7 @@
       margin-bottom: 0;
     }
 
-    .table th, 
+    .table th,
     .table td {
       padding: 0.5rem;
     }
@@ -126,23 +126,6 @@
     .table thead th {
       font-size: 0.8rem;
       padding: 0.6rem 0.4rem;
-    }
-
-    #filtros {
-      gap: 0.75rem;
-      margin-bottom: 1rem !important;
-    }
-
-    #filtros .col-md-2,
-    #filtros .col-md-3 {
-      flex: 0 0 100%;
-      max-width: 100%;
-    }
-
-    #filtros .btn {
-      width: 100%;
-      font-size: 0.85rem;
-      padding: 0.5rem 0.75rem;
     }
 
     .table thead {
@@ -167,6 +150,79 @@
     .table th,
     .table td {
       padding: 0.4rem;
+    }
+  }
+
+  /* Filter collapsible styles */
+  .filter-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 15px;
+    background: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 0.75rem;
+    transition: background 0.3s ease;
+  }
+
+  .filter-header:hover {
+    background: #e9ecef;
+  }
+
+  .filter-header i.filter-icon {
+    color: #219963;
+  }
+
+  .filter-header span {
+    flex: 1;
+    font-weight: 600;
+    font-size: 0.95rem;
+  }
+
+  .filter-header i.toggle-icon {
+    transition: transform 0.3s ease;
+    color: #219963;
+  }
+
+  .filter-header.collapsed i.toggle-icon {
+    transform: rotate(-90deg);
+  }
+
+  .filter-content {
+    max-height: 500px;
+    opacity: 1;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    padding: 0.5rem 0;
+  }
+
+  .filter-content.collapsed {
+    max-height: 0;
+    opacity: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 768px) {
+    .filter-content {
+      flex-direction: column;
+    }
+
+    .filter-content .col-md-3,
+    .filter-content .col-md-2,
+    .filter-content .col-md-4 {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+
+    .filter-content .btn {
+      width: 100%;
+      margin-bottom: 0.5rem;
+    }
+
+    .filter-content .text-end {
+      flex-direction: column;
     }
   }
 
@@ -291,29 +347,37 @@
   <div id="tabelaCard" class="card p-4 hidden">
 
     <!-- FILTROS -->
-    <div id="filtros" class="row g-2 mb-3">
-
-      <div class="col-md-3">
-        <label class="form-label">Colaborador</label>
-        <input type="text" id="filtroColaborador" class="form-control">
+    <div id="filtrosContainer" class="mb-3">
+      <div class="filter-header" onclick="toggleFiltrosPonto()">
+        <i class="bi bi-funnel filter-icon"></i>
+        <span>Filtros de Pesquisa</span>
+        <i class="bi bi-chevron-down toggle-icon"></i>
       </div>
 
-      <div class="col-md-2">
-        <label class="form-label">Frota</label>
-        <input type="text" id="filtroFrota" class="form-control">
-      </div>
+      <div id="filtrosContent" class="filter-content">
+        <div class="row g-2">
+          <div class="col-md-3">
+            <label class="form-label">Colaborador</label>
+            <input type="text" id="filtroColaborador" class="form-control">
+          </div>
 
-      <div class="col-md-3">
-        <label class="form-label">Data</label>
-        <input type="date" id="filtroData" class="form-control">
-      </div>
+          <div class="col-md-2">
+            <label class="form-label">Frota</label>
+            <input type="text" id="filtroFrota" class="form-control">
+          </div>
 
-      <div class="col-md-4 text-end">
-        <button class="btn btn-primary" onclick="carregar()">Buscar</button>
-        <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
-        <button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
-      </div>
+          <div class="col-md-3">
+            <label class="form-label">Data</label>
+            <input type="date" id="filtroData" class="form-control">
+          </div>
 
+          <div class="col-md-4 text-end">
+            <button class="btn btn-primary" onclick="carregar()">Buscar</button>
+            <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+            <button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- TABELA -->
@@ -342,6 +406,16 @@
 <script defer src="js/pontodigital.js"></script>
 
 <script>
+  // Toggle filtros colapsáveis
+  function toggleFiltrosPonto() {
+    const header = document.querySelector("#filtrosContainer .filter-header");
+    const content = document.getElementById("filtrosContent");
+    if (header && content) {
+      header.classList.toggle("collapsed");
+      content.classList.toggle("collapsed");
+    }
+  }
+
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
       navigator.serviceWorker.register('./service-worker.js', { scope: './' })

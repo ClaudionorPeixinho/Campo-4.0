@@ -137,37 +137,40 @@ Cancelar
 <div id="tabelaTela" class="mt-4" style="display:none;">
 
 <!-- FILTROS -->
-<div class="card p-2 mb-2">
+<div class="card p-0 mb-2">
+  <div class="filter-header" onclick="toggleFiltrosApontamento()">
+    <i class="bi bi-funnel filter-icon"></i>
+    <span>Filtros de Pesquisa</span>
+    <i class="bi bi-chevron-down toggle-icon"></i>
+  </div>
 
-<div class="row g-2">
+  <div id="filtrosApontamentoContent" class="filter-content">
+    <div class="row g-2 p-2">
 
-<div class="col-md-3 col-12">
-<input id="fFrota" placeholder="Frota" class="form-control">
-</div>
+      <div class="col-md-3 col-12">
+        <input id="fFrota" placeholder="Frota" class="form-control">
+      </div>
 
-<div class="col-md-3 col-12">
-<input id="fMotorista" placeholder="Motorista" class="form-control">
-</div>
+      <div class="col-md-3 col-12">
+        <input id="fMotorista" placeholder="Motorista" class="form-control">
+      </div>
 
-<div class="col-md-3 col-12">
-<select id="fTurno" class="form-control">
-<option value="">Todos</option>
-<option>Diurno</option>
-<option>Noturno</option>
-</select>
-</div>
+      <div class="col-md-3 col-12">
+        <select id="fTurno" class="form-control">
+          <option value="">Todos</option>
+          <option>Diurno</option>
+          <option>Noturno</option>
+        </select>
+      </div>
 
-<div class="col-md-3 text-end">
+      <div class="col-md-3 text-end">
+        <button class="btn btn-primary" onclick="carregar()">Buscar</button>
+        <button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
+        <button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
+      </div>
 
-<button class="btn btn-primary" onclick="carregar()">Buscar</button>
-
-<button class="btn btn-secondary" onclick="limparFiltros()">Limpar</button>
-
-<button class="btn btn-dark" onclick="voltarFormulario()">Fechar</button>
-
-</div>
-
-</div>
+    </div>
+  </div>
 </div>
 
 <!-- TABELA -->
@@ -196,6 +199,16 @@ Cancelar
 <script src="js/apontamento.js"></script>
 
 <script>
+// Toggle filtros colapsáveis
+function toggleFiltrosApontamento() {
+    const header = document.querySelector("#tabelaTela .filter-header");
+    const content = document.getElementById("filtrosApontamentoContent");
+    if (header && content) {
+        header.classList.toggle("collapsed");
+        content.classList.toggle("collapsed");
+    }
+}
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
         navigator.serviceWorker.register('./service-worker.js', { scope: './' })

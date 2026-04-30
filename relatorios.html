@@ -138,15 +138,67 @@
     /* FILTROS */
     .filtros {
       background: white;
-      padding: 20px;
+      padding: 0;
       border-radius: 15px;
       margin-bottom: 30px;
       box-shadow: 0 10px 40px rgba(33, 153, 99, 0.1);
+      border-top: 3px solid #219963;
+      overflow: hidden;
+    }
+
+    .filtros .filter-header {
+      background: white;
+      padding: 15px 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    .filtros .filter-header:hover {
+      background: #f8f9fa;
+    }
+
+    .filtros .filter-header i.filter-icon {
+      color: #219963;
+      font-size: 18px;
+      margin-right: 0;
+    }
+
+    .filtros .filter-header span {
+      font-weight: 600;
+      color: #2c3e50;
+      flex: 1;
+    }
+
+    .filtros .filter-header i.toggle-icon {
+      color: #219963;
+      transition: transform 0.3s ease;
+    }
+
+    .filtros .filter-header.collapsed i.toggle-icon {
+      transform: rotate(-90deg);
+    }
+
+    .filtros .filter-content {
+      padding: 20px;
       display: flex;
       gap: 15px;
       flex-wrap: wrap;
       align-items: center;
-      border-top: 3px solid #219963;
+      border-top: 1px solid #f0f0f0;
+      max-height: 500px;
+      opacity: 1;
+      transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+    }
+
+    .filtros .filter-content.collapsed {
+      max-height: 0;
+      opacity: 0;
+      padding-top: 0;
+      padding-bottom: 0;
+      overflow: hidden;
     }
 
     .filtros input,
@@ -524,6 +576,26 @@
       .header {
         flex-direction: column;
         text-align: center;
+        padding: 20px 15px;
+      }
+
+      .header h1 {
+        font-size: 22px;
+      }
+
+      .header-buttons {
+        width: 100%;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      .header-buttons button {
+        width: 100%;
+        padding: 10px;
+        font-size: 13px;
+        justify-content: center;
       }
 
       .charts-container {
@@ -538,13 +610,49 @@
         font-size: 28px;
       }
 
-      .filtros {
-        flex-direction: column;
+      .chart-wrapper {
+        height: 250px;
       }
 
-      .filtros input,
-      .filtros select {
+      .table-card {
+        padding: 15px;
+      }
+
+      .table-card table {
+        font-size: 12px;
+      }
+
+      .filtros .filter-header {
+        padding: 12px 15px;
+      }
+
+      .filtros .filter-content {
+        flex-direction: column;
+        padding: 15px;
+      }
+
+      .filtros .filter-content input,
+      .filtros .filter-content select,
+      .filtros .filter-content button {
         width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .header-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .header h1 {
+        font-size: 20px;
+      }
+
+      .kpi-card {
+        padding: 20px 15px;
+      }
+
+      .kpi-value {
+        font-size: 24px;
       }
     }
   </style>
@@ -599,16 +707,22 @@
     </div>
 
     <!-- FILTROS -->
-    <div class="filtros">
-      <i class="fas fa-filter filter-icon"></i>
-      <input type="date" id="dataInicio" placeholder="Data início">
-      <input type="date" id="dataFim" placeholder="Data fim">
-      <button class="btn-filtro" onclick="carregarDados()">
-        <i class="fas fa-search"></i> Filtrar
-      </button>
-      <button class="btn-filtro btn-limpar" onclick="limparFiltros()">
-        <i class="fas fa-times"></i> Limpar
-      </button>
+    <div class="filtros" id="filtrosContainer">
+      <div class="filter-header" onclick="toggleFiltros()">
+        <i class="fas fa-filter filter-icon"></i>
+        <span>Filtros de Período</span>
+        <i class="fas fa-chevron-down toggle-icon"></i>
+      </div>
+      <div class="filter-content" id="filtrosContent">
+        <input type="date" id="dataInicio" placeholder="Data início">
+        <input type="date" id="dataFim" placeholder="Data fim">
+        <button class="btn-filtro" onclick="carregarDados()">
+          <i class="fas fa-search"></i> Filtrar
+        </button>
+        <button class="btn-filtro btn-limpar" onclick="limparFiltros()">
+          <i class="fas fa-times"></i> Limpar
+        </button>
+      </div>
     </div>
 
     <div id="periodoImpressao" class="periodo-print">Período de: - até -</div>
@@ -812,6 +926,16 @@
     function ocultarLoading() {
       const loading = document.getElementById("loading");
       if (loading) loading.style.display = "none";
+    }
+
+    // ============================
+    // TOGGLE FILTROS
+    // ============================
+    function toggleFiltros() {
+      const header = document.querySelector("#filtrosContainer .filter-header");
+      const content = document.getElementById("filtrosContent");
+      header.classList.toggle("collapsed");
+      content.classList.toggle("collapsed");
     }
 
     // ============================
