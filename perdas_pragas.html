@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Formulário moderno para registro de Perdas e Pragas em Cana-de-Açúcar">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="stylesheet" href="css/estilo.css">
+    <link rel="stylesheet" href="css/dark.css">
+    <title>Perdas e Pragas - Cana-de-Açúcar</title>
+    <style>
+        :root {
+            --primary-color: #27ae60;
+            --primary-dark: #1e8449;
+            --primary-light: #2ecc71;
+            --secondary-color: #16a085;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --success-color: #27ae60;
+            --dark-color: #2c3e50;
+            --gray-color: #95a5a6;
+            --light-color: #ecf0f1;
+            --white: #ffffff;
+            --shadow: 0 4px 15px rgba(0,0,0,0.1);
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark-color);
+            transition: background 0.3s ease;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, #0f172a 0%, #1a2942 100%);
+            color: var(--light-color);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .header h1 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .btn-icon {
+            background: var(--white);
+            border: 2px solid var(--light-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+            color: var(--primary-color);
+        }
+
+        .btn-icon:hover {
+            background: var(--primary-color);
+            color: var(--white);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        body.dark-mode .btn-icon {
+            background: #1e293b;
+            border-color: #334155;
+            color: var(--primary-light);
+        }
+
+        body.dark-mode .btn-icon:hover {
+            background: var(--primary-color);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        @media (min-width: 1400px) {
+            .container {
+                max-width: 1400px;
+            }
+
+            .card {
+                padding: 35px;
+            }
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .card {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        .card:hover {
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            transform: translateY(-2px);
+        }
+
+        .card-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: var(--dark-color);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        body.dark-mode .form-group label {
+            color: var(--light-color);
+        }
+
+        .label-hint {
+            font-size: 0.8rem;
+            color: var(--gray-color);
+            font-weight: 400;
+            display: block;
+            margin-top: 4px;
+        }
+
+        input, select, textarea {
+            padding: 12px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-family: inherit;
+            transition: all 0.3s ease;
+            background: var(--white);
+            color: var(--dark-color);
+        }
+
+        body.dark-mode input,
+        body.dark-mode select,
+        body.dark-mode textarea {
+            background: #0f172a;
+            color: var(--light-color);
+            border-color: #334155;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.1);
+        }
+
+        body.dark-mode input:focus,
+        body.dark-mode select:focus,
+        body.dark-mode textarea:focus {
+            box-shadow: 0 0 0 4px rgba(39, 174, 96, 0.2);
+        }
+
+        textarea {
+            min-height: 80px;
+            resize: vertical;
+        }
+
+        .input-group {
+            display: flex;
+            gap: 8px;
+            align-items: flex-end;
+        }
+
+        .input-group input,
+        .input-group select {
+            flex: 1;
+        }
+
+        .unit {
+            background: var(--light-color);
+            padding: 12px 10px;
+            border-radius: 10px;
+            font-weight: 600;
+            color: var(--dark-color);
+            min-width: 50px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .unit {
+            background: #334155;
+            color: var(--light-color);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            color: var(--white);
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(39, 174, 96, 0.3);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: var(--light-color);
+            color: var(--dark-color);
+        }
+
+        .btn-secondary:hover {
+            background: var(--gray-color);
+        }
+
+        .btn-danger {
+            background: var(--danger-color);
+            color: var(--white);
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .btn-pragas {
+            background: linear-gradient(135deg, var(--secondary-color), #138d75);
+            color: var(--white);
+            border: none;
+            padding: 14px 24px;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            margin-top: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-pragas:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(22, 160, 133, 0.3);
+        }
+
+        .btn-pragas:active {
+            transform: translateY(0);
+        }
+
+        .resumo-info {
+            background: linear-gradient(135deg, rgba(39, 174, 96, 0.08), rgba(30, 132, 73, 0.08));
+            border: 2px solid var(--primary-color);
+            border-radius: 12px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .resumo-info.show {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-section {
+            margin-bottom: 18px;
+        }
+
+        .info-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-section-title {
+            font-size: 0.85rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: var(--primary-color);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+        }
+
+        .info-item {
+            background: var(--white);
+            padding: 10px 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--primary-color);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            transition: all 0.2s ease;
+        }
+
+        .info-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-left-color: var(--secondary-color);
+        }
+
+        body.dark-mode .info-item {
+            background: #0f172a;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .info-label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: var(--gray-color);
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .info-value {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+
+        body.dark-mode .info-value {
+            color: var(--light-color);
+        }
+
+        body.dark-mode .info-section-title {
+            color: var(--primary-light);
+            border-bottom-color: var(--primary-light);
+        }
+
+        .severity-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .severity-baixa {
+            background: rgba(39, 174, 96, 0.15);
+            color: var(--success-color);
+        }
+
+        .severity-media {
+            background: rgba(243, 156, 18, 0.15);
+            color: var(--warning-color);
+        }
+
+        .severity-alta {
+            background: rgba(231, 76, 60, 0.15);
+            color: var(--danger-color);
+        }
+
+        .results-container {
+            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            border-radius: 16px;
+            padding: 25px;
+            color: var(--white);
+            grid-column: 1 / -1;
+            display: none;
+        }
+
+        .results-container.show {
+            display: block;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(4px);
+            z-index: 1000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.3s ease;
+        }
+
+        body.dark-mode .modal-content {
+            background: #1e293b;
+            border: 1px solid #334155;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light-color);
+        }
+
+        body.dark-mode .modal-header {
+            border-bottom-color: #334155;
+        }
+
+        .modal-header h2 {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0;
+        }
+
+        .btn-close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--gray-color);
+            transition: all 0.3s ease;
+            padding: 5px;
+        }
+
+        .btn-close-modal:hover {
+            color: var(--danger-color);
+            transform: rotate(90deg);
+        }
+
+        .modal-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        .modal-actions .btn {
+            flex: 1;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--light-color);
+            overflow-x: auto;
+        }
+
+        body.dark-mode .tabs {
+            border-bottom-color: #334155;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--gray-color);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .tab-btn.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .info-box {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.1), rgba(41, 128, 185, 0.1));
+            border-left: 4px solid var(--secondary-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+        }
+
+        body.dark-mode .info-box {
+            background: linear-gradient(135deg, rgba(52, 152, 219, 0.2), rgba(41, 128, 185, 0.2));
+            border-left-color: var(--secondary-color);
+        }
+
+        .warning-box {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.1), rgba(230, 126, 34, 0.1));
+            border-left: 4px solid var(--warning-color);
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 0.9rem;
+            color: #d68910;
+        }
+
+        body.dark-mode .warning-box {
+            background: linear-gradient(135deg, rgba(243, 156, 18, 0.2), rgba(230, 126, 34, 0.2));
+            border-left-color: var(--warning-color);
+            color: #f39c12;
+        }
+
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        .summary-table th,
+        .summary-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid var(--light-color);
+        }
+
+        body.dark-mode .summary-table th,
+        body.dark-mode .summary-table td {
+            border-bottom-color: #334155;
+        }
+
+        .summary-table th {
+            background: var(--light-color);
+            color: var(--dark-color);
+            font-weight: 600;
+        }
+
+        body.dark-mode .summary-table th {
+            background: #0f172a;
+            color: var(--light-color);
+        }
+
+        .summary-table tr:hover {
+            background: var(--light-color);
+        }
+
+        body.dark-mode .summary-table tr:hover {
+            background: #0f172a;
+        }
+
+        .presets-group {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+        }
+
+        .preset-btn {
+            padding: 8px 12px;
+            border: 2px solid var(--light-color);
+            background: var(--white);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--dark-color);
+            transition: all 0.3s ease;
+        }
+
+        body.dark-mode .preset-btn {
+            background: #0f172a;
+            border-color: #334155;
+            color: var(--light-color);
+        }
+
+        .preset-btn:hover {
+            background: var(--primary-color);
+            color: var(--white);
+            border-color: var(--primary-color);
+        }
+
+        .severity-legend {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-top: 10px;
+            padding: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--gray-color);
+            margin-top: 40px;
+        }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-link:hover {
+            transform: translateX(-5px);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .badge.bg-success { background: #27ae60; color: white; }
+        .badge.bg-warning { background: #f39c12; color: white; }
+        .badge.bg-danger { background: #e74c3c; color: white; }
+
+        .btn-outline-danger {
+            background: transparent;
+            border: 2px solid #e74c3c;
+            color: #e74c3c;
+            padding: 6px 12px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-outline-danger:hover {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .text-muted { color: var(--gray-color); }
+        .text-center { text-align: center; }
+        .py-4 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+        .mt-2 { margin-top: 0.5rem; }
+
+        body.dark-mode .text-muted { color: #8899aa; }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 12px;
+            }
+
+            .header {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 12px;
+                margin-bottom: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.4rem;
+                width: 100%;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+
+            .card {
+                padding: 15px;
+                border-radius: 12px;
+            }
+
+            .card-title {
+                font-size: 1.1rem;
+                margin-bottom: 15px;
+            }
+
+            .form-group {
+                margin-bottom: 15px;
+            }
+
+            .form-group label {
+                font-size: 0.9rem;
+                margin-bottom: 6px;
+            }
+
+            .label-hint {
+                font-size: 0.75rem;
+                margin-top: 3px;
+            }
+
+            .input-group {
+                flex-direction: column;
+                gap: 6px;
+            }
+
+            .input-group input,
+            .input-group select,
+            .unit {
+                width: 100%;
+            }
+
+            .unit {
+                padding: 10px;
+                font-size: 0.85rem;
+                min-width: auto;
+            }
+
+            input, select, textarea {
+                padding: 11px 12px;
+                font-size: 16px;
+                border-radius: 8px;
+            }
+
+            .btn-group {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 15px;
+            }
+
+            .btn {
+                padding: 12px 16px;
+                font-size: 0.9rem;
+                width: 100%;
+                flex: none;
+            }
+
+            .tabs {
+                overflow-x: auto;
+                gap: 5px;
+                margin-bottom: 15px;
+                border-bottom: 1px solid rgba(255,255,255,0.2);
+            }
+
+            .tab-btn {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+                white-space: nowrap;
+            }
+
+            .info-box {
+                padding: 12px;
+                margin-bottom: 12px;
+                font-size: 0.85rem;
+            }
+
+            .presets-group {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 6px;
+                margin-top: 10px;
+            }
+
+            .preset-btn {
+                padding: 8px 6px;
+                font-size: 0.75rem;
+            }
+
+            footer {
+                padding: 15px;
+                text-align: center;
+                font-size: 0.9rem;
+            }
+
+            footer p {
+                font-size: 0.8rem;
+            }
+
+            .back-link {
+                padding: 10px 16px;
+            }
+
+            .summary-table {
+                margin-top: 10px;
+            }
+
+            .summary-table th,
+            .summary-table td {
+                padding: 8px;
+                font-size: 0.8rem;
+            }
+
+            .summary-table th {
+                font-size: 0.75rem;
+            }
+
+            .warning-box {
+                padding: 10px;
+                font-size: 0.8rem;
+            }
+
+            .severity-legend {
+                flex-direction: column;
+                gap: 8px;
+                margin-top: 8px;
+                padding: 8px;
+            }
+
+            .modal-content {
+                padding: 20px;
+                margin: 10px;
+            }
+
+            .modal-header {
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+            }
+
+            .modal-header h2 {
+                font-size: 1.1rem;
+            }
+
+            .modal-actions {
+                flex-direction: column;
+            }
+
+            .modal-actions .btn {
+                padding: 12px;
+                font-size: 0.9rem;
+            }
+
+            .presets-group {
+                gap: 6px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .info-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+
+            .info-item {
+                padding: 8px;
+            }
+
+            .info-label {
+                font-size: 0.65rem;
+            }
+
+            .info-value {
+                font-size: 0.8rem;
+            }
+
+            .info-section-title {
+                font-size: 0.75rem;
+            }
+
+            .resumo-info {
+                padding: 15px;
+            }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .info-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .modal-content {
+                max-width: 600px;
+                padding: 25px;
+            }
+        }
+
+        @media (min-width: 1025px) and (max-width: 1399px) {
+            .info-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (min-width: 1400px) {
+            .info-grid {
+                grid-template-columns: repeat(6, 1fr);
+            }
+
+            .info-section {
+                margin-bottom: 15px;
+            }
+
+            .info-section:last-child {
+                margin-bottom: 0;
+                padding-top: 15px;
+                border-top: 1px solid rgba(39, 174, 96, 0.2);
+            }
+
+            .modal-content {
+                max-width: 700px;
+            }
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/spa-utils.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>
+                <i class="bi bi-bug-fill"></i>
+                Perdas e Pragas
+            </h1>
+            <div class="header-actions">
+                <button class="btn-icon" id="themeToggle" title="Alternar tema">
+                    <i class="bi bi-moon-fill"></i>
+                </button>
+                <a href="javascript:void(0)" onclick="sair()" class="btn-icon" title="Menu inicial">
+                    <i class="bi bi-house-fill"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="main-content">
+            <!-- Card de Registro de Perdas -->
+            <div class="card">
+                <div class="card-title">
+                    <i class="bi bi-graph-down-arrow"></i>
+                    Registro de Perdas
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-list-task"></i>
+                        Tipo de Perda
+                    </label>
+                    <select id="tipoPerda">
+                        <option value="">Selecione o tipo de perda</option>
+                        <option value="praga">Perda por Praga</option>
+                        <option value="doenca">Perda por Doença</option>
+                        <option value="climatica">Perda Climática (Geada/Seca)</option>
+                        <option value="falha_plantio">Falha no Plantio</option>
+                        <option value="compactacao">Compactação do Solo</option>
+                        <option value="erosao">Erosão</option>
+                        <option value="outra">Outra</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-tree"></i>
+                        Estágio da Cultura
+                    </label>
+                    <select id="estagioCultura">
+                        <option value="">Selecione o estágio</option>
+                        <option value="plantio">Plantio</option>
+                        <option value="cana_plantada">Cana Plantada (1º Corte)</option>
+                        <option value="cana_soca_1">Soca (2º Corte)</option>
+                        <option value="cana_soca_2">Soca (3º Corte)</option>
+                        <option value="cana_soca_3">Soca (4º Corte+)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-diagram-3"></i>
+                        Área Afetada
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="areaAfetada" placeholder="0.00" step="0.01" min="0">
+                        <select id="areaUnit">
+                            <option value="ha">Hectares</option>
+                            <option value="m2">m²</option>
+                        </select>
+                    </div>
+                    <span class="label-hint">Área total afetada pelo problema</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-exclamation-triangle"></i>
+                        Severidade / Intensidade
+                    </label>
+                    <select id="severidade">
+                        <option value="">Selecione a severidade</option>
+                        <option value="baixa">Baixa (até 5%)</option>
+                        <option value="media">Média (5% - 15%)</option>
+                        <option value="alta">Alta (acima de 15%)</option>
+                    </select>
+                    <span class="label-hint">Intensidade do dano observado na área</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-percent"></i>
+                        Estimativa de Perda
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="perdaEstimada" placeholder="0.00" step="0.1" min="0" max="100">
+                        <div class="unit">%</div>
+                    </div>
+                    <span class="label-hint">Percentual estimado de perda na produtividade</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-cloud-rain"></i>
+                        Condições Climáticas
+                    </label>
+                    <select id="condicoesClimaticas">
+                        <option value="">Selecione as condições</option>
+                        <option value="seco">Período Seco</option>
+                        <option value="chuvoso">Período Chuvoso</option>
+                        <option value="geada">Ocorrência de Geada</option>
+                        <option value="granizo">Granizo</option>
+                        <option value="normal">Condições Normais</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-calendar-event"></i>
+                        Data da Constatação
+                    </label>
+                    <input type="date" id="dataConstatacao">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-chat-left-text"></i>
+                        Observações
+                    </label>
+                    <textarea id="observacoes" placeholder="Descreva os sintomas, danos observados, etc."></textarea>
+                </div>
+
+                <button class="btn-pragas" onclick="abrirModalPragas()">
+                    <i class="bi bi-bug-fill"></i>
+                    Dados da Praga (MIP)
+                </button>
+
+                <div class="resumo-info" id="resumoPerdas">
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <i class="bi bi-graph-down-arrow"></i> Dados das Perdas
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-list-task"></i> Tipo</div>
+                                <div class="info-value" id="infoTipoPerda">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-tree"></i> Estágio</div>
+                                <div class="info-value" id="infoEstagio">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-diagram-3"></i> Área Afetada</div>
+                                <div class="info-value" id="infoArea">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-exclamation-triangle"></i> Severidade</div>
+                                <div class="info-value" id="infoSeveridade">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-percent"></i> Perda Est.</div>
+                                <div class="info-value" id="infoPerda">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-cloud-rain"></i> Clima</div>
+                                <div class="info-value" id="infoClima">-</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="info-section">
+                        <div class="info-section-title">
+                            <i class="bi bi-bug-fill"></i> Dados da Praga
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-search"></i> Praga</div>
+                                <div class="info-value" id="infoPraga">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-book"></i> Nome Científico</div>
+                                <div class="info-value" id="infoNomeCientifico">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-lifecycle"></i> Estágio</div>
+                                <div class="info-value" id="infoEstagioPraga">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-speedometer2"></i> Infestação</div>
+                                <div class="info-value" id="infoInfestacao">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-shield-check"></i> Controle</div>
+                                <div class="info-value" id="infoControle">-</div>
+                            </div>
+                            <div class="info-item">
+                                <div class="info-label"><i class="bi bi-calendar"></i> Data</div>
+                                <div class="info-value" id="infoDataPraga">-</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="registrar()">
+                        <i class="bi bi-check-circle-fill"></i>
+                        Registrar
+                    </button>
+                    <button class="btn btn-secondary" onclick="limparFormulario()">
+                        <i class="bi bi-arrow-clockwise"></i>
+                        Limpar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Dados da Praga -->
+        <div class="modal-overlay" id="modalPragas">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2>
+                        <i class="bi bi-bug-fill"></i>
+                        Dados da Praga (MIP)
+                    </h2>
+                    <button class="btn-close-modal" onclick="fecharModalPragas()">
+                        <i class="bi bi-x-lg"></i>
+                    </button>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-search"></i>
+                        Praga Principal
+                    </label>
+                    <select id="praga" onchange="atualizarNomeCientifico()">
+                        <option value="">Selecione a praga</option>
+                        <option value="broca" data-cientifico="Diatraea saccharalis">Broca-da-cana</option>
+                        <option value="bicudo" data-cientifico="Sphenophorus levis">Bicudo-da-cana</option>
+                        <option value="cigarrinha" data-cientifico="Mahanarva fimbriolata">Cigarrinha-das-raízes</option>
+                        <option value="cupim" data-cientifico="Heterotermes tenuis">Cupim</option>
+                        <option value="broca_gigante" data-cientifico="Telchin licus">Broca-gigante</option>
+                        <option value="broca_rizoma" data-cientifico="Castnia icarus">Broca-do-rizoma</option>
+                        <option value="cochonilha" data-cientifico="Saccharicoccus sacchari">Cochonilha</option>
+                        <option value="pulgao" data-cientifico="Melanaphis sacchari">Pulgão</option>
+                        <option value="formiga_cortadeira" data-cientifico="Atta spp.">Formiga Cortadeira</option>
+                        <option value="outra" data-cientifico="">Outra</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-book"></i>
+                        Nome Científico
+                    </label>
+                    <input type="text" id="nomeCientifico" placeholder="Preenchido automaticamente" readonly style="background: var(--light-color);">
+                    <span class="label-hint">Nome científico da praga selecionada</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-lifecycle"></i>
+                        Estágio da Praga
+                    </label>
+                    <select id="estagioPraga">
+                        <option value="">Selecione o estágio</option>
+                        <option value="larva">Larva</option>
+                        <option value="ninfa">Ninfa</option>
+                        <option value="adulto">Adulto</option>
+                        <option value="ovo">Ovos</option>
+                        <option value="misto">Misto (vários estágios)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-speedometer2"></i>
+                        Nível de Infestação
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="nivelInfestacao" placeholder="0.00" step="0.1" min="0" max="100">
+                        <div class="unit">% colmos</div>
+                    </div>
+                    <span class="label-hint">Percentual de colmos/plantas atacadas na amostragem</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-clipboard-data"></i>
+                        Método de Amostragem
+                    </label>
+                    <select id="metodoAmostragem">
+                        <option value="">Selecione o método</option>
+                        <option value="inspecao">Inspeção visual direta</option>
+                        <option value="armadilha">Armadilha (iscas/feromônio)</option>
+                        <option value="amostragem_solo">Amostragem de solo</option>
+                        <option value="contagem_colmos">Contagem de colmos atacados</option>
+                        <option value="massa_ninfas">Contagem de massas de ninfa</option>
+                        <option value="galeria">Pesquisa de galerias</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-people"></i>
+                        População Estimada
+                    </label>
+                    <div class="input-group">
+                        <input type="number" id="populacaoEstimada" placeholder="0" step="1" min="0">
+                        <select id="populacaoUnit">
+                            <option value="ind/100colmos">ind/100 colmos</option>
+                            <option value="ind/m2">ind/m²</option>
+                            <option value="ind/armadilha">ind/armadilha/dia</option>
+                        </select>
+                    </div>
+                    <span class="label-hint">Densidade populacional estimada da praga</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-exclamation-circle"></i>
+                        Nível de Dano Econômico
+                    </label>
+                    <select id="nivelDano">
+                        <option value="">Selecione o nível</option>
+                        <option value="abaixo">Abaixo do NDE</option>
+                        <option value="proximo">Próximo ao NDE</option>
+                        <option value="acima">Acima do NDE (ação necessária)</option>
+                    </select>
+                    <span class="label-hint">NDE = Nível de Dano Econômico</span>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-shield-check"></i>
+                        Tipo de Controle
+                    </label>
+                    <select id="tipoControle">
+                        <option value="">Selecione o tipo</option>
+                        <option value="biologico">Controle Biológico</option>
+                        <option value="cultural">Controle Cultural</option>
+                        <option value="quimico">Controle Químico</option>
+                        <option value="integrado">Manejo Integrado (MIP)</option>
+                        <option value="monitoramento">Apenas Monitoramento</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-droplet"></i>
+                        Produto / Agente Utilizado
+                    </label>
+                    <select id="produtoControle" onchange="preencherOutroProduto()">
+                        <option value="">Selecione o produto</option>
+                        <option value="cotesia">Cotesia flavipes (parasitoide)</option>
+                        <option value="beauveria">Beauveria bassiana (fungo)</option>
+                        <option value="metarhizium">Metarhizium anisopliae (fungo)</option>
+                        <option value="bacillus">Bacillus thuringiensis (Bt)</option>
+                        <option value="fipronil">Fipronil</option>
+                        <option value="tiametoxam">Tiametoxam</option>
+                        <option value="clorantraniliprole">Clorantraniliprole</option>
+                        <option value="outro">Outro (especificar)</option>
+                    </select>
+                </div>
+
+                <div class="form-group" id="outroProdutoGroup" style="display: none;">
+                    <label>
+                        <i class="bi bi-pencil"></i>
+                        Especificar Produto
+                    </label>
+                    <input type="text" id="outroProduto" placeholder="Nome do produto utilizado">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-calendar-event"></i>
+                        Data da Amostragem
+                    </label>
+                    <input type="date" id="dataAmostragem">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-person-badge"></i>
+                        Responsável Técnico
+                    </label>
+                    <input type="text" id="responsavelTecnico" placeholder="Nome do agrônomo/técnico">
+                </div>
+
+                <div class="form-group">
+                    <label>
+                        <i class="bi bi-chat-left-text"></i>
+                        Observações
+                    </label>
+                    <textarea id="observacoesPraga" placeholder="Descreva a situação, sintomas, etc."></textarea>
+                </div>
+
+                <div class="presets-group">
+                    <button class="preset-btn" onclick="carregarPresetPraga('broca')">
+                        <i class="bi bi-lightning-fill"></i> Broca
+                    </button>
+                    <button class="preset-btn" onclick="carregarPresetPraga('bicudo')">
+                        <i class="bi bi-lightning-fill"></i> Bicudo
+                    </button>
+                    <button class="preset-btn" onclick="carregarPresetPraga('cigarrinha')">
+                        <i class="bi bi-lightning-fill"></i> Cigarrinha
+                    </button>
+                </div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-primary" onclick="salvarPraga()">
+                        <i class="bi bi-check-lg"></i>
+                        Salvar e Fechar
+                    </button>
+                    <button class="btn btn-secondary" onclick="fecharModalPragas()">
+                        <i class="bi bi-x-lg"></i>
+                        Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Resultados -->
+        <div class="results-container" id="resultados">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                <h2 style="margin: 0; color: white; display: flex; align-items: center; gap: 10px;">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Registro Realizado
+                </h2>
+                <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                    <button class="btn btn-secondary" onclick="copiarResultados()" style="padding: 8px 16px;">
+                        <i class="bi bi-clipboard"></i> Copiar
+                    </button>
+                    <button class="btn btn-secondary" onclick="compartilharWhatsApp()" style="padding: 8px 16px;">
+                        <i class="bi bi-whatsapp"></i> WhatsApp
+                    </button>
+                </div>
+            </div>
+
+            <div class="tabs">
+                <button class="tab-btn active" onclick="abrirTab(event, 'resumo')">
+                    <i class="bi bi-graph-up"></i> Resumo
+                </button>
+                <button class="tab-btn" onclick="abrirTab(event, 'detalhes')">
+                    <i class="bi bi-list-check"></i> Detalhes
+                </button>
+                <button class="tab-btn" onclick="abrirTab(event, 'recomendacoes')">
+                    <i class="bi bi-info-circle"></i> Recomendações
+                </button>
+            </div>
+
+            <!-- Tab 1: Resumo -->
+            <div id="resumo" class="tab-content active">
+                <div class="info-box">
+                    <strong><i class="bi bi-info-circle"></i> Sobre este registro:</strong>
+                    Os dados foram registrados com base nas informações fornecidas. Mantenha o monitoramento contínuo da área.
+                </div>
+                <table class="summary-table">
+                    <tbody id="resumoTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab 2: Detalhes -->
+            <div id="detalhes" class="tab-content">
+                <div class="info-box">
+                    <strong><i class="bi bi-info-circle"></i> Informações detalhadas:</strong>
+                    Todos os dados coletados durante o registro de perdas e pragas.
+                </div>
+                <table class="summary-table">
+                    <tbody id="detalhesTable">
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Tab 3: Recomendações -->
+            <div id="recomendacoes" class="tab-content">
+                <div class="warning-box" id="recomendacoesBox">
+                    <strong><i class="bi bi-exclamation-triangle"></i> Recomendações:</strong>
+                    Preencha os dados para visualizar as recomendações de manejo.
+                </div>
+                <div id="recomendacoesMIP"></div>
+            </div>
+
+            <div class="severity-legend" style="margin-top: 20px;">
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #2ecc71;"></div>
+                    <span>Baixo risco</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #f39c12;"></div>
+                    <span>Risco moderado</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-dot" style="background: #e74c3c;"></div>
+                    <span>Alto risco</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabela de Registros Salvos -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-title">
+                <i class="bi bi-database"></i>
+                Registros Salvos
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="summary-table" id="tabelaRegistrosContainer">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-calendar"></i> Data</th>
+                            <th><i class="bi bi-list-task"></i> Tipo</th>
+                            <th><i class="bi bi-diagram-3"></i> Área</th>
+                            <th><i class="bi bi-exclamation-triangle"></i> Severidade</th>
+                            <th><i class="bi bi-percent"></i> Perda</th>
+                            <th><i class="bi bi-bug"></i> Praga</th>
+                            <th><i class="bi bi-box"></i> Perda (t)</th>
+                            <th><i class="bi bi-gear"></i> Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaRegistros">
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                <p class="mt-2">Nenhum registro encontrado</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <footer>
+            <a href="javascript:void(0)" onclick="sair()" class="back-link">
+                <i class="bi bi-arrow-left"></i>
+                Voltar ao Menu
+            </a>
+            <p style="margin-top: 15px;">Campo 4.0 © 2024 - Sistema de Gestão Agrícola</p>
+        </footer>
+    </div>
+
+    <!-- Script de Tema -->
+    <script>
+        const themeToggle = document.getElementById('themeToggle');
+
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark-mode');
+            themeToggle.innerHTML = '<i class="bi bi-sun-fill"></i>';
+        }
+
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            themeToggle.innerHTML = document.body.classList.contains('dark-mode') 
+                ? '<i class="bi bi-sun-fill"></i>' 
+                : '<i class="bi bi-moon-fill"></i>';
+            localStorage.setItem('theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
+        });
+
+        document.getElementById('dataConstatacao').valueAsDate = new Date();
+        document.getElementById('dataAmostragem').valueAsDate = new Date();
+
+        function abrirModalPragas() {
+            document.getElementById('modalPragas').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function fecharModalPragas() {
+            document.getElementById('modalPragas').classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function salvarPraga() {
+            fecharModalPragas();
+            atualizarResumo();
+        }
+
+        function atualizarNomeCientifico() {
+            const select = document.getElementById('praga');
+            const option = select.options[select.selectedIndex];
+            const nomeCientifico = option.getAttribute('data-cientifico') || '';
+            document.getElementById('nomeCientifico').value = nomeCientifico;
+        }
+
+        function preencherOutroProduto() {
+            const select = document.getElementById('produtoControle');
+            const group = document.getElementById('outroProdutoGroup');
+            group.style.display = select.value === 'outro' ? 'block' : 'none';
+        }
+
+        function atualizarResumo() {
+            const tipoPerda = document.getElementById('tipoPerda');
+            const tipoTexto = tipoPerda.options[tipoPerda.selectedIndex]?.text || '-';
+            const estagioCultura = document.getElementById('estagioCultura');
+            const estagioTexto = estagioCultura.options[estagioCultura.selectedIndex]?.text || '-';
+            const areaAfetada = document.getElementById('areaAfetada').value;
+            const areaUnit = document.getElementById('areaUnit');
+            const areaUnitTexto = areaUnit.options[areaUnit.selectedIndex]?.text || '';
+            const severidade = document.getElementById('severidade');
+            const severidadeTexto = severidade.options[severidade.selectedIndex]?.text || '-';
+            const perdaEstimada = document.getElementById('perdaEstimada').value;
+            const condicoesClimaticas = document.getElementById('condicoesClimaticas');
+            const climaTexto = condicoesClimaticas.options[condicoesClimaticas.selectedIndex]?.text || '-';
+
+            document.getElementById('infoTipoPerda').textContent = tipoTexto;
+            document.getElementById('infoEstagio').textContent = estagioTexto;
+            document.getElementById('infoArea').textContent = areaAfetada ? `${areaAfetada} ${areaUnitTexto}` : '-';
+            document.getElementById('infoSeveridade').textContent = severidadeTexto;
+            document.getElementById('infoPerda').textContent = perdaEstimada ? `${perdaEstimada}%` : '-';
+            document.getElementById('infoClima').textContent = climaTexto;
+
+            const praga = document.getElementById('praga');
+            const pragaTexto = praga.options[praga.selectedIndex]?.text || '-';
+            const nomeCientifico = document.getElementById('nomeCientifico').value;
+            const estagioPraga = document.getElementById('estagioPraga');
+            const estagioPragaTexto = estagioPraga.options[estagioPraga.selectedIndex]?.text || '-';
+            const nivelInfestacao = document.getElementById('nivelInfestacao').value;
+            const tipoControle = document.getElementById('tipoControle');
+            const controleTexto = tipoControle.options[tipoControle.selectedIndex]?.text || '-';
+            const dataAmostragem = document.getElementById('dataAmostragem').value;
+            const dataTexto = dataAmostragem ? new Date(dataAmostragem + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+
+            document.getElementById('infoPraga').textContent = pragaTexto;
+            document.getElementById('infoNomeCientifico').textContent = nomeCientifico || '-';
+            document.getElementById('infoEstagioPraga').textContent = estagioPragaTexto;
+            document.getElementById('infoInfestacao').textContent = nivelInfestacao ? `${nivelInfestacao}%` : '-';
+            document.getElementById('infoControle').textContent = controleTexto;
+            document.getElementById('infoDataPraga').textContent = dataTexto;
+
+            const resumoDiv = document.getElementById('resumoPerdas');
+            const temDados = areaAfetada || perdaEstimada || praga.value || nivelInfestacao;
+
+            if (temDados) {
+                resumoDiv.classList.add('show');
+            } else {
+                resumoDiv.classList.remove('show');
+            }
+        }
+
+        document.getElementById('modalPragas').addEventListener('click', function(e) {
+            if (e.target === this) {
+                fecharModalPragas();
+            }
+        });
+
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                fecharModalPragas();
+            }
+        });
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                padding: 15px 25px;
+                background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#f39c12'};
+                color: white;
+                border-radius: 12px;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+                z-index: 3000;
+                animation: slideInRight 0.3s ease;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+            `;
+            const icon = type === 'success' ? 'check-circle-fill' : type === 'error' ? 'exclamation-triangle-fill' : 'exclamation-circle-fill';
+            notification.innerHTML = `<i class="bi bi-${icon}"></i> ${message}`;
+            document.body.appendChild(notification);
+
+            if (!document.getElementById('slideInRightStyle')) {
+                const style = document.createElement('style');
+                style.id = 'slideInRightStyle';
+                style.textContent = `@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+                document.head.appendChild(style);
+            }
+
+            setTimeout(() => {
+                notification.style.transition = 'all 0.3s ease';
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+    </script>
+
+    <!-- Script Principal -->
+    <script src="js/perdas_pragas.js"></script>
+</body>
+</html>

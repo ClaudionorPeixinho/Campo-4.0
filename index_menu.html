@@ -685,8 +685,8 @@ body.dark .table-custom td {
                 <span>Ponto Digital</span>
             </li>
             <li data-form="perdas">
-                <i class="bi bi-graph-down"></i>
-                <span>Controle de Perdas</span>
+                <i class="bi bi-bug-fill"></i>
+                <span>Perdas e Pragas</span>
             </li>
             <li id="logout">
                 <i class="bi bi-box-arrow-right"></i>
@@ -1363,9 +1363,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                 </div>`;
                 break;
             case 'perdas':
-                title = 'Controle de Perdas';
+                title = 'Perdas e Pragas';
                 html = `<div style="position: relative;">
-                    <iframe src="perdas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                    <iframe src="perdas_pragas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
                     <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;

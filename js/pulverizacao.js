@@ -14,7 +14,12 @@ class CalculadoraPulverizacao {
     inicializarEventos() {
         // Salvar dados automaticamente enquanto digita
         document.querySelectorAll('input, select').forEach(campo => {
-            campo.addEventListener('change', () => this.salvarDados());
+            campo.addEventListener('change', () => {
+                this.salvarDados();
+                if (typeof atualizarInfoPropriedade === 'function') {
+                    atualizarInfoPropriedade();
+                }
+            });
         });
 
         // Enter para calcular
@@ -53,6 +58,14 @@ class CalculadoraPulverizacao {
                 elemento.value = dados[chave];
             }
         });
+        // Atualizar informações da propriedade se houver dados
+        if (Object.keys(dados).length > 0) {
+            setTimeout(() => {
+                if (typeof atualizarInfoPropriedade === 'function') {
+                    atualizarInfoPropriedade();
+                }
+            }, 100);
+        }
     }
 
     calcular() {
@@ -65,6 +78,10 @@ class CalculadoraPulverizacao {
         const resultado = this.realizarCalculos(dados);
         this.exibirResultados(resultado);
         this.adicionarAoHistorico(dados, resultado);
+
+        if (typeof atualizarInfoPropriedade === 'function') {
+            atualizarInfoPropriedade();
+        }
     }
 
     coletarDados() {
@@ -316,6 +333,7 @@ class CalculadoraPulverizacao {
         document.getElementById('ra').value = '';
         document.getElementById('dataAplicacao').valueAsDate = new Date();
         document.getElementById('resultados').classList.remove('show');
+        document.getElementById('propriedadeInfo').classList.remove('show');
         localStorage.removeItem('pulverizacaoDados');
     }
 }
