@@ -1,18 +1,42 @@
 /**
  * Calculadora de Pulverização de Herbicidas
  * Sistema de Gestão Agrícola Campo 4.0
- * Versão 2.0 - Moderna e Responsiva
+ * Versão 3.0 - Com integração ao Supabase
  */
+
+// CONFIG
+const PULV_SUPABASE_URL = "https://szzfqkhibuejhodhkvjj.supabase.co";
+const PULV_SUPABASE_KEY = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
 
 class CalculadoraPulverizacao {
     constructor() {
         this.historico = this.carregarHistorico();
+        this.supabase = this.getSupabaseClient();
+        this.registrosSalvos = [];
         this.inicializarEventos();
         this.restaurarDados();
+        this.carregarRegistrosSalvos();
+    }
+
+    getSupabaseClient() {
+        if (typeof supabase !== 'undefined') {
+            return supabase.createClient(PULV_SUPABASE_URL, PULV_SUPABASE_KEY);
+        }
+        if (window.supabaseClient) {
+            return window.supabaseClient;
+        }
+        try {
+            if (window.parent && window.parent.supabaseClient) {
+                return window.parent.supabaseClient;
+            }
+        } catch (e) {
+            console.warn('Não foi possível acessar parent:', e);
+        }
+        console.error('Supabase: NÃO foi possível criar cliente');
+        return null;
     }
 
     inicializarEventos() {
-        // Salvar dados automaticamente enquanto digita
         document.querySelectorAll('input, select').forEach(campo => {
             campo.addEventListener('change', () => {
                 this.salvarDados();
@@ -22,7 +46,6 @@ class CalculadoraPulverizacao {
             });
         });
 
-        // Enter para calcular
         document.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 this.calcular();
@@ -58,7 +81,6 @@ class CalculadoraPulverizacao {
                 elemento.value = dados[chave];
             }
         });
-        // Atualizar informações da propriedade se houver dados
         if (Object.keys(dados).length > 0) {
             setTimeout(() => {
                 if (typeof atualizarInfoPropriedade === 'function') {
@@ -68,7 +90,7 @@ class CalculadoraPulverizacao {
         }
     }
 
-    calcular() {
+    async calcular() {
         const dados = this.coletarDados();
 
         if (!this.validarDados(dados)) {
@@ -78,9 +100,174 @@ class CalculadoraPulverizacao {
         const resultado = this.realizarCalculos(dados);
         this.exibirResultados(resultado);
         this.adicionarAoHistorico(dados, resultado);
+        await this.registrarNoBanco(dados, resultado);
 
         if (typeof atualizarInfoPropriedade === 'function') {
             atualizarInfoPropriedade();
+        }
+    }
+
+    async registrarNoBanco(dados, resultado) {
+        if (!this.supabase) {
+            console.warn('Supabase não disponível. Salvando apenas localmente.');
+            showNotification('Supabase não disponível. Registro salvo localmente.', 'warning');
+            return;
+        }
+
+        try {
+            const registro = {
+                area: dados.area,
+                area_unit: document.getElementById('areaUnit').value,
+                dose: dados.dose,
+                dose_unit: document.getElementById('doseUnit').value,
+                velocidade: dados.velocidade,
+                bicos: dados.bicos,
+                capacidade: dados.capacidade,
+                largura_barra: dados.larguraBarra,
+                propriedade: dados.propriedade || null,
+                lote_talhao: dados.lote || null,
+                cultura: dados.cultura || null,
+                herbicida: dados.herbicida || null,
+                responsavel_agronomo: dados.ra || null,
+                data_aplicacao: dados.dataAplicacao || null,
+                volume_total: parseFloat(resultado.totalHerbicida),
+                tanques_necessarios: resultado.tanquesNecessarios,
+                tempo_estimado: resultado.tempoEstimado,
+                produtividade: parseFloat(resultado.produtividade),
+                litros_por_bico_30seg: parseFloat(resultado.litrosPorBico30seg),
+                litros_por_bico_60seg: parseFloat(resultado.litrosPorBico60seg),
+                vazao_media: parseFloat(resultado.vazaoMedia),
+                eficiencia_tanque: parseFloat(resultado.eficienciaTanque),
+                custo_projecao: parseFloat(resultado.custoProjecao)
+            };
+
+            const { data: inserido, error } = await this.supabase
+                .from('pulverizacoes_herbicidas')
+                .insert([registro])
+                .select()
+                .single();
+
+            if (error) throw error;
+
+            this.carregarRegistrosSalvos();
+            showNotification('Registro salvo com sucesso no banco de dados!', 'success');
+        } catch (error) {
+            console.error('Erro ao salvar no banco:', error);
+            let mensagem = error.message || 'Erro desconhecido';
+            if (mensagem.includes('relation') || mensagem.includes('does not exist')) {
+                mensagem = 'Tabela não existe. Execute o SQL no Supabase!';
+            } else if (mensagem.includes('policy') || mensagem.includes('permission')) {
+                mensagem = 'Erro de permissão. Verifique RLS policies!';
+            }
+            showNotification(`Erro: ${mensagem}`, 'error');
+        }
+    }
+
+    async carregarRegistrosSalvos() {
+        if (!this.supabase) {
+            this.registrosSalvos = [];
+            return;
+        }
+
+        try {
+            const { data: testData, error: testError } = await this.supabase
+                .from('pulverizacoes_herbicidas')
+                .select('id')
+                .limit(1);
+
+            if (testError) {
+                console.warn('Erro no teste de conexão:', testError);
+                this.registrosSalvos = [];
+                return;
+            }
+
+            const { data, error } = await this.supabase
+                .from('pulverizacoes_herbicidas')
+                .select('*')
+                .order('created_at', { ascending: false })
+                .limit(50);
+
+            if (error) throw error;
+
+            this.registrosSalvos = data || [];
+            this.atualizarTabelaRegistros();
+        } catch (error) {
+            console.error('Erro ao carregar registros:', error);
+            this.registrosSalvos = [];
+        }
+    }
+
+    atualizarTabelaRegistros() {
+        const container = document.getElementById('tabelaRegistros');
+        if (!container) return;
+
+        if (!this.registrosSalvos || this.registrosSalvos.length === 0) {
+            container.innerHTML = `
+                <tr>
+                    <td colspan="8" class="text-center text-muted py-4">
+                        <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                        <p class="mt-2">Nenhum registro encontrado</p>
+                    </td>
+                </tr>
+            `;
+            return;
+        }
+
+        const culturaLabels = {
+            'soja': 'Soja',
+            'milho': 'Milho',
+            'cana': 'Cana-de-açúcar',
+            'trigo': 'Trigo',
+            'algodao': 'Algodão',
+            'arroz': 'Arroz',
+            'feijao': 'Feijão',
+            'pastagem': 'Pastagem',
+            'outra': 'Outra'
+        };
+
+        let html = this.registrosSalvos.map(reg => {
+            const data = reg.data_aplicacao ? new Date(reg.data_aplicacao + 'T00:00:00').toLocaleDateString('pt-BR') : '-';
+            const cultura = culturaLabels[reg.cultura] || reg.cultura || '-';
+
+            return `
+                <tr>
+                    <td>${data}</td>
+                    <td>${reg.propriedade || '-'}</td>
+                    <td>${reg.lote_talhao || '-'}</td>
+                    <td>${cultura}</td>
+                    <td>${reg.herbicida || '-'}</td>
+                    <td>${reg.area} ${reg.area_unit}</td>
+                    <td>${reg.volume_total} L</td>
+                    <td>
+                        <button class="btn btn-sm btn-outline-danger" onclick="calculadora.excluirRegistro('${reg.id}')">
+                            <i class="bi bi-trash"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+        }).join('');
+
+        container.innerHTML = html;
+    }
+
+    async excluirRegistro(id) {
+        if (!confirm('Tem certeza que deseja excluir este registro?')) return;
+
+        try {
+            if (this.supabase) {
+                const { error } = await this.supabase
+                    .from('pulverizacoes_herbicidas')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                showNotification('Registro excluído com sucesso!', 'success');
+                this.carregarRegistrosSalvos();
+            }
+        } catch (error) {
+            console.error('Erro ao excluir:', error);
+            showNotification('Erro ao excluir registro.', 'error');
         }
     }
 
@@ -136,18 +323,11 @@ class CalculadoraPulverizacao {
         const minutos = Math.round((tempoEstimadoHoras - horas) * 60);
         const produtividade = (dados.velocidade * dados.larguraBarra) / 10;
 
-        // Cálculos avançados
         const litrosPorBico30seg = (dados.dose / dados.velocidade / dados.bicos) * 0.5;
         const litrosPorBico60seg = dados.dose / dados.velocidade / dados.bicos;
-        
-        // Vazão média por bico (L/min)
         const vazaoMedia = (litrosPorBico60seg / 60).toFixed(4);
-        
-        // Eficiência do tanque
         const eficienciaTanque = ((totalHerbicida % dados.capacidade) / dados.capacidade * 100).toFixed(1);
-        
-        // Custo estimado (valor padrão)
-        const custoProjecao = (totalHerbicida * 15).toFixed(2); // R$ 15 por litro
+        const custoProjecao = (totalHerbicida * 15).toFixed(2);
 
         return {
             totalHerbicida: totalHerbicida.toFixed(2),
@@ -166,13 +346,11 @@ class CalculadoraPulverizacao {
     }
 
     exibirResultados(resultado) {
-        // Atualizar valores principais
         document.getElementById('totalHerbicida').textContent = resultado.totalHerbicida;
         document.getElementById('tanquesNecessarios').textContent = resultado.tanquesNecessarios;
         document.getElementById('tempoEstimado').textContent = resultado.tempoEstimado;
         document.getElementById('produtividade').textContent = resultado.produtividade;
 
-        // Tabela de detalhes
         const detalhesTable = document.getElementById('detalhesTable');
         detalhesTable.innerHTML = `
             <tr>
@@ -261,7 +439,6 @@ class CalculadoraPulverizacao {
             </tr>
         `;
 
-        // Tabela de ciclo de voltas
         const cicloTable = document.getElementById('cicloTable');
         let cicloHTML = '';
         const totalHerbicida = parseFloat(resultado.totalHerbicida);
@@ -284,7 +461,6 @@ class CalculadoraPulverizacao {
         }
         cicloTable.innerHTML = cicloHTML;
 
-        // Exibir resultados
         document.getElementById('resultados').classList.add('show');
         setTimeout(() => {
             document.querySelector('.results-container').scrollIntoView({ behavior: 'smooth' });
@@ -338,13 +514,11 @@ class CalculadoraPulverizacao {
     }
 }
 
-// Instanciar ao carregar a página
 let calculadora;
 document.addEventListener('DOMContentLoaded', () => {
     calculadora = new CalculadoraPulverizacao();
 });
 
-// Funções globais para compatibilidade com HTML
 function calcular() {
     calculadora.calcular();
 }
@@ -436,16 +610,6 @@ Data: ${new Date().toLocaleDateString('pt-BR')}
     });
 }
 
-// Utilitários
-function exportarPDF() {
-    const conteudo = document.querySelector('.results-container');
-    if (!conteudo || !conteudo.classList.contains('show')) {
-        alert('Calcule antes de exportar!');
-        return;
-    }
-    alert('Funcionalidade de PDF será implementada em breve!');
-}
-
 function compartilharWhatsApp() {
     const tempo = document.getElementById('tempoEstimado').textContent;
     const totalHerbicida = document.getElementById('totalHerbicida').textContent;
@@ -460,4 +624,41 @@ function compartilharWhatsApp() {
 
     const url = `https://wa.me/?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank');
+}
+
+function showNotification(message, type = 'success') {
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 15px 25px;
+        background: ${type === 'success' ? '#27ae60' : type === 'error' ? '#e74c3c' : '#f39c12'};
+        color: white;
+        border-radius: 12px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        z-index: 3000;
+        animation: slideInRight 0.3s ease;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    `;
+    const icon = type === 'success' ? 'check-circle-fill' : type === 'error' ? 'exclamation-triangle-fill' : 'exclamation-circle-fill';
+    notification.innerHTML = `<i class="bi bi-${icon}"></i> ${message}`;
+    document.body.appendChild(notification);
+
+    if (!document.getElementById('slideInRightStyle')) {
+        const style = document.createElement('style');
+        style.id = 'slideInRightStyle';
+        style.textContent = `@keyframes slideInRight { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }`;
+        document.head.appendChild(style);
+    }
+
+    setTimeout(() => {
+        notification.style.transition = 'all 0.3s ease';
+        notification.style.opacity = '0';
+        notification.style.transform = 'translateX(100%)';
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }

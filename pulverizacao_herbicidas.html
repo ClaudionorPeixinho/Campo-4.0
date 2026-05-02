@@ -1029,6 +1029,7 @@
             }
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/spa-utils.js"></script>
 </head>
 <body>
@@ -1408,6 +1409,74 @@
                 </table>
             </div>
         </div>
+
+        <!-- Tabela de Registros Salvos -->
+        <div class="card" style="margin-top: 30px;">
+            <div class="card-title">
+                <i class="bi bi-database"></i>
+                Registros Salvos
+            </div>
+            <div style="overflow-x: auto;">
+                <table class="summary-table" id="tabelaRegistrosContainer">
+                    <thead>
+                        <tr>
+                            <th><i class="bi bi-calendar"></i> Data</th>
+                            <th><i class="bi bi-building"></i> Propriedade</th>
+                            <th><i class="bi bi-geo-alt"></i> Lote</th>
+                            <th><i class="bi bi-flower1"></i> Cultura</th>
+                            <th><i class="bi bi-prescription2"></i> Herbicida</th>
+                            <th><i class="bi bi-diagram-3"></i> Área</th>
+                            <th><i class="bi bi-bucket"></i> Volume</th>
+                            <th><i class="bi bi-gear"></i> Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabelaRegistros">
+                        <tr>
+                            <td colspan="8" class="text-center text-muted py-4">
+                                <i class="bi bi-inbox" style="font-size: 2rem;"></i>
+                                <p class="mt-2">Nenhum registro encontrado</p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <style>
+            .badge {
+                display: inline-block;
+                padding: 4px 10px;
+                border-radius: 20px;
+                font-size: 0.75rem;
+                font-weight: 600;
+            }
+
+            .badge.bg-success { background: #27ae60; color: white; }
+            .badge.bg-warning { background: #f39c12; color: white; }
+            .badge.bg-danger { background: #e74c3c; color: white; }
+
+            .btn-outline-danger {
+                background: transparent;
+                border: 2px solid #e74c3c;
+                color: #e74c3c;
+                padding: 6px 12px;
+                border-radius: 8px;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .btn-outline-danger:hover {
+                background: #e74c3c;
+                color: white;
+            }
+
+            .text-muted { color: var(--gray-color); }
+            .text-center { text-align: center; }
+            .py-4 { padding-top: 1.5rem; padding-bottom: 1.5rem; }
+            .mt-2 { margin-top: 0.5rem; }
+
+            body.dark-mode .text-muted { color: #8899aa; }
+        </style>
 
         <footer>
             <a href="javascript:void(0)" onclick="sair()" class="back-link">

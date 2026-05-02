@@ -13,28 +13,20 @@ class CalculadoraPerdasPragas {
         this.historico = this.carregarHistorico();
         this.supabase = this.getSupabaseClient();
         this.registrosSalvos = [];
-        console.log('=== Perdas e Pragas Inicializado ===');
-        console.log('Supabase client:', this.supabase ? 'OK' : 'NÃO DISPONÍVEL');
         this.inicializarEventos();
         this.restaurarDados();
         this.carregarRegistrosSalvos();
     }
 
     getSupabaseClient() {
-        // 1. Criar cliente diretamente (mesmo padrão do apontamento.js)
         if (typeof supabase !== 'undefined') {
-            console.log('Supabase: criando cliente com SDK direto');
             return supabase.createClient(PERDAS_SUPABASE_URL, PERDAS_SUPABASE_KEY);
         }
-        // 2. Tentar window.supabaseClient (herdado do parent)
         if (window.supabaseClient) {
-            console.log('Supabase: usando window.supabaseClient');
             return window.supabaseClient;
         }
-        // 3. Tentar parent window
         try {
             if (window.parent && window.parent.supabaseClient) {
-                console.log('Supabase: usando parent.supabaseClient');
                 return window.parent.supabaseClient;
             }
         } catch (e) {
@@ -176,11 +168,6 @@ class CalculadoraPerdasPragas {
 
         const resultado = this.calcularImpacto(dados);
 
-        console.log('=== DEBUG SUPABASE ===');
-        console.log('Supabase client:', this.supabase);
-        console.log('Parent window:', window.parent);
-        console.log('Parent supabaseClient:', window.parent?.supabaseClient);
-
         if (!this.supabase) {
             console.error('Supabase client não encontrado!');
             this.exibirResultados(resultado);
@@ -210,8 +197,6 @@ class CalculadoraPerdasPragas {
                 responsavel_registro: dados.responsavelTecnico || null,
             };
 
-            console.log('Enviando registro:', registroPerda);
-
             const { data: perdaInserida, error: erroPerda } = await this.supabase
                 .from('registros_perdas')
                 .insert([registroPerda])
@@ -222,8 +207,6 @@ class CalculadoraPerdasPragas {
                 console.error('Erro ao inserir perda:', erroPerda);
                 throw erroPerda;
             }
-
-            console.log('Perda inserida com sucesso:', perdaInserida);
 
             if (dados.praga) {
                 const monitoramentoPraga = {
@@ -244,8 +227,6 @@ class CalculadoraPerdasPragas {
                     registro_perda_id: perdaInserida.id,
                 };
 
-                console.log('Enviando monitoramento:', monitoramentoPraga);
-
                 const { error: erroPraga } = await this.supabase
                     .from('monitoramento_pragas')
                     .insert([monitoramentoPraga]);
@@ -254,8 +235,6 @@ class CalculadoraPerdasPragas {
                     console.error('Erro ao inserir praga:', erroPraga);
                     throw erroPraga;
                 }
-
-                console.log('Monitoramento inserido com sucesso');
             }
 
             this.exibirResultados(resultado);
@@ -665,8 +644,6 @@ class CalculadoraPerdasPragas {
                 return;
             }
 
-            console.log('Conexão Supabase OK. Teste:', testData);
-
             const { data, error } = await this.supabase
                 .from('registros_perdas')
                 .select(`
@@ -682,7 +659,6 @@ class CalculadoraPerdasPragas {
             if (error) throw error;
 
             this.registrosSalvos = data || [];
-            console.log('Registros carregados:', this.registrosSalvos.length);
             this.atualizarTabelaRegistros();
         } catch (error) {
             console.error('Erro ao carregar registros:', error);
