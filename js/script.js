@@ -3,7 +3,8 @@ const SUPABASE_URL = "https://szzfqkhibuejhodhkvjj.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
 
 // Inicializa o cliente Supabase
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const supabase = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+window.supabaseClient = supabase;
 
 // Elementos do DOM
 const form = document.getElementById('abastecimentoForm');
@@ -272,13 +273,14 @@ form.addEventListener('submit', async (e) => {
     };
     
     try {
-        const { error } = await supabase
-            .from('abastecimentos')
-            .insert([abastecimento]);
+        const resposta = window.CampoOfflineSync
+            ? await window.CampoOfflineSync.saveInsert('abastecimentos', abastecimento)
+            : await supabase.from('abastecimentos').insert([abastecimento]);
+        const { error } = resposta;
         
         if (error) throw error;
         
-        showToast('Abastecimento registrado com sucesso!', 'success');
+        showToast(resposta.offline ? 'Salvo offline. Sincronize quando tiver internet.' : 'Abastecimento registrado com sucesso!', 'success');
         form.reset();
         carregarAbastecimentos();
     } catch (error) {

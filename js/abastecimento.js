@@ -1,6 +1,7 @@
-const supabaseUrl = "SUA_URL";
-const supabaseKey = "SUA_ANON_KEY";
-const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
+const supabaseUrl = "https://szzfqkhibuejhodhkvjj.supabase.co";
+const supabaseKey = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
+const supabaseClient = window.supabaseClient || window.supabase.createClient(supabaseUrl, supabaseKey);
+window.supabaseClient = supabaseClient;
 
 const form = document.getElementById("formAbastecimento");
 const tabelaBody = document.querySelector("#tabela tbody");
@@ -44,7 +45,14 @@ form.addEventListener("submit", async (e) => {
         valor_total: valor_total.value
     };
 
-    await supabase.from("abastecimentos").insert([dados]);
+    const resposta = window.CampoOfflineSync
+        ? await window.CampoOfflineSync.saveInsert("abastecimentos", dados)
+        : await supabaseClient.from("abastecimentos").insert([dados]);
+
+    if (resposta.error) {
+        alert("Erro ao salvar: " + resposta.error.message);
+        return;
+    }
 
     form.reset();
     carregarDados();
@@ -52,7 +60,7 @@ form.addEventListener("submit", async (e) => {
 
 // CARREGAR
 async function carregarDados() {
-    const { data } = await supabase.from("abastecimentos").select("*").order("data_abastecimento", { ascending: false });
+    const { data } = await supabaseClient.from("abastecimentos").select("*").order("data_abastecimento", { ascending: false });
 
     tabelaBody.innerHTML = "";
 
@@ -73,7 +81,7 @@ carregarDados();
 
 // FILTROS
 async function filtrar() {
-    let query = supabase.from("abastecimentos").select("*");
+    let query = supabaseClient.from("abastecimentos").select("*");
 
     if (filtroData.value) {
         query = query.eq("data_abastecimento", filtroData.value);

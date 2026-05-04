@@ -2,7 +2,8 @@
 const SUPABASE_URL = "https://szzfqkhibuejhodhkvjj.supabase.co";
 const SUPABASE_KEY = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
 
-const client = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const client = window.supabaseClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.supabaseClient = client;
 
 let editandoId = null;
 
@@ -57,14 +58,18 @@ form.addEventListener("submit", async (e) => {
     let resposta;
 
     if (editandoId) {
+      if (!navigator.onLine) {
+        alert("Edicoes exigem internet. O registro original ainda esta no Supabase.");
+        return;
+      }
       resposta = await client
         .from("apontamentos_entrega")
         .update(dados)
         .eq("id", editandoId);
     } else {
-      resposta = await client
-        .from("apontamentos_entrega")
-        .insert([dados]);
+      resposta = window.CampoOfflineSync
+        ? await window.CampoOfflineSync.saveInsert("apontamentos_entrega", dados)
+        : await client.from("apontamentos_entrega").insert([dados]);
     }
 
     if (resposta.error) {
@@ -73,7 +78,7 @@ form.addEventListener("submit", async (e) => {
       return;
     }
 
-    alert("Salvo com sucesso!");
+    alert(resposta.offline ? "Salvo offline. Use Sincronizar quando tiver internet." : "Salvo com sucesso!");
 
     limparFormulario();
 

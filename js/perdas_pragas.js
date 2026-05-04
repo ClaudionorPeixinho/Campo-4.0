@@ -16,6 +16,7 @@ class CalculadoraPerdasPragas {
         this.inicializarEventos();
         this.restaurarDados();
         this.carregarRegistrosSalvos();
+        window.addEventListener('online', () => this.syncRegistrosLocais());
     }
 
     getSupabaseClient() {
@@ -765,6 +766,63 @@ class CalculadoraPerdasPragas {
         }
     }
 
+    async salvarNoSupabase(reg) {
+        if (!this.supabase) throw new Error('Supabase indisponivel');
+
+        const registroPerda = {
+            tipo_perda: reg.tipoPerda,
+            estagio_cultura: reg.estagioCultura || null,
+            area_afetada: reg.areaAfetada,
+            area_unit: reg.areaUnit,
+            severidade: reg.severidade || null,
+            perda_estimada: reg.perdaEstimada || null,
+            condicoes_climaticas: reg.condicoesClimaticas || null,
+            data_constatacao: reg.dataConstatacao || null,
+            observacoes: reg.observacoes || null,
+            perda_tch: parseFloat(reg.perdaTCH),
+            tch_final: parseFloat(reg.tchFinal),
+            perda_total_toneladas: parseFloat(reg.perdaTotalToneladas),
+            custo_perda_estimado: parseFloat(reg.custoPerdaEstimado),
+            nivel_risco: reg.nivelRisco,
+            acao_recomendada: reg.acaoRecomendada,
+            responsavel_registro: reg.responsavelTecnico || null,
+        };
+
+        const { data: perdaInserida, error: erroPerda } = await this.supabase
+            .from('registros_perdas')
+            .insert([registroPerda])
+            .select()
+            .single();
+
+        if (erroPerda) throw erroPerda;
+
+        if (reg.praga) {
+            const monitoramentoPraga = {
+                praga: reg.praga,
+                nome_cientifico: reg.nomeCientifico || null,
+                estagio_praga: reg.estagioPraga || null,
+                nivel_infestacao: reg.nivelInfestacao || null,
+                metodo_amostragem: reg.metodoAmostragem || null,
+                populacao_estimada: reg.populacaoEstimada || null,
+                populacao_unit: reg.populacaoUnit || null,
+                nivel_dano_economico: reg.nivelDano || null,
+                tipo_controle: reg.tipoControle || null,
+                produto_controle: reg.produtoControle === 'outro' ? (reg.outroProduto || null) : (reg.produtoControle || null),
+                outro_produto: reg.produtoControle === 'outro' ? (reg.outroProduto || null) : null,
+                data_amostragem: reg.dataAmostragem || null,
+                observacoes: reg.observacoesPraga || null,
+                responsavel_tecnico: reg.responsavelTecnico || null,
+                registro_perda_id: perdaInserida.id,
+            };
+
+            const { error: erroPraga } = await this.supabase
+                .from('monitoramento_pragas')
+                .insert([monitoramentoPraga]);
+
+            if (erroPraga) throw erroPraga;
+        }
+    }
+
     limpar() {
         document.getElementById('tipoPerda').value = '';
         document.getElementById('estagioCultura').value = '';
@@ -797,6 +855,7 @@ class CalculadoraPerdasPragas {
 let calculadora;
 document.addEventListener('DOMContentLoaded', () => {
     calculadora = new CalculadoraPerdasPragas();
+    window.calculadora = calculadora;
 });
 
 function registrar() {

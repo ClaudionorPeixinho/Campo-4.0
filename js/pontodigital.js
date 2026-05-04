@@ -35,12 +35,15 @@ async function salvar(event) {
     informacao: document.getElementById("informacao").value,
   };
 
-  const { error } = await supabaseClient.from("ponto_digital").insert([dados]);
+  const resposta = window.CampoOfflineSync
+    ? await window.CampoOfflineSync.saveInsert("ponto_digital", dados)
+    : await supabaseClient.from("ponto_digital").insert([dados]);
+  const { error } = resposta;
 
   if (error) {
     alert("Erro: " + error.message);
   } else {
-    alert("Salvo com sucesso!");
+    alert(resposta.offline ? "Salvo offline. Use Sincronizar quando tiver internet." : "Salvo com sucesso!");
     form.reset();
     if (!tabelaCard.classList.contains("hidden")) {
       carregar();

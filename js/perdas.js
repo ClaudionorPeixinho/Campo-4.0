@@ -1,6 +1,8 @@
-import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm'
-
-const supabase = createClient("https://szzfqkhibuejhodhkvjj.supabase.co", "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_")
+const supabase = window.supabaseClient || window.supabase.createClient(
+    "https://szzfqkhibuejhodhkvjj.supabase.co",
+    "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_"
+);
+window.supabaseClient = supabase;
 
 let registrosGlobais = [];
 
@@ -155,10 +157,10 @@ window.salvar = async () => {
         // Calcular total
         dados.total = calcTotal(dados);
 
-        // Salvar no Supabase
-        const {data: resultado, error} = await supabase
-            .from('perdas_cana')
-            .insert([dados]);
+        // Salvar no Supabase ou na fila offline.
+        const {data: resultado, error, offline} = window.CampoOfflineSync
+            ? await window.CampoOfflineSync.saveInsert('perdas_cana', dados)
+            : await supabase.from('perdas_cana').insert([dados]);
 
         if(error) {
             if(error.code === '42P01') {

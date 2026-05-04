@@ -153,9 +153,20 @@ categoria: document.getElementById("categoria").value
 
 const operacao = editandoId
 ? supabase.from("equipamentos").update(dados).eq("id", editandoId)
-: supabase.from("equipamentos").insert([dados]);
+: null;
 
-const { error } = await operacao;
+if (editandoId && !navigator.onLine) {
+alert("Edicoes exigem internet. O registro original ainda esta no Supabase.");
+return;
+}
+
+const resposta = editandoId
+? await operacao
+: window.CampoOfflineSync
+? await window.CampoOfflineSync.saveInsert("equipamentos", dados)
+: await supabase.from("equipamentos").insert([dados]);
+
+const { error } = resposta;
 
 if (error) {
 console.error("Erro ao salvar equipamento:", error);
@@ -165,6 +176,7 @@ return;
 
 limparFormulario();
 voltarFormulario();
+if (resposta.offline) alert("Salvo offline. Use Sincronizar quando tiver internet.");
 }
 
 form.addEventListener("submit", salvar);

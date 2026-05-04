@@ -13,6 +13,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="js/supabase.js"></script>
+<script src="js/offline-sync.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.min.js"></script>
 <script>
     // Garantir que ApexCharts esteja disponível globalmente
@@ -850,7 +851,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function getOfflineQueue() {
-        const queueString = localStorage.getItem('offlineQueue');
+        const queueString = localStorage.getItem('campo40OfflineQueue');
         if (!queueString) return [];
         try {
             return JSON.parse(queueString);
@@ -861,7 +862,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     function setOfflineQueue(queue) {
-        localStorage.setItem('offlineQueue', JSON.stringify(queue));
+        localStorage.setItem('campo40OfflineQueue', JSON.stringify(queue));
     }
 
     function enqueueOfflineInsert(table, record) {
@@ -872,6 +873,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
 
     async function processOfflineQueue() {
+        if (window.CampoOfflineSync) return window.CampoOfflineSync.sync();
         if (!isOnline()) return;
         const queue = getOfflineQueue();
         if (!queue.length) return;
@@ -899,6 +901,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     window.processOfflineQueue = processOfflineQueue;
 
     window.saveRecord = async (table, record) => {
+        if (window.CampoOfflineSync) return window.CampoOfflineSync.saveInsert(table, record);
         if (isOnline()) {
             const { error } = await supabaseClient.from(table).insert([record]);
             if (error) {
@@ -914,7 +917,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     window.addEventListener('online', async () => {
         showNotification('Conexão restabelecida. Sincronizando dados em backlog...', 'success');
-        await processOfflineQueue();
         await loadDashboardData();
     });
 
@@ -930,20 +932,26 @@ document.addEventListener("DOMContentLoaded", async () => {
             // Buscar dados diretamente das tabelas
             const results = await Promise.allSettled([
                 supabaseClient.from("apontamentos_entrega").select("*").limit(100),
+                supabaseClient.from("ponto_digital").select("*").limit(100),
                 supabaseClient.from("abastecimentos").select("*").limit(100),
                 supabaseClient.from("colaboradores").select("*").limit(50),
                 supabaseClient.from("equipamentos").select("*").limit(50)
             ]);
 
-            const [apontRes, abastRes, colabRes, equipRes] = results;
+            const [apontRes, pontoRes, abastRes, colabRes, equipRes] = results;
 
             let apontamentos = [];
+            let pontosDigitais = [];
             let abastecimentos = [];
             let colaboradores = [];
             let equipamentos = [];
 
             if (apontRes.status === 'fulfilled' && apontRes.value.data) {
                 apontamentos = apontRes.value.data;
+            }
+
+            if (pontoRes.status === 'fulfilled' && pontoRes.value.data) {
+                pontosDigitais = pontoRes.value.data;
             }
 
             if (abastRes.status === 'fulfilled' && abastRes.value.data) {
@@ -960,6 +968,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
             console.log('=== DEBUG DADOS ===');
             console.log('Apontamentos:', apontamentos.length);
+            console.log('Ponto Digital:', pontosDigitais.length);
             console.log('Abastecimentos:', abastecimentos.length);
             console.log('Primeiro apontamento:', JSON.stringify(apontamentos[0], null, 2));
             console.log('Primeiro abastecimento:', JSON.stringify(abastecimentos[0], null, 2));
@@ -996,9 +1005,11 @@ document.addEventListener("DOMContentLoaded", async () => {
             }, 0);
 
             // Contar registros únicos
-            const totalKm = apontamentos.length; // Usando contagem como indicador
+            const totalKm = pontosDigitais.reduce((s, p) => {
+                return s + (getNumber(getVal(p, ['kmf', 'km_final'])) - getNumber(getVal(p, ['kmi', 'km_inicial'])));
+            }, 0);
 
-            console.log('Totais calculados:', { km: totalKm, peso: totalPeso, horas: totalHoras, litros: totalLitros });
+            console.log('Totais calculados:', { km: totalKm, peso: totalPeso, horas: totalHoras, litros: totalLitros, pontoDigital: pontosDigitais.length });
 
 // Renderizar linha de tabela com campos corretos
             const renderRow = (a) => {
@@ -1057,9 +1068,9 @@ document.addEventListener("DOMContentLoaded", async () => {
                         <div class="stat-label">Apontamentos</div>
                     </div>
                     <div class="stat-card" style="border-left: 4px solid #2196f3;">
-                        <div class="stat-icon"><i class="bi bi-signpost-2"></i></div>
-                        <div class="stat-value">${numFormat(totalKm)}</div>
-                        <div class="stat-label">Apontamentos</div>
+                        <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                        <div class="stat-value">${pontosDigitais.length}</div>
+                        <div class="stat-label">Ponto Digital</div>
                     </div>
                     <div class="stat-card" style="border-left: 4px solid #ff9800;">
                         <div class="stat-icon"><i class="bi bi-speedometer2"></i></div>

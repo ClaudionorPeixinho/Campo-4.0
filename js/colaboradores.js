@@ -158,9 +158,20 @@ observacao: observacao.value
 
 const query = editId
 ? supabaseClient.from("colaboradores").update(dados).eq("id", editId)
-: supabaseClient.from("colaboradores").insert([dados]);
+: null;
 
-const { error } = await query;
+if (editId && !navigator.onLine) {
+alert("Edicoes exigem internet. O registro original ainda esta no Supabase.");
+return;
+}
+
+const resposta = editId
+? await query
+: window.CampoOfflineSync
+? await window.CampoOfflineSync.saveInsert("colaboradores", dados)
+: await supabaseClient.from("colaboradores").insert([dados]);
+
+const { error } = resposta;
 
 if (error) {
 console.error("Erro ao salvar colaborador:", error);
@@ -170,6 +181,7 @@ return;
 
 limparFormulario();
 voltarFormulario();
+if (resposta.offline) alert("Salvo offline. Use Sincronizar quando tiver internet.");
 }
 
 form.addEventListener("submit", salvarColaborador);

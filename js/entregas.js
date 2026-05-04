@@ -1,7 +1,8 @@
 // Configuração do Supabase
-const SUPABASE_URL = 'SUA_URL_DO_SUPABASE';
-const SUPABASE_KEY = 'SUA_CHAVE_ANON_DO_SUPABASE';
-const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const SUPABASE_URL = 'https://szzfqkhibuejhodhkvjj.supabase.co';
+const SUPABASE_KEY = 'sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_';
+const supabaseClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+window.supabaseClient = supabaseClient;
 
 // Elementos do DOM
 const deliveryForm = document.getElementById('deliveryForm');
@@ -80,7 +81,7 @@ async function carregarEntregas() {
     try {
         tableBody.innerHTML = '<tr><td colspan="16" class="loading"><i class="fas fa-spinner"></i> Carregando...</td></tr>';
         
-        let query = supabase
+        let query = supabaseClient
             .from('entregas')
             .select('*');
         
@@ -187,15 +188,16 @@ async function salvarEntrega(e) {
     };
     
     try {
-        const { error } = await supabase
-            .from('entregas')
-            .insert([formData]);
+        const resposta = window.CampoOfflineSync
+            ? await window.CampoOfflineSync.saveInsert('entregas', formData)
+            : await supabaseClient.from('entregas').insert([formData]);
+        const { error } = resposta;
         
         if (error) throw error;
         
         deliveryForm.reset();
         pesoTara.value = '';
-        carregarEntregas();
+        if (!resposta.offline) carregarEntregas();
         alert('Lançamento salvo com sucesso!');
     } catch (error) {
         console.error('Erro ao salvar:', error);
@@ -206,7 +208,7 @@ async function salvarEntrega(e) {
 // Editar entrega
 async function editarEntrega(id) {
     try {
-        const { data, error } = await supabase
+        const { data, error } = await supabaseClient
             .from('entregas')
             .select('*')
             .eq('id', id)
@@ -257,7 +259,7 @@ async function atualizarEntrega(e) {
     };
     
     try {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('entregas')
             .update(formData)
             .eq('id', id);
@@ -278,7 +280,7 @@ async function excluirEntrega(id) {
     if (!confirm('Tem certeza que deseja excluir este lançamento?')) return;
     
     try {
-        const { error } = await supabase
+        const { error } = await supabaseClient
             .from('entregas')
             .delete()
             .eq('id', id);

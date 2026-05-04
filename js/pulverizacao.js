@@ -141,16 +141,18 @@ class CalculadoraPulverizacao {
                 custo_projecao: parseFloat(resultado.custoProjecao)
             };
 
-            const { data: inserido, error } = await this.supabase
-                .from('pulverizacoes_herbicidas')
-                .insert([registro])
-                .select()
-                .single();
+            const { data: inserido, error, offline } = window.CampoOfflineSync
+                ? await window.CampoOfflineSync.saveInsert('pulverizacoes_herbicidas', registro, { select: true, single: true })
+                : await this.supabase
+                    .from('pulverizacoes_herbicidas')
+                    .insert([registro])
+                    .select()
+                    .single();
 
             if (error) throw error;
 
-            this.carregarRegistrosSalvos();
-            showNotification('Registro salvo com sucesso no banco de dados!', 'success');
+            if (!offline) this.carregarRegistrosSalvos();
+            showNotification(offline ? 'Registro salvo offline. Sincronize quando tiver internet.' : 'Registro salvo com sucesso no banco de dados!', 'success');
         } catch (error) {
             console.error('Erro ao salvar no banco:', error);
             let mensagem = error.message || 'Erro desconhecido';
@@ -517,6 +519,7 @@ class CalculadoraPulverizacao {
 let calculadora;
 document.addEventListener('DOMContentLoaded', () => {
     calculadora = new CalculadoraPulverizacao();
+    window.calculadora = calculadora;
 });
 
 function calcular() {
