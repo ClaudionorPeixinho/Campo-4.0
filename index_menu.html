@@ -220,11 +220,11 @@ body.dark {
     margin-left: auto;
     font-size: 0.85rem;
     transition: transform 0.3s ease;
-    transform: rotate(0deg);
+    transform: rotate(0deg) !important;
 }
 
 .menu-group.expanded .menu-toggle-icon {
-    transform: rotate(90deg);
+    transform: rotate(90deg) !important;
 }
 
 /* Submenu Items */
@@ -899,10 +899,11 @@ document.addEventListener("DOMContentLoaded", async () => {
     const pageTitle = document.getElementById("pageTitle");
     const sidebarBackdrop = document.getElementById("sidebarBackdrop");
 
+
+
     // Controle dos grupos de menu (todos iniciam fechados)
     menuGroups.forEach(group => {
         const icon = group.querySelector(".menu-toggle-icon");
-        // Estado inicial: setar rotação 0
         if (icon) icon.style.transform = "rotate(0deg)";
         
         group.addEventListener("click", (e) => {
@@ -910,18 +911,18 @@ document.addEventListener("DOMContentLoaded", async () => {
             const submenu = group.nextElementSibling;
             if (!submenu || !submenu.classList.contains("menu-subitems")) return;
             
-            const isCurrentlyExpanded = submenu.classList.contains("expanded");
+            const isOpen = submenu.classList.contains("expanded");
             
-            if (!isCurrentlyExpanded) {
+            if (!isOpen) {
                 // FECHAR todos os outros grupos primeiro
-                menuGroups.forEach(otherGroup => {
-                    if (otherGroup !== group) {
-                        const otherSubmenu = otherGroup.nextElementSibling;
-                        if (otherSubmenu && otherSubmenu.classList.contains("menu-subitems")) {
-                            otherSubmenu.classList.remove("expanded");
-                            otherGroup.classList.remove("expanded");
-                            const otherIcon = otherGroup.querySelector(".menu-toggle-icon");
-                            if (otherIcon) otherIcon.style.transform = "rotate(0deg)";
+                menuGroups.forEach(other => {
+                    if (other !== group) {
+                        const otherSub = other.nextElementSibling;
+                        if (otherSub && otherSub.classList.contains("menu-subitems")) {
+                            otherSub.classList.remove("expanded");
+                            other.classList.remove("expanded");
+                            const otherIc = other.querySelector(".menu-toggle-icon");
+                            if (otherIc) otherIc.style.transform = "rotate(0deg)";
                         }
                     }
                 });
@@ -937,8 +938,7 @@ document.addEventListener("DOMContentLoaded", async () => {
                 if (icon) icon.style.transform = "rotate(0deg)";
             }
         });
-    });
-    function setFloatingBackVisible(visible) {
+    });    function setFloatingBackVisible(visible) {
         const backButton = document.getElementById("campoBackButton");
         if (backButton) {
             backButton.style.display = visible ? "" : "none";
@@ -1677,6 +1677,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
+
+
 
 
 
