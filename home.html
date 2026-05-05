@@ -3,42 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Importância da Tecnologia no Campo</title>
+    <title>Home | Campo 4.0</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#198754">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-title" content="Campo 4.0">
-    <link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
     <link rel="stylesheet" href="css/app-base.css">
     <link rel="stylesheet" href="css/style_home.css">
     <style>
-        html,
-        body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        :root {
+            --green-dark: #145A32;
+            --green-main: #198754;
+            --green-light: #d4edda;
         }
-
+        
+        * { margin:0; padding:0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f4f6f9;
+            color: #333;
+            min-height: 100vh;
+        }
+        
+        body.spa-mode header,
+        body.spa-mode .floating-back-btn,
+        body.spa-mode .nav-wrapper,
+        body.spa-mode nav,
+        body.spa-mode .off-line-banner { display: none !important; }
+        
+        body.spa-mode main { margin:0; padding:0; }
+        
         header {
-            background-color: #198754;
+            background: linear-gradient(135deg, var(--green-dark), var(--green-main));
             color: white;
             text-align: center;
-            padding: 1rem 0.75rem;
+            padding: 1.5rem 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
         }
-
-        h1 {
-            margin: 0.5rem 0 0.75rem;
-            font-size: clamp(1.6rem, 3vw, 2rem);
+        
+        header h1 {
+            margin:0 0 0.5rem;
+            font-size: clamp(1.8rem, 3vw, 2.2rem);
+            font-weight: 800;
         }
-
+        
+        header p { opacity: 0.9; font-size: 0.95rem; margin:0; }
+        
         nav {
-            background-color: #145A32;
-            padding: 0.45rem 0.75rem;
+            background: rgba(0,0,0,0.1);
+            padding: 0.75rem;
         }
-
+        
         .nav-wrapper {
             display: flex;
             align-items: center;
@@ -46,358 +60,169 @@
             gap: 0.75rem;
             flex-wrap: wrap;
         }
-
+        
         .nav-label {
             color: white;
+            font-weight: 600;
             font-size: 0.95rem;
-            white-space: nowrap;
         }
-
+        
         .nav-select {
-            min-width: 220px;
+            min-width: 250px;
             max-width: 100%;
-            padding: 0.55rem 0.75rem;
+            padding: 0.6rem 1rem;
             border: none;
             border-radius: 999px;
             font-size: 0.95rem;
             background: white;
-            color: #145A32;
+            color: var(--green-dark);
+            cursor: pointer;
         }
-
-        .nav-select:focus {
-            outline: 2px solid rgba(255, 255, 255, 0.9);
-            outline-offset: 2px;
-        }
-
-        .menu {
-            display: none;
-        }
-
+        
+        .nav-select:focus { outline: 2px solid rgba(255,255,255,0.5); }
+        
         main {
-            height: calc(100vh - 10rem);
-            padding: 0.75rem;
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 0 1rem;
             display: grid;
-            gap: 0.75rem;
-            align-content: stretch;
-            box-sizing: border-box;
+            gap: 1.25rem;
         }
-
+        
         .content {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 1rem;
-            margin: 0;
-            background: rgba(255, 255, 255, 0.98);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            background: white;
             border-radius: 16px;
-            min-height: 0;
-            flex: 1 1 auto;
+            padding: 1.5rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+            align-items: center;
         }
-
-        .content .image,
-        .content .text {
-            flex: 1 1 50%;
-            min-height: 0;
-        }
-
+        
         .content .image img {
             width: 100%;
-            max-height: 220px;
+            max-height: 280px;
             object-fit: cover;
             border-radius: 12px;
-            display: block;
         }
-
-        .text {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            min-height: 0;
-        }
-
+        
         .text h2 {
-            font-size: clamp(1.2rem, 2.2vw, 1.4rem);
+            color: var(--green-dark);
+            font-size: clamp(1.3rem, 2.5vw, 1.6rem);
             margin-bottom: 0.75rem;
         }
-
+        
         .text p {
-            font-size: clamp(0.9rem, 1.2vw, 1rem);
-            line-height: 1.35;
-            margin: 0;
+            line-height: 1.6;
+            color: #555;
+            font-size: 0.95rem;
         }
-
-        @media (max-width: 920px) {
-            main {
-                height: calc(100vh - 11rem);
-            }
-
-            .content {
-                flex-direction: column;
-                justify-content: center;
-                padding: 0.85rem;
-            }
-
-            .content .image img {
-                max-height: 180px;
-            }
-
-            .text h2,
-            .text p {
-                text-align: center;
-            }
-        }
-
-        @media (max-height: 720px) {
-            main {
-                height: calc(100vh - 8.5rem);
-            }
-
-            .content {
-                gap: 0.5rem;
-                padding: 0.75rem;
-            }
-
-            .content .image img {
-                max-height: 150px;
-            }
-
-            .text h2 {
-                font-size: 1.1rem;
-            }
-
-            .text p {
-                font-size: 0.88rem;
-            }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
+        
         .iframe-container {
-            position: absolute;
+            position: fixed;
             inset: 0;
-            padding: 0;
-            box-sizing: border-box;
-            background-color: #0f3c1f;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
             display: none;
+            padding: 0;
         }
-
+        
+        .iframe-container.visible { display: block; }
+        
         .iframe-wrapper {
-            position: absolute;
-            inset: 0;
-            overflow: hidden;
-            border-radius: 0;
-            box-shadow: none;
-            background: linear-gradient(180deg, rgba(15, 76, 31, 0.95), rgba(0, 0, 0, 0.5)), url('Img/agro-5-0-990x550.jpg') center/cover no-repeat;
+            width: 100%;
+            height: 100%;
             border: none;
         }
-
+        
         .iframe-wrapper iframe {
             width: 100%;
             height: 100%;
-            border: 0;
-            display: block;
+            border: none;
         }
-
-        .iframe-notice,
-        .internal-page {
-            position: absolute;
-            inset: 0;
+        
+        .close-iframe-btn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 10000;
+            background: var(--green-main);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 48px;
+            height: 48px;
+            cursor: pointer;
+            font-size: 1.2rem;
             display: none;
-            flex-direction: column;
-            justify-content: center;
             align-items: center;
-            text-align: center;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.96);
-            color: #333;
-            z-index: 2;
-            border-radius: 0;
-            overflow-y: auto;
+            justify-content: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
-
-        .iframe-notice p,
-        .internal-page p {
-            margin: 0;
-            line-height: 1.6;
-            max-width: 36rem;
-        }
-
-        .iframe-notice button,
-        .internal-page button {
-            padding: 0.75rem 1.1rem;
-            border: none;
-            border-radius: 999px;
-            background-color: #198754;
-            color: #fff;
-            cursor: pointer;
-            font-size: 0.95rem;
-            margin-top: 1rem;
-        }
-
-        .iframe-notice button:hover,
-        .internal-page button:hover {
-            background-color: #145A32;
-        }
-
-        .internal-page {
-            display: none;
-            overflow-y: auto;
-            gap: 1.25rem;
-            align-items: stretch;
-            justify-content: flex-start;
-        }
-
-        .internal-content {
-            width: min(100%, 1080px);
-            max-width: 1080px;
-            background: rgba(255, 255, 255, 0.96);
-            border-radius: 18px;
-            padding: 2rem;
-            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.15);
-            text-align: left;
-            margin: 0 auto;
-        }
-
-        .internal-content .page-label {
-            display: inline-block;
-            margin-bottom: 1rem;
-            color: #198754;
-            font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-        }
-
-        .internal-content h2 {
-            margin-top: 0;
-            font-size: clamp(1.8rem, 2.7vw, 2.6rem);
-            color: #111;
-        }
-
-        .internal-content p {
-            color: #4d4d4d;
-            font-size: clamp(0.97rem, 1.1vw, 1.05rem);
-        }
-
-        .internal-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .internal-card {
-            padding: 1.25rem;
-            border-radius: 16px;
-            background: #f7fdf6;
-            border: 1px solid rgba(25, 135, 84, 0.12);
-            text-align: left;
-        }
-
-        .internal-card h3 {
-            margin-top: 0;
-            font-size: 1.15rem;
-            color: #145A32;
-        }
-
-        .internal-card p {
-            margin: 0.75rem 0 0;
-            line-height: 1.55;
-        }
-
-        .link-buttons {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.9rem;
-            margin-top: 1.5rem;
-        }
-
-        .external-link-btn {
-            width: 100%;
-            padding: 0.95rem 1rem;
-            border: none;
-            border-radius: 999px;
-            background-color: #145A32;
-            color: #fff;
-            font-size: 0.95rem;
-            cursor: pointer;
-            transition: background-color 0.2s ease, transform 0.2s ease;
-            text-align: center;
-        }
-
-        .external-link-btn:hover {
-            background-color: #0f5729;
-            transform: translateY(-1px);
-        }
-
-        .internal-page.visible,
-        .iframe-notice.visible {
-            display: flex;
-        }
-
-        .floating-home-btn,
+        
+        .close-iframe-btn.visible { display: flex; }
+        
         .floating-back-btn {
             position: fixed;
-            right: 1rem;
             bottom: 1rem;
+            right: 1rem;
             z-index: 999;
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 0.85rem 1rem;
-            background-color: #198754;
-            color: #fff;
+            gap: 0.5rem;
+            padding: 0.85rem 1.2rem;
+            background: var(--green-main);
+            color: white;
             text-decoration: none;
             border-radius: 999px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.18);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
             font-size: 0.95rem;
-            transition: background-color 0.2s ease;
+            transition: all 0.2s;
         }
-
-        .floating-back-btn {
-            bottom: 5.5rem;
-            background-color: #0d6f3f;
-        }
-
-        .floating-home-btn:hover,
-        .floating-back-btn:hover {
-            background-color: #145A32;
-        }
-
+        
+        .floating-back-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+        
         .offline-banner {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
+            background: #d63333;
+            color: white;
+            padding: 0.75rem;
+            text-align: center;
+            font-weight: 600;
+            z-index: 9999;
+            transform: translateY(-100%);
+            transition: transform 0.3s;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 0.75rem;
-            padding: 0.85rem 1rem;
-            background: #d63333;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-            z-index: 9999;
-            transform: translateY(-100%);
-            transition: transform 0.3s ease;
         }
-
-        .offline-banner.visible {
-            transform: translateY(0);
-        }
-
+        
+        .offline-banner.visible { transform: translateY(0); }
+        
         .offline-banner button {
-            border: none;
             background: rgba(255,255,255,0.2);
+            border: none;
             color: white;
-            padding: 0.55rem 0.85rem;
+            padding: 0.4rem 0.8rem;
             border-radius: 999px;
             cursor: pointer;
+            font-size: 0.85rem;
+        }
+        
+        @media (max-width: 768px) {
+            .content { grid-template-columns: 1fr; }
+            .content .image img { max-height: 200px; }
+            .nav-select { min-width: 200px; }
+        }
+        
+        @media (max-width: 480px) {
+            header { padding: 1rem 0.75rem; }
+            .content { padding: 1rem; }
         }
     </style>
 </head>
@@ -406,6 +231,7 @@
         Você está offline. Alguns recursos podem não funcionar.
         <button type="button" id="retryConnection">Tentar novamente</button>
     </div>
+    
     <header>
         <nav>
             <div class="nav-wrapper">
@@ -417,12 +243,13 @@
                     <option value="https://globorural.globo.com/opiniao/vozes-do-agro/noticia/2024/01/o-agro-e-a-tecnologia-do-campo-ao-token.ghtml">Globo Rural</option>
                     <option value="https://rehagro.com.br/blog/agricultura-4-0/">Importância da Tecnologia</option>
                     <option value="https://www.agronoticias.com">Agro Notícias</option>
-                    <option value="index_menu.html">Sair</option>
                 </select>
             </div>
         </nav>
         <h1>Tecnologia no Campo</h1>
+        <p>Conheça as inovações que estão transformando o agronegócio</p>
     </header>
+    
     <main id="mainContent">
         <section class="content" id="importancia">
             <div class="image">
@@ -433,6 +260,7 @@
                 <p>A integração da tecnologia no campo agrícola tem se mostrado essencial para alcançar maior eficiência, produtividade e sustentabilidade. Tecnologias como a Internet das Coisas (IoT), inteligência artificial e análise de dados estão revolucionando a maneira como as atividades agrícolas são conduzidas, proporcionando uma gestão mais precisa e informada.</p>
             </div>
         </section>
+        
         <section class="content" id="evolucao">
             <div class="image">
                 <img src="Img/todas-tecnologias.png" alt="Evolução do agro">
@@ -443,128 +271,51 @@
             </div>
         </section>
     </main>
-
-    <section class="iframe-container" id="iframeView">
+    
+    <div class="iframe-container" id="iframeView">
         <div class="iframe-wrapper">
-            <div class="internal-page" id="internalPage">
-                <div class="internal-content">
-                    <span class="page-label">Agro Tech</span>
-                    <h2>Inovações e oportunidades no Agro</h2>
-                    <p>Ao selecionar um link externo, você acessa aqui o conteúdo direto no aplicativo. O agronegócio já vive a fase de agricultura de precisão, drones, análise de dados e cursos modernos que preparam profissionais para o mercado atual.</p>
-                    <div class="internal-cards">
-                        <div class="internal-card">
-                            <h3>Drones no campo</h3>
-                            <p>Drones com sensores avançados ajudam a monitorar culturas, detectar pragas e otimizar aplicações de insumos, entregando eficiência e sustentabilidade.</p>
-                        </div>
-                        <div class="internal-card">
-                            <h3>Novas tecnologias</h3>
-                            <p>Soluções como IoT, sistemas de gestão agrícola e análise preditiva transformam propriedades em operações mais inteligentes e conectadas.</p>
-                        </div>
-                        <div class="internal-card">
-                            <h3>Cursos e qualificação</h3>
-                            <p>Capacitação em agro 4.0, gestão digital e sustentabilidade está em alta. O mercado busca pessoas que entendem tecnologia, dados e práticas agrícolas modernas.</p>
-                        </div>
-                    </div>
-                    <p>Escolha um dos links abaixo para abrir no navegador ou use o botão Voltar para retornar à página principal.</p>
-                    <div class="link-buttons">
-                        <button type="button" class="external-link-btn" data-url="https://blog.aegro.com.br/agricultura-4-0/">Tecnologia 4.0</button>
-                        <button type="button" class="external-link-btn" data-url="https://ead.senar.org.br/">Site Senar</button>
-                        <button type="button" class="external-link-btn" data-url="https://globorural.globo.com/opiniao/vozes-do-agro/noticia/2024/01/o-agro-e-a-tecnologia-do-campo-ao-token.ghtml">Globo Rural</button>
-                        <button type="button" class="external-link-btn" data-url="https://rehagro.com.br/blog/agricultura-4-0/">Importância da Tecnologia</button>
-                        <button type="button" class="external-link-btn" data-url="https://www.agronoticias.com">Agro Notícias</button>
-                    </div>
-                </div>
-            </div>
+            <iframe id="externalFrame" src="" frameborder="0"></iframe>
         </div>
-    </section>
-
-    <a class="floating-home-btn hidden" id="homeButton" href="javascript:void(0)" onclick="closeIFrame()">Página principal</a>
-    <a class="floating-back-btn" href="index_menu.html" onclick="returnToApp(event)">Voltar ao App</a>
+    </div>
+    
+    <button class="close-iframe-btn" id="closeIframeBtn" onclick="closeIFrame()">
+        <i class="bi bi-x-lg"></i>
+    </button>
+    
     <script>
-        let currentUrl = '';
-
-        function showInternalPage(url) {
-            const internalPage = document.getElementById('internalPage');
-            if (!internalPage) return;
-            currentUrl = url;
-            internalPage.classList.add('visible');
+        // Detectar SPA Mode
+        const isSPAMode = new URLSearchParams(window.location.search).get('spa') === 'true';
+        if(isSPAMode) {
+            document.body.classList.add('spa-mode');
         }
-
-        function hideInternalPage() {
-            const internalPage = document.getElementById('internalPage');
-            if (!internalPage) return;
-            internalPage.classList.remove('visible');
-        }
-
-        function openExternalLink(url) {
-            if (!url) return;
-            window.open(url, '_blank');
-        }
-
+        
         function navigateToLink(select) {
             const url = select.value;
             if (!url) return;
-
-            const iframeView = document.getElementById('iframeView');
-            const mainContent = document.getElementById('mainContent');
-            const homeButton = document.getElementById('homeButton');
-
+            
             if (url.startsWith('http')) {
-                currentUrl = url;
-                iframeView.style.display = 'block';
-                mainContent.classList.add('hidden');
-                homeButton.classList.remove('hidden');
-                showInternalPage(url);
-            } else {
-                navigateToPage(url);
+                const iframeView = document.getElementById('iframeView');
+                const closeBtn = document.getElementById('closeIframeBtn');
+                const frame = document.getElementById('externalFrame');
+                
+                frame.src = url;
+                iframeView.classList.add('visible');
+                closeBtn.classList.add('visible');
             }
-
+            
             select.selectedIndex = 0;
         }
-
-        function navigateToLink(selectElement) {
-            const url = selectElement.value;
-            if (!url) return;
-
-            const iframeView = document.getElementById('iframeView');
-            const mainContent = document.getElementById('mainContent');
-            const homeButton = document.getElementById('homeButton');
-
-            if (url.startsWith('http')) {
-                currentUrl = url;
-                iframeView.style.display = 'block';
-                mainContent.classList.add('hidden');
-                homeButton.classList.remove('hidden');
-                showInternalPage(url);
-            } else if (url === 'index_menu.html') {
-                window.location.href = url;
-            }
-
-            selectElement.selectedIndex = 0;
-        }
-
-        document.querySelectorAll('.external-link-btn').forEach(button => {
-            button.addEventListener('click', () => openExternalLink(button.dataset.url));
-        });
-
+        
         function closeIFrame() {
             const iframeView = document.getElementById('iframeView');
-            const mainContent = document.getElementById('mainContent');
-            const homeButton = document.getElementById('homeButton');
-
-            iframeView.style.display = 'none';
-            mainContent.classList.remove('hidden');
-            homeButton.classList.add('hidden');
-            hideInternalPage();
+            const closeBtn = document.getElementById('closeIframeBtn');
+            const frame = document.getElementById('externalFrame');
+            
+            iframeView.classList.remove('visible');
+            closeBtn.classList.remove('visible');
+            frame.src = '';
         }
-
-        function returnToApp(event) {
-            if (event) {
-                event.preventDefault();
-            }
-            window.location.href = 'index_menu.html';
-        }
-
+        
         function updateOfflineBanner() {
             const banner = document.getElementById('offlineBanner');
             if (!banner) return;
@@ -574,23 +325,21 @@
                 banner.classList.add('visible');
             }
         }
-
+        
         window.addEventListener('online', updateOfflineBanner);
         window.addEventListener('offline', updateOfflineBanner);
-
+        
         document.addEventListener('DOMContentLoaded', () => {
-            const retryButton = document.getElementById('retryConnection');
-            if (retryButton) {
-                retryButton.addEventListener('click', () => {
+            const retryBtn = document.getElementById('retryConnection');
+            if (retryBtn) {
+                retryBtn.addEventListener('click', () => {
                     updateOfflineBanner();
-                    if (navigator.onLine) {
-                        window.location.reload();
-                    }
+                    if (navigator.onLine) window.location.reload();
                 });
             }
             updateOfflineBanner();
         });
-
+        
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./service-worker.js', { scope: './' })

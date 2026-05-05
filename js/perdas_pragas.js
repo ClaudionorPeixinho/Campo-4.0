@@ -47,11 +47,27 @@ class CalculadoraPerdasPragas {
             });
         });
 
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter' && !document.getElementById('modalPragas').classList.contains('show')) {
-                this.registrar();
-            }
-        });
+        document.addEventListener('keydown', (e) => this.avancarCampoComEnter(e));
+    }
+
+    avancarCampoComEnter(e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        const atual = document.activeElement;
+        if (!atual || !atual.matches('input, select, textarea')) return;
+        if (atual.type === 'button' || atual.type === 'submit' || atual.readOnly) return;
+
+        e.preventDefault();
+        const escopo = document.getElementById('modalPragas').classList.contains('show')
+            ? document.getElementById('modalPragas')
+            : document;
+        const campos = [...escopo.querySelectorAll('input, select, textarea')]
+            .filter(campo => !campo.disabled && !campo.readOnly && campo.offsetParent !== null);
+        const index = campos.indexOf(atual);
+
+        if (index >= 0 && index < campos.length - 1) {
+            campos[index + 1].focus();
+            if (typeof campos[index + 1].select === 'function') campos[index + 1].select();
+        }
     }
 
     salvarDados() {
@@ -242,6 +258,7 @@ class CalculadoraPerdasPragas {
             this.adicionarAoHistorico(dados, resultado);
             this.carregarRegistrosSalvos();
             showNotification('Registro salvo com sucesso no banco de dados!', 'success');
+            this.limpar({ manterResultados: true });
         } catch (error) {
             console.error('=== ERRO AO SALVAR ===');
             console.error('Mensagem:', error.message);
@@ -249,6 +266,7 @@ class CalculadoraPerdasPragas {
             this.exibirResultados(resultado);
             this.adicionarAoHistorico(dados, resultado);
             this.salvarDadosLocalmente(resultado);
+            this.limpar({ manterResultados: true });
 
             let mensagemErro = error.message || 'Erro desconhecido';
             if (mensagemErro.includes('relation') || mensagemErro.includes('does not exist')) {
@@ -823,10 +841,11 @@ class CalculadoraPerdasPragas {
         }
     }
 
-    limpar() {
+    limpar(opcoes = {}) {
         document.getElementById('tipoPerda').value = '';
         document.getElementById('estagioCultura').value = '';
         document.getElementById('areaAfetada').value = '';
+        document.getElementById('areaUnit').value = 'ha';
         document.getElementById('severidade').value = '';
         document.getElementById('perdaEstimada').value = '';
         document.getElementById('condicoesClimaticas').value = '';
@@ -843,12 +862,18 @@ class CalculadoraPerdasPragas {
         document.getElementById('produtoControle').value = '';
         document.getElementById('outroProduto').value = '';
         document.getElementById('outroProdutoGroup').style.display = 'none';
+        document.getElementById('populacaoUnit').value = 'ind/100colmos';
         document.getElementById('dataAmostragem').valueAsDate = new Date();
         document.getElementById('responsavelTecnico').value = '';
         document.getElementById('observacoesPraga').value = '';
-        document.getElementById('resultados').classList.remove('show');
+        if (!opcoes.manterResultados) {
+            document.getElementById('resultados').classList.remove('show');
+        }
         document.getElementById('resumoPerdas').classList.remove('show');
         localStorage.removeItem('perdasPragasDados');
+
+        const primeiroCampo = document.getElementById('tipoPerda');
+        if (primeiroCampo) primeiroCampo.focus();
     }
 }
 

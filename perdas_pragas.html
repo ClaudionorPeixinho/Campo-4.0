@@ -435,12 +435,28 @@
         }
 
         .results-container {
-            background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+            background: var(--white);
+            border: 1px solid var(--light-color);
+            box-shadow: var(--shadow);
             border-radius: 16px;
             padding: 25px;
-            color: var(--white);
+            color: var(--dark-color);
             grid-column: 1 / -1;
             display: none;
+        }
+
+        body.dark-mode .results-container {
+            background: #1e293b;
+            border-color: #334155;
+            color: var(--light-color);
+        }
+
+        .results-container h2 {
+            color: var(--dark-color) !important;
+        }
+
+        body.dark-mode .results-container h2 {
+            color: var(--light-color) !important;
         }
 
         .results-container.show {
@@ -702,8 +718,12 @@
             flex-wrap: wrap;
             margin-top: 10px;
             padding: 10px;
-            background: rgba(255,255,255,0.1);
+            background: var(--light-color);
             border-radius: 8px;
+        }
+
+        body.dark-mode .severity-legend {
+            background: #0f172a;
         }
 
         .legend-item {

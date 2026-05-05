@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8">
@@ -185,6 +185,92 @@ body.dark {
 .sidebar ul li.active {
     background: linear-gradient(90deg, rgba(76, 175, 80, 0.2), transparent);
     border-left: 3px solid var(--secondary-color);
+}
+
+/* Menu Groups */
+.sidebar ul li.menu-group {
+    padding: 12px 18px;
+    margin: 15px 0 5px;
+    cursor: pointer;
+    border-radius: 12px;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+    color: var(--primary-light);
+    text-transform: uppercase;
+    font-size: 0.85rem;
+    letter-spacing: 0.5px;
+    position: relative;
+    overflow: hidden;
+    border-left: 3px solid rgba(76, 175, 80, 0.3);
+}
+
+.menu-group:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.menu-group i:first-child {
+    font-size: 1.1rem;
+    width: 28px;
+}
+
+.menu-toggle-icon {
+    margin-left: auto;
+    font-size: 0.85rem;
+    transition: transform 0.3s ease;
+    transform: rotate(0deg);
+}
+
+.menu-group.expanded .menu-toggle-icon {
+    transform: rotate(90deg);
+}
+
+/* Submenu Items */
+.menu-subitems {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s ease;
+    padding-left: 20px;
+}
+
+.menu-subitems.expanded {
+    max-height: 1000px;
+}
+
+.menu-subitems li {
+    padding: 10px 18px;
+    margin: 2px 0;
+    font-size: 0.95rem;
+}
+
+.menu-subitems li i {
+    font-size: 1.1rem;
+}
+
+/* Disabled Item */
+.disabled-item {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    position: relative;
+}
+
+.disabled-item:hover {
+    background: transparent !important;
+    transform: none !important;
+}
+
+.dev-badge {
+    font-size: 0.65rem;
+    background: rgba(255, 152, 0, 0.3);
+    color: #ff9800;
+    padding: 2px 8px;
+    border-radius: 10px;
+    margin-left: auto;
+    font-weight: 600;
+    letter-spacing: 0;
+    text-transform: none;
 }
 
 /* Main Content */
@@ -655,43 +741,93 @@ body.dark .table-custom td {
         <ul>
             <li data-form="home" class="active">
                 <i class="bi bi-house-door-fill"></i>
+                <span>Home</span>
+            </li>
+            <li data-form="dashboard">
+                <i class="bi bi-speedometer2"></i>
                 <span>Dashboard</span>
             </li>
-            <li data-form="apontamento">
-                <i class="bi bi-pencil-square"></i>
-                <span>Apontamentos</span>
+            
+            <li class="menu-group">
+                <i class="bi bi-briefcase-fill"></i>
+                <span>Administrativo</span>
+                <i class="bi bi-chevron-right menu-toggle-icon"></i>
             </li>
-            <li data-form="cadastro">
-                <i class="bi bi-people-fill"></i>
-                <span>Colaboradores</span>
+            <div class="menu-subitems" id="submenu-admin">
+                <li data-form="ponto">
+                    <i class="bi bi-clock-fill"></i>
+                    <span>Ponto Digital</span>
+                </li>
+                <li data-form="cadastro">
+                    <i class="bi bi-people-fill"></i>
+                    <span>Cadastro Colaboradores</span>
+                </li>
+                <li data-form="equipamento">
+                    <i class="bi bi-gear-fill"></i>
+                    <span>Cadastro Equipamentos</span>
+                </li>
+            </div>
+
+            <li class="menu-group">
+                <i class="bi bi-truck-front-fill"></i>
+                <span>Operacional</span>
+                <i class="bi bi-chevron-right menu-toggle-icon"></i>
             </li>
-            <li data-form="equipamento">
-                <i class="bi bi-gear-fill"></i>
-                <span>Equipamentos</span>
+            <div class="menu-subitems" id="submenu-oper" style="max-height: 0; overflow: hidden;">
+                <li data-form="apontamento">
+                    <i class="bi bi-pencil-square"></i>
+                    <span>Apontamentos Entregas</span>
+                </li>
+                <li data-form="abastecimento">
+                    <i class="bi bi-fuel-pump-fill"></i>
+                    <span>Abastecimentos Veículos</span>
+                </li>
+                <li data-form="relatorio">
+                    <i class="bi bi-graph-up"></i>
+                    <span>Relatórios Entregas</span>
+                </li>
+            </div>
+
+            <li class="menu-group">
+                <i class="bi bi-flower1"></i>
+                <span>Tratos Culturais</span>
+                <i class="bi bi-chevron-right menu-toggle-icon"></i>
             </li>
-            <li data-form="abastecimento">
-                <i class="bi bi-fuel-pump-fill"></i>
-                <span>Abastecimentos</span>
+            <div class="menu-subitems" id="submenu-culturais" style="max-height: 0; overflow: hidden;">
+                <li data-form="pulverizacao">
+                    <i class="bi bi-droplet-fill"></i>
+                    <span>Pulverização</span>
+                </li>
+                <li data-form="perdas">
+                    <i class="bi bi-bug-fill"></i>
+                    <span>Perdas e Pragas</span>
+                </li>
+                <li data-form="fertilizantes" class="disabled-item">
+                    <i class="bi bi-box-seam-fill"></i>
+                    <span>Fertilizantes e Corretivos</span>
+                    <span class="dev-badge">Em desenvolvimento</span>
+                </li>
+                <li data-form="relatorio_agricola">
+                    <i class="bi bi-tree-fill"></i>
+                    <span>Relatórios Agrícolas</span>
+                </li>
+            </div>
+
+            <li class="menu-group">
+                <i class="bi bi-box-arrow-up-right"></i>
+                <span>Acesso Externos</span>
+                <i class="bi bi-chevron-right menu-toggle-icon"></i>
             </li>
-            <li data-form="relatorio">
-                <i class="bi bi-graph-up"></i>
-                <span>Relatórios</span>
-            </li>            
-            <li data-form="pulverizacao">
-                <i class="bi bi-droplet-fill"></i>
-                <span>Pulverização</span>
-            </li>
-            <li data-form="ponto">
-                <i class="bi bi-clock-fill"></i>
-                <span>Ponto Digital</span>
-            </li>
-            <li data-form="perdas">
-                <i class="bi bi-bug-fill"></i>
-                <span>Perdas e Pragas</span>
-            </li>
+            <div class="menu-subitems" id="submenu-externos" style="max-height: 0; overflow: hidden;">
+                <li data-form="acesso_externos">
+                    <i class="bi bi-link-45deg"></i>
+                    <span>Gerenciar Links</span>
+                </li>
+            </div>
+
             <li id="logout">
                 <i class="bi bi-box-arrow-right"></i>
-                <span>Sair</span>
+                <span>Sair do Sistema</span>
             </li>
         </ul>
     </nav>
@@ -754,13 +890,62 @@ document.addEventListener("DOMContentLoaded", async () => {
         console.warn('Erro ao buscar usuário:', e);
     }
 
-    const menuItems = document.querySelectorAll(".sidebar ul li");
+    const menuItems = document.querySelectorAll(".sidebar ul li[data-form]:not(.disabled-item)");
+    const menuGroups = document.querySelectorAll(".sidebar .menu-group");
     const conteudo = document.getElementById("conteudoPrincipal");
     const toggle = document.getElementById("toggleTheme");
     const menuToggle = document.getElementById("menuToggle");
     const sidebar = document.getElementById("sidebar");
     const pageTitle = document.getElementById("pageTitle");
     const sidebarBackdrop = document.getElementById("sidebarBackdrop");
+
+    // Controle dos grupos de menu (todos iniciam fechados)
+    menuGroups.forEach(group => {
+        const icon = group.querySelector(".menu-toggle-icon");
+        // Estado inicial: setar rotação 0
+        if (icon) icon.style.transform = "rotate(0deg)";
+        
+        group.addEventListener("click", (e) => {
+            e.stopPropagation();
+            const submenu = group.nextElementSibling;
+            if (!submenu || !submenu.classList.contains("menu-subitems")) return;
+            
+            const isCurrentlyExpanded = submenu.classList.contains("expanded");
+            
+            if (!isCurrentlyExpanded) {
+                // FECHAR todos os outros grupos primeiro
+                menuGroups.forEach(otherGroup => {
+                    if (otherGroup !== group) {
+                        const otherSubmenu = otherGroup.nextElementSibling;
+                        if (otherSubmenu && otherSubmenu.classList.contains("menu-subitems")) {
+                            otherSubmenu.classList.remove("expanded");
+                            otherGroup.classList.remove("expanded");
+                            const otherIcon = otherGroup.querySelector(".menu-toggle-icon");
+                            if (otherIcon) otherIcon.style.transform = "rotate(0deg)";
+                        }
+                    }
+                });
+                
+                // ABRIR este grupo
+                submenu.classList.add("expanded");
+                group.classList.add("expanded");
+                if (icon) icon.style.transform = "rotate(90deg)";
+            } else {
+                // FECHAR este grupo
+                submenu.classList.remove("expanded");
+                group.classList.remove("expanded");
+                if (icon) icon.style.transform = "rotate(0deg)";
+            }
+        });
+    });
+    function setFloatingBackVisible(visible) {
+        const backButton = document.getElementById("campoBackButton");
+        if (backButton) {
+            backButton.style.display = visible ? "" : "none";
+        }
+    }
+
+    setFloatingBackVisible(false);
 
     // Função para fechar o menu com sincronização
     function closeMenuMobile() {
@@ -1318,9 +1503,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     async function loadContent(formType) {
         let html = '';
         let title = '';
+        setFloatingBackVisible(formType !== 'home');
         
         switch(formType) {
             case 'home':
+                title = 'Home';
+                html = `<div style="position: relative;">
+                    <iframe src="home.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
+                </div>`;
+                break;
+            case 'dashboard':
                 title = 'Dashboard';
                 await loadDashboardData();
                 return;
@@ -1328,56 +1520,60 @@ document.addEventListener("DOMContentLoaded", async () => {
                 title = 'Apontamentos';
                 html = `<div style="position: relative;">
                     <iframe src="apontamentos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;
             case 'cadastro':
                 title = 'Cadastro de Colaboradores';
                 html = `<div style="position: relative;">
                     <iframe src="cadastro_colaboradores.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;
             case 'equipamento':
                 title = 'Equipamentos';
                 html = `<div style="position: relative;">
                     <iframe src="equipamentos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;
             case 'abastecimento':
                 title = 'Abastecimentos';
                 html = `<div style="position: relative;">
                     <iframe src="abastecimentos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;
             case 'relatorio':
                 title = 'Relatórios';
                 html = `<div style="position: relative;">
                     <iframe src="relatorios.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
+                break;
+            case 'relatorio_agricola':
+                title = 'Relatórios Agrícolas';
+                html = `<div style="position: relative;">
+                    <iframe src="relatorios_agricolas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
                 </div>`;
                 break;
             case 'pulverizacao':
                 title = 'Calculadora de Pulverização de Herbicidas';
                 html = `<div style="position: relative;">
                     <iframe src="pulverizacao_herbicidas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;
             case 'ponto':
                 title = 'Ponto Digital';
                 html = `<div style="position: relative;">
                     <iframe src="pontodigital.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
                 </div>`;
                 break;
             case 'perdas':
                 title = 'Perdas e Pragas';
                 html = `<div style="position: relative;">
                     <iframe src="perdas_pragas.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
-                    <button onclick="app.returnToDashboard()" style="position: absolute; top: 10px; right: 10px; background: var(--primary-color); color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; z-index: 10; font-weight: 600;">← Voltar</button>
+                </div>`;
+                break;
+            case 'acesso_externos':
+                title = 'Acesso Externos';
+                html = `<div style="position: relative;">
+                    <iframe src="acesso_externos.html?spa=true" style="width:100%; height:calc(100vh - 160px); border:none; min-height:650px;"></iframe>
                 </div>`;
                 break;
         }
@@ -1413,11 +1609,24 @@ document.addEventListener("DOMContentLoaded", async () => {
     // Carregar conteúdo ao clicar no menu
     menuItems.forEach(item => {
         item.addEventListener("click", async () => {
+            // Ignorar itens desabilitados
+            if (item.classList.contains("disabled-item")) return;
+            
             const formType = item.getAttribute("data-form");
             
             // Ativar item do menu
             menuItems.forEach(i => i.classList.remove("active"));
             item.classList.add("active");
+            
+            // Expandir grupo pai se existir
+            const parentSubmenu = item.parentElement;
+            if (parentSubmenu && parentSubmenu.classList.contains("menu-subitems")) {
+                const parentGroup = parentSubmenu.previousElementSibling;
+                if (parentGroup && parentGroup.classList.contains("menu-group")) {
+                    parentSubmenu.classList.add("expanded");
+                    parentGroup.classList.add("expanded");
+                }
+            }
             
             // Carregar conteúdo
             await loadContent(formType);
@@ -1468,3 +1677,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 </body>
 </html>
+
+
+

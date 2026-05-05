@@ -92,18 +92,20 @@ document.addEventListener('DOMContentLoaded', () => {
 // ============================================
 
 document.addEventListener("keydown", e => {
-    if(e.key === "Enter" || e.key === "Tab") {
-        e.preventDefault();
-        
-        // Inputs e textareas
-        let campos = [...document.querySelectorAll(".input-modern, textarea")];
-        let atual = document.activeElement;
-        let index = campos.indexOf(atual);
-        
-        if(index >= 0 && index < campos.length - 1) {
-            campos[index + 1].focus();
-            campos[index + 1].select && campos[index + 1].select();
-        }
+    if(e.key !== "Enter" || e.shiftKey) return;
+
+    const atual = document.activeElement;
+    if(!atual || !atual.matches(".input-modern, textarea")) return;
+
+    e.preventDefault();
+
+    const campos = [...document.querySelectorAll(".input-modern, textarea")]
+        .filter(campo => !campo.disabled && !campo.readOnly && campo.offsetParent !== null);
+    const index = campos.indexOf(atual);
+
+    if(index >= 0 && index < campos.length - 1) {
+        campos[index + 1].focus();
+        if(typeof campos[index + 1].select === "function") campos[index + 1].select();
     }
 });
 

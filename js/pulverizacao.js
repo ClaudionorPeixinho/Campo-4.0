@@ -46,11 +46,27 @@ class CalculadoraPulverizacao {
             });
         });
 
-        document.addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                this.calcular();
-            }
-        });
+        document.addEventListener('keydown', (e) => this.avancarCampoComEnter(e));
+    }
+
+    avancarCampoComEnter(e) {
+        if (e.key !== 'Enter' || e.shiftKey) return;
+        const atual = document.activeElement;
+        if (!atual || !atual.matches('input, select, textarea')) return;
+        if (atual.type === 'button' || atual.type === 'submit' || atual.readOnly) return;
+
+        e.preventDefault();
+        const escopo = document.getElementById('modalPropriedade').classList.contains('show')
+            ? document.getElementById('modalPropriedade')
+            : document;
+        const campos = [...escopo.querySelectorAll('input, select, textarea')]
+            .filter(campo => !campo.disabled && !campo.readOnly && campo.offsetParent !== null);
+        const index = campos.indexOf(atual);
+
+        if (index >= 0 && index < campos.length - 1) {
+            campos[index + 1].focus();
+            if (typeof campos[index + 1].select === 'function') campos[index + 1].select();
+        }
     }
 
     salvarDados() {
@@ -105,6 +121,8 @@ class CalculadoraPulverizacao {
         if (typeof atualizarInfoPropriedade === 'function') {
             atualizarInfoPropriedade();
         }
+
+        this.limpar({ manterResultados: true });
     }
 
     async registrarNoBanco(dados, resultado) {
@@ -497,9 +515,11 @@ class CalculadoraPulverizacao {
         return JSON.parse(localStorage.getItem('pulverizacaoHistorico') || '[]');
     }
 
-    limpar() {
+    limpar(opcoes = {}) {
         document.getElementById('area').value = '';
+        document.getElementById('areaUnit').value = 'ha';
         document.getElementById('dose').value = '';
+        document.getElementById('doseUnit').value = 'l/ha';
         document.getElementById('velocidade').value = '';
         document.getElementById('bicos').value = '';
         document.getElementById('capacidade').value = '';
@@ -510,9 +530,14 @@ class CalculadoraPulverizacao {
         document.getElementById('herbicida').value = '';
         document.getElementById('ra').value = '';
         document.getElementById('dataAplicacao').valueAsDate = new Date();
-        document.getElementById('resultados').classList.remove('show');
+        if (!opcoes.manterResultados) {
+            document.getElementById('resultados').classList.remove('show');
+        }
         document.getElementById('propriedadeInfo').classList.remove('show');
         localStorage.removeItem('pulverizacaoDados');
+
+        const primeiroCampo = document.getElementById('area');
+        if (primeiroCampo) primeiroCampo.focus();
     }
 }
 

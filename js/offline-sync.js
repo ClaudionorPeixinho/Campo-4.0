@@ -174,15 +174,27 @@
       .campo-sync-panel{position:fixed;right:16px;bottom:16px;z-index:9999;display:flex;gap:8px;align-items:center;font-family:Arial,sans-serif}
       .campo-sync-panel span{background:#fff;color:#1f2937;border:1px solid #d1d5db;border-radius:999px;padding:8px 12px;font-size:13px;box-shadow:0 6px 18px rgba(0,0,0,.14)}
       .campo-sync-panel button{border:0;border-radius:999px;background:#198754;color:#fff;padding:10px 14px;font-weight:700;box-shadow:0 6px 18px rgba(0,0,0,.18);cursor:pointer}
+      .campo-sync-panel .campo-back-button{background:#fff;color:#1f2937;border:1px solid #d1d5db}
       .campo-sync-panel button:disabled{opacity:.7;cursor:wait}
       .campo-sync-toast{position:fixed;top:16px;right:16px;z-index:10000;border-radius:8px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.2);font:600 14px Arial,sans-serif;max-width:320px}
+      @media (max-width:640px){.campo-sync-panel{left:10px;right:10px;bottom:10px;justify-content:flex-end;flex-wrap:wrap}.campo-sync-panel span,.campo-sync-panel button{font-size:12px;padding:8px 10px}}
     `;
     document.head.appendChild(style);
 
     const panel = document.createElement("div");
     panel.className = "campo-sync-panel";
-    panel.innerHTML = '<span id="campoSyncStatus"></span><button id="campoSyncButton" type="button"></button>';
+    panel.innerHTML = '<button id="campoBackButton" class="campo-back-button" type="button">Voltar</button><span id="campoSyncStatus"></span><button id="campoSyncButton" type="button"></button>';
     document.body.appendChild(panel);
+
+    document.getElementById("campoBackButton").addEventListener("click", () => {
+      if (window.app && typeof window.app.returnToDashboard === "function") {
+        window.app.returnToDashboard();
+      } else if (typeof window.sair === "function") {
+        window.sair();
+      } else {
+        window.location.href = "index_menu.html";
+      }
+    });
 
     document.getElementById("campoSyncButton").addEventListener("click", async (event) => {
       event.currentTarget.disabled = true;
