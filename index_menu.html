@@ -410,10 +410,9 @@
                             </div>
                         </li>
                         <li>
-                            <div class="menu-item disabled-item" data-form="fertilizantes">
+                            <div class="menu-item" data-form="fertilizantes">
                                 <i class="bi bi-box-seam-fill"></i>
                                 <span>Fertilizantes e Corretivos</span>
-                                <span class="dev-badge">Em desenvolvimento</span>
                             </div>
                         </li>
                         <li>
@@ -505,7 +504,8 @@
                 'apontamento': 'Apontamentos Entregas', 'abastecimento': 'Abastecimentos Veiculos',
                 'relatorio': 'Relatorios Entregas', 'pulverizacao': 'Pulverizacao',
                 'perdas': 'Perdas e Pragas', 'fertilizantes': 'Fertilizantes e Corretivos',
-                'relatorio_agricola': 'Relatorios Agricolas', 'acesso_externos': 'Gerenciar Links'
+                'relatorio_agricola': 'Relatorios Agricolas', 'acesso_externos': 'Gerenciar Links',
+                'relatorio_fertilizantes': 'Relatorios Fertilizantes'
             };
 
             function closeMenuMobile() { 
@@ -617,10 +617,12 @@
                     'abastecimento': 'abastecimentos.html',
                     'relatorio': 'relatorios.html',
                     'relatorio_agricola': 'relatorios_agricolas.html',
+                    'relatorio_fertilizantes': 'relatorio_fertilizantes.html',
                     'pulverizacao': 'pulverizacao_herbicidas.html',
                     'ponto': 'pontodigital.html',
                     'perdas': 'perdas_pragas.html',
-                    'acesso_externos': 'acesso_externos.html'
+                    'acesso_externos': 'acesso_externos.html',
+                    'fertilizantes': 'fertilizantes_corretivos.html'
                 };
 
                 if (formType === 'dashboard') { await loadDashboardData(); return; }
