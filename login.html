@@ -114,9 +114,9 @@ const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 // Se já estiver logado, vai direto para menu
 document.addEventListener("DOMContentLoaded", async () => {
     const { data: { session } } = await supabaseClient.auth.getSession();
-    if(session){
-        window.location.href = "index_menu.html";
-    }
+        if(session){
+            window.location.href = "index_menu.html";
+        }
 });
 
 async function registrar(){

@@ -1,5 +1,6 @@
-const CACHE_NAME = 'campo-4-0-cache-v4';
+const CACHE_NAME = 'campo-4-0-cache-v5';
 const ASSETS_TO_CACHE = [
+  './homepage.html',
   './index_menu.html',
   './home.html',
   './login.html',
@@ -8,8 +9,6 @@ const ASSETS_TO_CACHE = [
   './apontamentos.html',
   './cadastro_colaboradores.html',
   './equipamentos.html',
-  './entregas.html',
-  './perdas.html',
   './perdas_pragas.html',
   './pontodigital.html',
   './pulverizacao_herbicidas.html',
@@ -36,58 +35,53 @@ const ASSETS_TO_CACHE = [
   './js/apontamento.js',
   './js/colaboradores.js',
   './js/equipamentos.js',
-  './js/entregas.js',
   './js/perdas.js',
-  './js/perdas_pragas.js',
   './js/pontodigital.js',
   './js/pulverizacao.js',
   './js/dashboard.js',
   './js/fertilizantes.js',
   './js/menu.js',
-  './Img/tecnologia-campo5.png',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js',
-  'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
-  'https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css',
-  'https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.min.js',
-  'https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.css'
+  './Img/tecnologia-campo5.png'
 ];
 
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
-      .then(cache => Promise.allSettled(ASSETS_TO_CACHE.map(asset => cache.add(asset))))
-      .then(() => {
-        console.log('SW installed and cached assets:', ASSETS_TO_CACHE);
-        return self.skipWaiting();
+      .then(cache => {
+        console.log('SW: Cache aberto');
+        return Promise.allSettled(
+          ASSETS_TO_CACHE.map(asset => 
+            cache.add(asset).catch(err => console.warn('SW: Falha ao cachear', asset, err))
+          )
+        );
       })
-      .catch(err => {
-        console.error('SW install cache error:', err);
-      })
+      .then(() => self.skipWaiting())
   );
 });
 
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(keys => 
-      Promise.all(keys.filter(key => key !== CACHE_NAME)
-        .map(key => caches.delete(key)))
-    ).then(() => {
-      console.log('SW activated and old caches removed.');
-      return self.clients.claim();
-    })
+      Promise.all(
+        keys.filter(key => key !== CACHE_NAME).map(key => {
+          console.log('SW: Removendo cache antigo', key);
+          return caches.delete(key);
+        })
+      )
+    ).then(() => self.clients.claim())
   );
 });
 
 self.addEventListener('fetch', event => {
   if (event.request.method !== 'GET') {
-    return event.respondWith(fetch(event.request));
+    return;
   }
 
   const requestUrl = new URL(event.request.url);
   const isSupabaseApi = requestUrl.hostname.includes('supabase.co');
+  const isExternal = !requestUrl.pathname.startsWith('/') && !requestUrl.origin.includes(self.location.origin);
 
-  if (isSupabaseApi) {
+  if (isSupabaseApi || isExternal) {
     return event.respondWith(fetch(event.request));
   }
 
@@ -101,13 +95,15 @@ self.addEventListener('fetch', event => {
         return networkResponse;
       })
       .catch(err => {
-        console.warn('SW fetch failed, trying cache for', event.request.url, err);
+        console.warn('SW: Falha no fetch, tentando cache para', event.request.url);
         return caches.match(event.request).then(cached => {
           if (cached) {
             return cached;
           }
           if (event.request.mode === 'navigate') {
-            return caches.match('offline.html');
+            return caches.match('./offline.html').then(offline => {
+              return offline || new Response('Offline', { status: 503 });
+            });
           }
           return Promise.reject(err);
         });

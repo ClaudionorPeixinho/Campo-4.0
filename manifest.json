@@ -1,23 +1,26 @@
 {
-  "name": "Campo 4.0",
+  "name": "Campo 4.0 - Gestão Agrícola",
   "short_name": "Campo 4.0",
-  "description": "Aplicativo de gestão agro para desktop e mobile.",
+  "description": "Sistema inteligente de gestão agro para desktop, tablet e mobile.",
   "lang": "pt-BR",
-  "start_url": "./index_menu.html",
+  "start_url": "./homepage.html",
   "display": "standalone",
-  "background_color": "#198754",
+  "background_color": "#0a0f0c",
   "theme_color": "#198754",
-  "orientation": "portrait-primary",
+  "orientation": "any",
+  "categories": ["business", "productivity", "agriculture"],
   "icons": [
     {
       "src": "./Img/tecnologia-campo5.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     },
     {
       "src": "./Img/tecnologia-campo5.png",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ]
 }

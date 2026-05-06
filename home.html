@@ -25,7 +25,6 @@
         }
         
         body.spa-mode header,
-        body.spa-mode .floating-back-btn,
         body.spa-mode .nav-wrapper,
         body.spa-mode nav,
         body.spa-mode .off-line-banner { display: none !important; }
@@ -38,7 +37,30 @@
             text-align: center;
             padding: 1.5rem 1rem;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            position: relative;
         }
+        
+        .menu-btn {
+            position: absolute;
+            top: 50%;
+            left: 1rem;
+            transform: translateY(-50%);
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            z-index: 10;
+        }
+
+        .menu-btn:hover { background: rgba(255,255,255,0.25); }
         
         header h1 {
             margin:0 0 0.5rem;
@@ -150,38 +172,22 @@
             background: var(--green-main);
             color: white;
             border: none;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
+            border-radius: 999px;
+            padding: 0.6rem 1rem;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 0.85rem;
+            font-weight: 600;
             display: none;
             align-items: center;
             justify-content: center;
+            gap: 0.4rem;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-        
-        .close-iframe-btn.visible { display: flex; }
-        
-        .floating-back-btn {
-            position: fixed;
-            bottom: 1rem;
-            right: 1rem;
-            z-index: 999;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.85rem 1.2rem;
-            background: var(--green-main);
-            color: white;
-            text-decoration: none;
-            border-radius: 999px;
-            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-            font-size: 0.95rem;
             transition: all 0.2s;
         }
+
+        .close-iframe-btn:hover { background: var(--green-dark); transform: translateY(-1px); }
         
-        .floating-back-btn:hover { background: var(--green-dark); transform: translateY(-2px); }
+        .close-iframe-btn.visible { display: flex; }
         
         .offline-banner {
             position: fixed;
@@ -223,6 +229,20 @@
         @media (max-width: 480px) {
             header { padding: 1rem 0.75rem; }
             .content { padding: 1rem; }
+            
+            .menu-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 0.8rem;
+                left: 0.75rem;
+            }
+            
+            .close-iframe-btn {
+                padding: 0.5rem 0.8rem;
+                font-size: 0.8rem;
+                top: 0.75rem;
+                right: 0.75rem;
+            }
         }
     </style>
 </head>
@@ -232,17 +252,18 @@
         <button type="button" id="retryConnection">Tentar novamente</button>
     </div>
     
+    <button class="menu-btn" onclick="goToMenu()" title="Voltar ao menu">☰</button>
+    
     <header>
         <nav>
             <div class="nav-wrapper">
                 <span class="nav-label">Ir para:</span>
                 <select class="nav-select" onchange="navigateToLink(this)">
                     <option value="">Selecionar link</option>
-                    <option value="https://blog.aegro.com.br/agricultura-4-0/">Tecnologia 4.0</option>
-                    <option value="https://ead.senar.org.br/">Site Senar</option>
-                    <option value="https://globorural.globo.com/opiniao/vozes-do-agro/noticia/2024/01/o-agro-e-a-tecnologia-do-campo-ao-token.ghtml">Globo Rural</option>
+                    <option value="https://aggro.com.br/">Tecnologia 4.0</option>
+                    <option value="https://www.climatempo.com.br/">Clima Tempo</option>
                     <option value="https://rehagro.com.br/blog/agricultura-4-0/">Importância da Tecnologia</option>
-                    <option value="https://www.agronoticias.com">Agro Notícias</option>
+                    <option value="https://www.noticiasagricolas.com.br/">Agro Notícias</option>
                 </select>
             </div>
         </nav>
@@ -278,17 +299,24 @@
         </div>
     </div>
     
-    <button class="close-iframe-btn" id="closeIframeBtn" onclick="closeIFrame()">
-        <i class="bi bi-x-lg"></i>
+    <button class="close-iframe-btn" id="closeIframeBtn" onclick="closeIFrame()" title="Fechar e escolher outro link">
+        <span>✕ Fechar</span>
     </button>
     
     <script>
-        // Detectar SPA Mode
         const isSPAMode = new URLSearchParams(window.location.search).get('spa') === 'true';
         if(isSPAMode) {
             document.body.classList.add('spa-mode');
         }
         
+        function goToMenu() {
+            if (isSPAMode && window.top) {
+                window.top.location.href = 'index_menu.html';
+            } else {
+                window.location.href = 'index_menu.html';
+            }
+        }
+
         function navigateToLink(select) {
             const url = select.value;
             if (!url) return;
