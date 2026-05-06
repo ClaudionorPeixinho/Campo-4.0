@@ -227,9 +227,6 @@
         }
         
         @media (max-width: 480px) {
-            header { padding: 1rem 0.75rem; }
-            .content { padding: 1rem; }
-            
             .menu-btn {
                 width: 28px;
                 height: 28px;
@@ -244,6 +241,41 @@
                 right: 0.75rem;
             }
         }
+        
+        .exit-float-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 10001;
+            background: var(--green-dark);
+            color: white;
+            border: none;
+            border-radius: 999px;
+            padding: 0.8rem 1.5rem;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            transition: all 0.2s;
+        }
+        
+        .exit-float-btn:hover { 
+            background: var(--green-main); 
+            transform: translateY(-2px);
+            color: white;
+        }
+        
+        @media (max-width: 480px) {
+            .exit-float-btn { 
+                bottom: 1rem; 
+                right: 1rem; 
+                padding: 0.6rem 1.2rem;
+                font-size: 0.85rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -253,6 +285,10 @@
     </div>
     
     <button class="menu-btn" onclick="goToMenu()" title="Voltar ao menu">☰</button>
+    <button class="exit-float-btn" onclick="exitToMenu()" title="Ir para o menu principal">
+        <i class="bi bi-box-arrow-right"></i>
+        <span>SAIR</span>
+    </button>
     
     <header>
         <nav>
@@ -311,6 +347,14 @@
         
         function goToMenu() {
             if (isSPAMode && window.top) {
+                window.top.location.href = 'index_menu.html';
+            } else {
+                window.location.href = 'index_menu.html';
+            }
+        }
+
+        function exitToMenu() {
+            if (typeof isSPAMode !== 'undefined' && isSPAMode && window.top) {
                 window.top.location.href = 'index_menu.html';
             } else {
                 window.location.href = 'index_menu.html';
