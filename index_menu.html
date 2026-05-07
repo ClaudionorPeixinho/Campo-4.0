@@ -322,18 +322,12 @@
         
         <nav class="sidebar-nav">
             <ul>
-                <li>
-                    <div class="menu-item" data-form="home">
-                        <i class="bi bi-house-door-fill"></i>
-                        <span>Home</span>
-                    </div>
-                </li>
-                <li>
-                    <div class="menu-item" data-form="dashboard">
-                        <i class="bi bi-speedometer2"></i>
-                        <span>Dashboard</span>
-                    </div>
-                </li>
+            <li>
+                <div class="menu-item" data-form="dashboard">
+                    <i class="bi bi-speedometer2"></i>
+                    <span>Dashboard</span>
+                </div>
+            </li>
                 
                 <li class="menu-group">
                     <div class="menu-group-header">
@@ -457,7 +451,7 @@
                 <button class="menu-toggle" id="menuToggle">
                     <i class="bi bi-list"></i>
                 </button>
-                <span class="page-title" id="pageTitle">Home</span>
+                <span class="page-title" id="pageTitle">Dashboard</span>
             </div>
             <div class="topbar-right">
                 <button class="mode-toggle" id="toggleTheme">
@@ -611,7 +605,6 @@
                 pageTitle.textContent = pageTitles[formType] || formType;
                 
                 const pages = {
-                    'home': 'home.html',
                     'apontamento': 'apontamentos.html',
                     'cadastro': 'cadastro_colaboradores.html',
                     'equipamento': 'equipamentos.html',
@@ -785,7 +778,7 @@
                 }
             }
 
-            await loadContent('home');
+            await loadContent('dashboard');
         });
     </script>
 </body>

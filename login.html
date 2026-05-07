@@ -111,11 +111,11 @@ const supabaseKey = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
 
 const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-// Se já estiver logado, vai direto para menu
+// Se já estiver logado, vai para home
 document.addEventListener("DOMContentLoaded", async () => {
     const { data: { session } } = await supabaseClient.auth.getSession();
         if(session){
-            window.location.href = "index_menu.html";
+            window.location.href = "home.html";
         }
 });
 
@@ -164,7 +164,7 @@ async function login(){
     if(error){
         msg.innerText = error.message;
     }else{
-        window.location.href = "index_menu.html";
+        window.location.href = "home.html";
     }
 }
 
