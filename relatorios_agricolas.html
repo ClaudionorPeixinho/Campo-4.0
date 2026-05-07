@@ -12,7 +12,9 @@
   <title>Relatórios Agrícolas | Campo 4.0</title>
 
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/StyleApto.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="js/supabase.js"></script>
@@ -41,51 +43,11 @@
       margin: 0 auto;
     }
 
-    /* HEADER */
-    .header {
-      background: white;
-      padding: 30px;
-      border-radius: 15px;
-      margin-bottom: 30px;
-      box-shadow: 0 10px 40px rgba(33, 153, 99, 0.15);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 20px;
-      border-left: 6px solid #219963;
-    }
-
-    .header h1 {
-      color: #219963;
-      font-size: 28px;
-      font-weight: 800;
-      margin: 0;
-    }
-
-    .header p {
-      color: #7f8c8d;
-      font-size: 13px;
-      margin: 5px 0 0;
-    }
-
-    .header-buttons {
+    /* HEADER AÇÕES */
+    .header-acoes {
       display: flex;
       gap: 10px;
       flex-wrap: wrap;
-    }
-
-    .header-buttons button {
-      padding: 12px 20px;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.3s ease;
-      font-size: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
 
     .btn-atualizar {
@@ -683,35 +645,42 @@
     </div>
 
     <!-- HEADER -->
-    <div class="header">
-      <div>
-        <h1><i class="fas fa-seedling"></i> Relatórios Agrícolas</h1>
-        <p id="dataAtual"></p>
-      </div>
-      <div class="header-buttons">
-        <button class="btn-atualizar" onclick="carregarDados()">
-          <i class="fas fa-redo"></i> Atualizar
-        </button>
-        <button class="btn-pdf" onclick="exportarPDF()">
-          <i class="fas fa-file-pdf"></i> PDF
-        </button>
-        <button class="btn-excel" onclick="exportarExcel()">
-          <i class="fas fa-file-excel"></i> Excel
-        </button>
-        <button class="btn-sair" onclick="sair()">
+    <nav class="navbar navbar-custom px-3 mb-3" style="border-radius:8px;">
+      <div class="w-100 d-flex align-items-center position-relative">
+        <div class="flex-grow-1 text-center">
+          <h3 class="text-white mb-0"><i class="fas fa-seedling"></i> Campo 4.0 - Relatórios Agrícolas</h3>
+        </div>
+        <a class="nav-link text-white position-absolute end-0 me-3" href="javascript:void(0)" onclick="sair()">
           <i class="fas fa-sign-out-alt"></i> Sair
-        </button>
+        </a>
       </div>
+    </nav>
+    <!-- Ações em Dropdown -->
+    <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+      <div class="dropdown">
+        <button class="btn btn-success dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <i class="fas fa-cog"></i> Ações
+        </button>
+        <ul class="dropdown-menu shadow">
+          <li><a class="dropdown-item" href="#" onclick="carregarDados()"><i class="fas fa-redo"></i> Atualizar</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="#" onclick="exportarPDF()"><i class="fas fa-file-pdf" style="color:#e74c3c;"></i> Exportar PDF</a></li>
+          <li><a class="dropdown-item" href="#" onclick="exportarExcel()"><i class="fas fa-file-excel" style="color:#27ae60;"></i> Exportar Excel</a></li>
+        </ul>
+      </div>
+      <button class="btn btn-outline-secondary btn-sm" onclick="toggleFiltros()">
+        <i class="fas fa-filter"></i> Filtros <i class="fas fa-chevron-down"></i>
+      </button>
     </div>
 
-    <!-- FILTROS -->
+    <!-- FILTROS (fechados por padrão) -->
     <div class="filtros" id="filtrosContainer">
-      <div class="filter-header" onclick="toggleFiltros()">
+      <div class="filter-header collapsed" onclick="toggleFiltros()">
         <i class="fas fa-filter filter-icon"></i>
         <span>Filtros de Período</span>
         <i class="fas fa-chevron-down toggle-icon"></i>
       </div>
-      <div class="filter-content" id="filtrosContent">
+      <div class="filter-content collapsed" id="filtrosContent">
         <input type="date" id="dataInicio" placeholder="Data início">
         <input type="date" id="dataFim" placeholder="Data fim">
         <button class="btn-filtro" onclick="carregarDados()">
@@ -930,11 +899,15 @@
 
   </div>
 
-  <script src="js/supabase.js"></script>
   <script src="js/offline-sync.js"></script>
 
   <script>
-    let supabaseClient = window.supabaseClient;
+    let supabaseClient = window.supabaseClient || (window.supabase ? window.supabase.createClient("https://szzfqkhibuejhodhkvjj.supabase.co", "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_") : null);
+    if (!supabaseClient) {
+      console.error("Supabase client nao disponivel. Verifique a conexao.");
+    } else {
+      window.supabaseClient = supabaseClient;
+    }
     let charts = {};
     let dadosGlobais = {
       perdas: [],
@@ -944,10 +917,16 @@
 
     document.addEventListener("DOMContentLoaded", async () => {
       try {
-        const { data: { session } } = await supabaseClient.auth.getSession();
-        if (!session) {
-          window.location.href = "login.html";
+        if (!supabaseClient) {
+          mostrarErro("Cliente Supabase nao inicializado. Verifique sua conexao.");
           return;
+        }
+        const { data: { session }, error: sessionError } = await supabaseClient.auth.getSession();
+        if (sessionError) {
+          console.warn("Sessao nao recuperada, tentando carregar dados mesmo assim:", sessionError);
+        }
+        if (!session) {
+          console.warn("Sem sessao ativa. Tentando carregar dados anonimamente.");
         }
 
         atualizarDataHora();
@@ -955,8 +934,8 @@
         setInterval(atualizarDataHora, 1000);
         setInterval(carregarDados, 120000);
       } catch (error) {
-        console.error("Erro na inicialização:", error);
-        mostrarErro("Erro ao inicializar a aplicação");
+        console.error("Erro na inicializacao:", error);
+        carregarDados();
       }
     });
 

@@ -3,14 +3,29 @@ body {
   background: #e8f5e9;
 }
 
-/* NAVBAR */
+/* NAVBAR PADRONIZADA */
 .navbar-custom {
   background: #1f7a3e;
+  min-height: 60px;
 }
 
 .navbar-custom .navbar-brand {
   color: white;
   font-weight: 600;
+}
+
+.navbar-custom h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+}
+
+@media (max-width: 576px) {
+  .navbar-custom h3 {
+    font-size: 1rem;
+  }
+  .navbar-custom .nav-link {
+    font-size: 0.85rem;
+  }
 }
 
 /* CARD */

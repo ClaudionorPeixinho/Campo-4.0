@@ -1,7 +1,4 @@
-// CONFIG
-const SUPABASE_URL = "https://szzfqkhibuejhodhkvjj.supabase.co";
-const SUPABASE_KEY = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
-
+// CONFIG (declaradas em supabase.js — não redeclarar com const!)
 const client = window.supabaseClient || supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 window.supabaseClient = client;
 
@@ -122,6 +119,11 @@ async function carregar() {
 
     tabela.innerHTML = "";
 
+    if (!data || data.length === 0) {
+      tabela.innerHTML = `<tr><td colspan="7" class="text-center text-muted">Nenhum registro encontrado.</td></tr>`;
+      return;
+    }
+
     data.forEach(item => {
       tabela.innerHTML += `
         <tr>
@@ -141,6 +143,7 @@ async function carregar() {
 
   } catch (erro) {
     console.error(erro);
+    alert("Erro ao carregar registros. Verifique o console para mais detalhes.");
   }
 }
 

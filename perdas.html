@@ -57,83 +57,7 @@
             color: #e0e0e0;
         }
 
-        /* SPA Mode - Esconder header */
-        body.spa-mode .topo {
-            display: none;
-        }
-
-        /* Header Moderno */
-        .topo {
-            background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
-            color: var(--white);
-            padding: 20px 30px;
-            box-shadow: var(--shadow);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .topo h5 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin: 0 !important;
-        }
-
-        .topo i {
-            font-size: 1.8rem;
-        }
-
-        .topo-buttons {
-            display: flex;
-            gap: 12px;
-            align-items: center;
-        }
-
-        .btn-theme-toggle {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: var(--white);
-            padding: 8px 12px;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 45px;
-        }
-
-        .btn-theme-toggle:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
-            transform: translateY(-2px);
-        }
-
-        .btn-sair {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            color: var(--white);
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .btn-sair:hover {
-            background: rgba(255,255,255,0.3);
-            border-color: rgba(255,255,255,0.5);
-            color: var(--white);
-            transform: translateY(-2px);
-        }
+        /* Navbar padronizada via StyleApto.css */
 
         /* Container */
         .container {
@@ -844,21 +768,21 @@
 
 <body>
     <!-- Header -->
-    <header class="topo">
-        <div>
-            <h5>
-                <i class="bi bi-clipboard-data"></i> Controle de Perdas
-            </h5>
+    <nav class="navbar navbar-custom px-3">
+      <div class="w-100 d-flex align-items-center position-relative">
+        <div class="flex-grow-1 text-center">
+          <h3 class="text-white mb-0"><i class="bi bi-clipboard-data"></i> Campo 4.0 - Controle de Perdas</h3>
         </div>
-        <div class="topo-buttons">
-            <button class="btn-theme-toggle" id="btnToggleTheme" title="Alternar tema">
-                <i class="bi bi-brightness-high"></i>
-            </button>
-            <button class="btn-sair" onclick="sair()">
-                <i class="bi bi-box-arrow-right"></i> Sair
-            </button>
+        <div class="d-flex align-items-center gap-2 position-absolute end-0 me-3">
+          <button class="btn btn-sm text-white border-0" id="btnToggleTheme" title="Alternar tema" style="background:rgba(255,255,255,0.2);border-radius:6px;padding:6px 10px;">
+            <i class="bi bi-brightness-high"></i>
+          </button>
+          <a class="nav-link text-white p-0" href="javascript:void(0)" onclick="sair()">
+            <i class="bi bi-box-arrow-left"></i> Sair
+          </a>
         </div>
-    </header>
+      </div>
+    </nav>
 
     <!-- Container Principal -->
     <div class="container">

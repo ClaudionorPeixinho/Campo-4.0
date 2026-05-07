@@ -1,6 +1,4 @@
-// Configuração do Supabase
-const SUPABASE_URL = 'https://szzfqkhibuejhodhkvjj.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_';
+// Configuração do Supabase (declaradas em supabase.js — não redeclarar com const!)
 const supabaseClient = window.supabaseClient || window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 window.supabaseClient = supabaseClient;
 
