@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Instalar Campo 4.0</title>
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#198754">
+  <meta name="description" content="Instale o Campo 4.0 no seu dispositivo - Sistema Agro Inteligente">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0a0f0c 0%, #1a2e1a 100%);
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      max-width: 800px;
+      width: 100%;
+      padding: 2rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .logo-area {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #198754, #27ae60);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 1rem;
+      box-shadow: 0 8px 32px rgba(25,135,84,0.3);
+    }
+    .logo-area h1 {
+      font-size: 1.8rem;
+      font-weight: 800;
+    }
+    .logo-area p {
+      color: rgba(255,255,255,0.6);
+      font-size: 0.95rem;
+    }
+    .card {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 2rem;
+      width: 100%;
+      margin-bottom: 1.5rem;
+      backdrop-filter: blur(10px);
+    }
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .card-title i { color: #2ecc71; }
+    .btn-install {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.75rem;
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #198754, #27ae60);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 8px 30px rgba(25,135,84,0.4);
+      margin-bottom: 1.5rem;
+    }
+    .btn-install:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(25,135,84,0.6);
+    }
+    .btn-install i { font-size: 1.3rem; }
+    .btn-install:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .qr-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+    .qr-section img {
+      width: 180px;
+      height: 180px;
+      border-radius: 12px;
+      background: white;
+      padding: 8px;
+    }
+    .qr-section p {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.5);
+      text-align: center;
+    }
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .step {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .step-num {
+      width: 32px;
+      height: 32px;
+      background: #198754;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+    .step-text { font-size: 0.9rem; line-height: 1.5; color: rgba(255,255,255,0.85); }
+    .step-text strong { color: #fff; }
+    .share-bar {
+      display: flex;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+      width: 100%;
+    }
+    .share-bar button {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.75rem;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: rgba(255,255,255,0.05);
+      color: white;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .share-bar button:hover { background: rgba(255,255,255,0.1); }
+    .share-bar .btn-whatsapp { background: rgba(37,211,102,0.15); border-color: rgba(37,211,102,0.3); }
+    .share-bar .btn-whatsapp:hover { background: rgba(37,211,102,0.25); }
+    .share-bar .btn-copy:hover { background: rgba(255,255,255,0.1); }
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+    .feature-item {
+      text-align: center;
+      padding: 1rem;
+      background: rgba(255,255,255,0.03);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .feature-item i { font-size: 1.5rem; color: #2ecc71; display: block; margin-bottom: 0.5rem; }
+    .feature-item span { font-size: 0.8rem; color: rgba(255,255,255,0.7); }
+    .status-msg {
+      font-size: 0.85rem;
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 0.5rem;
+      border-radius: 8px;
+      margin-top: 0.5rem;
+      min-height: 2rem;
+    }
+    .status-msg.success { background: rgba(46,204,113,0.15); color: #2ecc71; }
+    .status-msg.info { background: rgba(52,152,219,0.15); color: #3498db; }
+    .bottom-link {
+      color: rgba(255,255,255,0.5);
+      text-decoration: none;
+      font-size: 0.85rem;
+      margin-top: 1rem;
+      transition: color 0.2s;
+    }
+    .bottom-link:hover { color: rgba(255,255,255,0.8); }
+    .platform-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+    .platform-tab {
+      padding: 0.5rem 1rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.15);
+      background: transparent;
+      color: rgba(255,255,255,0.6);
+      font-size: 0.8rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .platform-tab:hover { background: rgba(255,255,255,0.05); color: #fff; }
+    .platform-tab.active { background: #198754; border-color: #198754; color: #fff; }
+    .platform-content { display: none; }
+    .platform-content.active { display: flex; flex-direction: column; gap: 0.75rem; }
+    .manual-install-box {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-top: 0.5rem;
+      font-size: 0.85rem;
+      line-height: 1.6;
+      color: rgba(255,255,255,0.8);
+    }
+    .manual-install-box ol { padding-left: 1.5rem; }
+    .manual-install-box li { margin-bottom: 0.25rem; }
+    @media (max-width: 600px) {
+      .container { padding: 1.5rem 1rem; }
+      .card { padding: 1.25rem; }
+      .features-grid { grid-template-columns: 1fr; }
+      .share-bar { flex-direction: column; }
+      .platform-tabs { justify-content: center; }
+      .qr-section img { width: 150px; height: 150px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo-area">
+      <div class="logo-icon"><i class="bi bi-flower1"></i></div>
+      <h1>Campo 4.0</h1>
+      <p>Sistema Agro Inteligente</p>
+    </div>
+
+    <div id="cardPrincipal" class="card">
+      <div class="card-title"><i class="bi bi-phone"></i> Instalar Aplicativo</div>
+      <p style="font-size:0.85rem;color:rgba(255,255,255,0.6);margin-bottom:1.5rem;line-height:1.5;">
+        Instale o <strong>Campo 4.0</strong> no seu dispositivo para usar offline, 
+        ter acesso rápido e gerenciar sua fazenda de qualquer lugar.
+      </p>
+
+      <button class="btn-install" id="btnInstalar">
+        <i class="bi bi-download"></i> Instalar Agora
+      </button>
+
+      <div class="qr-section">
+        <img id="qrCodeImg" src="" alt="QR Code">
+        <p>Escaneie o QR Code com seu celular para abrir esta página</p>
+      </div>
+
+      <div class="share-bar">
+        <button class="btn-whatsapp" id="btnWhatsapp">
+          <i class="bi bi-whatsapp"></i> Compartilhar
+        </button>
+        <button class="btn-copy" id="btnCopiar">
+          <i class="bi bi-clipboard"></i> Copiar Link
+        </button>
+      </div>
+
+      <div id="statusMsg" class="status-msg"></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="bi bi-info-circle"></i> Como instalar em cada dispositivo</div>
+      <div class="platform-tabs">
+        <button class="platform-tab active" data-platform="android">Android</button>
+        <button class="platform-tab" data-platform="iphone">iPhone/iPad</button>
+        <button class="platform-tab" data-platform="pc">PC / Notebook</button>
+      </div>
+
+      <div id="platformAndroid" class="platform-content active">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">Abra o link no <strong>Google Chrome</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">Toque nos <strong>3 pontos</strong> ⋮ no canto superior direito</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Toque em <strong>"Adicionar à tela inicial"</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">Toque em <strong>"Instalar"</strong></div>
+        </div>
+      </div>
+
+      <div id="platformIphone" class="platform-content">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">Abra o link no <strong>Safari</strong> (não funciona em outros navegadores)</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">Toque no botão <strong>Compartilhar</strong> ⎙ na barra inferior</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">Toque em <strong>"Adicionar"</strong> no canto superior direito</div>
+        </div>
+      </div>
+
+      <div id="platformPc" class="platform-content">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">Abra o link no <strong>Google Chrome</strong> ou <strong>Microsoft Edge</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">Clique no ícone de <strong>instalar</strong> ↓ na barra de endereço</div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Ou vá em <strong>Menu</strong> › <strong>"Instalar Campo 4.0"</strong></div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-text">Pronto! O app aparecerá na sua área de trabalho</div>
+        </div>
+      </div>
+
+      <div class="manual-install-box" id="manualGuide" style="display:none;">
+        <i class="bi bi-info-circle" style="color:#2ecc71;"></i>
+        <span id="manualGuideText"></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title"><i class="bi bi-star-fill" style="color:#f1c40f;"></i> Recursos do App</div>
+      <div class="features-grid">
+        <div class="feature-item">
+          <i class="bi bi-wifi-off"></i>
+          <span>Funciona offline no campo</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-speedometer2"></i>
+          <span>Acesso direto da tela inicial</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-phone-landscape"></i>
+          <span>Tela cheia sem navegador</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-cloud-check"></i>
+          <span>Sincroniza quando online</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-shield-check"></i>
+          <span>Segurança e privacidade</span>
+        </div>
+        <div class="feature-item">
+          <i class="bi bi-arrow-repeat"></i>
+          <span>Atualiza automático</span>
+        </div>
+      </div>
+    </div>
+
+    <a href="login.html" class="bottom-link">
+      <i class="bi bi-box-arrow-in-right"></i> Já tem conta? Acessar o sistema
+    </a>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="js/supabase.js"></script>
+  <script src="js/pwa-installer.js"></script>
+  <script>
+    (function () {
+      const fullUrl = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, "/") + "instalar.html";
+
+      const qrImg = document.getElementById("qrCodeImg");
+      qrImg.src = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + encodeURIComponent(fullUrl);
+      qrImg.onerror = function () {
+        qrImg.style.display = "none";
+      };
+
+      const btnInstall = document.getElementById("btnInstalar");
+      btnInstall.addEventListener("click", function () {
+        if (window.CampoPWA && window.CampoPWA.install) {
+          window.CampoPWA.install();
+          setTimeout(function () { btnInstall.textContent = "✓ Instalado"; btnInstall.disabled = true; }, 500);
+        } else {
+          showStatus("Clique nos 3 pontos ⋮ do navegador > Instalar", "info");
+        }
+      });
+
+      if (window.CampoPWA && window.CampoPWA.isInstalled()) {
+        btnInstall.textContent = "✓ Instalado";
+        btnInstall.disabled = true;
+      }
+      window.addEventListener("appinstalled", function () {
+        btnInstall.textContent = "✓ Instalado";
+        btnInstall.disabled = true;
+        showStatus("App instalado com sucesso!", "success");
+      });
+
+      if (window.CampoPWA && !window.CampoPWA.isInstalled()) {
+        const checkPrompt = setInterval(function () {
+          if (window.CampoPWA && window.CampoPWA.showModal) {
+            clearInterval(checkPrompt);
+          }
+        }, 500);
+      }
+
+      const btnWhatsapp = document.getElementById("btnWhatsapp");
+      btnWhatsapp.addEventListener("click", function () {
+        if (navigator.share) {
+          navigator.share({
+            title: "Campo 4.0",
+            text: "🌾 Instale o Campo 4.0 - Sistema Agro Inteligente",
+            url: fullUrl
+          }).catch(function () {});
+        } else {
+          var w = window.open("https://wa.me/?text=" + encodeURIComponent("🌾 Campo 4.0 - Sistema Agro Inteligente\n\nInstale no seu dispositivo:\n" + fullUrl), "_blank");
+          if (w) showStatus("WhatsApp aberto em outra janela", "success");
+          else showStatus("Copie o link manualmente: " + fullUrl, "info");
+        }
+      });
+
+      const btnCopiar = document.getElementById("btnCopiar");
+      btnCopiar.addEventListener("click", function () {
+        if (navigator.clipboard) {
+          navigator.clipboard.writeText(fullUrl).then(function () {
+            showStatus("Link copiado! Envie para quem quiser.", "success");
+          }).catch(function () {
+            fallbackCopy();
+          });
+        } else {
+          fallbackCopy();
+        }
+      });
+
+      function fallbackCopy() {
+        var ta = document.createElement("textarea");
+        ta.value = fullUrl;
+        ta.style.position = "fixed";
+        ta.style.opacity = "0";
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand("copy");
+          showStatus("Link copiado!", "success");
+        } catch (e) {
+          showStatus("Copie manualmente: " + fullUrl, "info");
+        }
+        document.body.removeChild(ta);
+      }
+
+      function showStatus(msg, type) {
+        var el = document.getElementById("statusMsg");
+        el.textContent = msg;
+        el.className = "status-msg " + (type || "info");
+        clearTimeout(el._timeout);
+        el._timeout = setTimeout(function () { el.className = "status-msg"; el.textContent = ""; }, 5000);
+      }
+
+      var tabs = document.querySelectorAll(".platform-tab");
+      tabs.forEach(function (tab) {
+        tab.addEventListener("click", function () {
+          tabs.forEach(function (t) { t.classList.remove("active"); });
+          tab.classList.add("active");
+          document.querySelectorAll(".platform-content").forEach(function (c) { c.classList.remove("active"); });
+          var target = document.getElementById("platform" + tab.dataset.platform.charAt(0).toUpperCase() + tab.dataset.platform.slice(1));
+          if (target) target.classList.add("active");
+        });
+      });
+
+      if (window.CampoPWA) {
+        document.addEventListener("pwaManualInstall", function (e) {
+          var guide = document.getElementById("manualGuide");
+          var text = document.getElementById("manualGuideText");
+          if (guide && text && e.detail) {
+            guide.style.display = "block";
+            text.innerHTML = e.detail;
+          }
+        });
+      }
+
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", function () {
+          navigator.serviceWorker.register("./service-worker.js", { scope: "./" }).catch(function () {});
+        });
+      }
+    })();
+  </script>
+</body>
+</html>

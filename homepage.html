@@ -414,6 +414,63 @@
                     .catch(err => console.warn('SW falhou:', err));
             });
         }
+
+        // Banner de instalacao PWA na homepage
+        (function() {
+            if (window.matchMedia('(display-mode: standalone)').matches) return;
+
+            var promptBanner = document.createElement('div');
+            promptBanner.className = 'install-prompt';
+            promptBanner.id = 'homeInstallBanner';
+            promptBanner.innerHTML =
+                '<div class="install-prompt-text">' +
+                    '<strong>' + "\u00a0" + 'Campo 4.0</strong>' +
+                    '<span>Instale no seu dispositivo</span>' +
+                '</div>' +
+                '<button class="install-btn" id="homeInstallBtn">Instalar</button>' +
+                '<button class="install-close" id="homeInstallClose">&times;</button>';
+
+            var style = document.createElement('style');
+            style.textContent =
+                '.install-prompt{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#198754,#0d3d1f);color:white;padding:1rem 1.5rem;border-radius:16px;box-shadow:0 10px 40px rgba(0,0,0,0.3);z-index:10000;display:none;align-items:center;gap:1rem;max-width:90%;animation:slideUp 0.3s ease;font-family:\'Inter\',Arial,sans-serif}' +
+                '.install-prompt.show{display:flex}' +
+                '.install-prompt-text{flex:1}' +
+                '.install-prompt-text strong{display:block;font-size:1rem}' +
+                '.install-prompt-text span{font-size:0.85rem;opacity:0.9}' +
+                '.install-btn{background:white;color:#0d3d1f;border:none;padding:0.6rem 1.2rem;border-radius:999px;font-weight:600;cursor:pointer}' +
+                '.install-btn:hover{transform:scale(1.05)}' +
+                '.install-close{background:rgba(255,255,255,0.2);border:none;color:white;width:32px;height:32px;border-radius:50%;cursor:pointer}' +
+                '@keyframes slideUp{from{transform:translateX(-50%) translateY(100px);opacity:0}to{transform:translateX(-50%) translateY(0);opacity:1}}';
+            document.head.appendChild(style);
+            document.body.appendChild(promptBanner);
+
+            var deferredPrompt = null;
+            window.addEventListener('beforeinstallprompt', function(e) {
+                e.preventDefault();
+                deferredPrompt = e;
+                setTimeout(function() { promptBanner.classList.add('show'); }, 3000);
+            });
+
+            document.getElementById('homeInstallBtn').addEventListener('click', function() {
+                if (!deferredPrompt) {
+                    window.location.href = 'instalar.html';
+                    return;
+                }
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function() {
+                    deferredPrompt = null;
+                    promptBanner.classList.remove('show');
+                });
+            });
+
+            document.getElementById('homeInstallClose').addEventListener('click', function() {
+                promptBanner.classList.remove('show');
+            });
+
+            window.addEventListener('appinstalled', function() {
+                promptBanner.classList.remove('show');
+            });
+        })();
     </script>
 </body>
 </html>

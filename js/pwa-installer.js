@@ -4,6 +4,7 @@
   const APP_NAME = "Campo 4.0";
   const STORAGE_KEY = "campo40_pwa_dismissed";
   const CACHE_VERSION = "v6";
+  const APP_URL = window.location.origin + window.location.pathname.replace(/\/[^/]*$/, "/");
 
   let deferredPrompt = null;
   let isInstalled = false;
@@ -397,6 +398,20 @@
           </button>
           <button class="pwa-install-close" id="pwaModalCloseBtn">Agora não</button>
         </div>
+        <div class="pwa-install-share" style="margin-top:16px;padding-top:12px;border-top:1px solid rgba(255,255,255,0.1);">
+          <p style="font-size:0.75rem;color:rgba(255,255,255,0.5);margin-bottom:8px;">
+            <i class="bi bi-share-fill"></i> Compartilhe com outros dispositivos
+          </p>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="pwa-share-btn" id="pwaShareBtn" style="flex:1;padding:10px;background:rgba(255,255,255,0.1);color:white;border:1px solid rgba(255,255,255,0.15);border-radius:999px;font-weight:600;font-size:0.8rem;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;justify-content:center;gap:6px;">
+              <i class="bi bi-whatsapp"></i> Compartilhar Link
+            </button>
+            <button class="pwa-share-btn" id="pwaCopyLinkBtn" style="padding:10px 16px;background:rgba(255,255,255,0.05);color:white;border:1px solid rgba(255,255,255,0.1);border-radius:999px;font-weight:500;font-size:0.8rem;cursor:pointer;transition:background 0.2s;display:flex;align-items:center;gap:6px;">
+              <i class="bi bi-clipboard"></i>
+            </button>
+          </div>
+          <div id="pwaShareStatus" style="font-size:0.7rem;color:rgba(255,255,255,0.4);margin-top:6px;"></div>
+        </div>
       </div>
     `;
     document.body.appendChild(modal);
@@ -410,6 +425,9 @@
       hideModal();
       markDismissed();
     });
+
+    modal.querySelector("#pwaShareBtn").addEventListener("click", shareApp);
+    modal.querySelector("#pwaCopyLinkBtn").addEventListener("click", copyAppUrl);
 
     modal.addEventListener("click", (e) => {
       if (e.target === modal) {
@@ -453,7 +471,7 @@
 
   async function installApp() {
     if (!deferredPrompt) {
-      showModal();
+      showManualInstructions();
       return;
     }
 
@@ -470,6 +488,65 @@
     deferredPrompt = null;
     hideBanner();
     hideModal();
+  }
+
+  function showManualInstructions() {
+    const modal = document.getElementById("pwaInstallModal");
+    if (!modal) return;
+
+    const content = modal.querySelector(".pwa-install-modal");
+    if (!content) return;
+
+    const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+    const isAndroid = /Android/.test(navigator.userAgent);
+    const isChrome = /Chrome/.test(navigator.userAgent) && !isIOS;
+
+    let steps = "";
+    if (isIOS) {
+      steps = `
+        <div style="text-align:left;font-size:0.8rem;color:rgba(255,255,255,0.8);line-height:1.6;">
+          <p><strong>Para instalar no iPhone/iPad:</strong></p>
+          <ol style="padding-left:20px;margin:8px 0;">
+            <li>Toque no botão <strong>Compartilhar</strong> <span style="font-size:1.2rem;">⎙</span> no Safari</li>
+            <li>Role para baixo e toque em <strong>"Adicionar à Tela de Início"</strong></li>
+            <li>Toque em <strong>"Adicionar"</strong> no canto superior direito</li>
+          </ol>
+        </div>`;
+    } else if (isAndroid && isChrome) {
+      steps = `
+        <div style="text-align:left;font-size:0.8rem;color:rgba(255,255,255,0.8);line-height:1.6;">
+          <p><strong>Para instalar no Android:</strong></p>
+          <ol style="padding-left:20px;margin:8px 0;">
+            <li>Toque nos <strong>3 pontos</strong> ⋮ no navegador Chrome</li>
+            <li>Toque em <strong>"Adicionar à tela inicial"</strong></li>
+            <li>Toque em <strong>"Instalar"</strong></li>
+          </ol>
+        </div>`;
+    } else {
+      steps = `
+        <div style="text-align:left;font-size:0.8rem;color:rgba(255,255,255,0.8);line-height:1.6;">
+          <p><strong>Para instalar no computador:</strong></p>
+          <ol style="padding-left:20px;margin:8px 0;">
+            <li>Clique no ícone de <strong>instalar</strong> <span style="font-size:1.2rem;">↓</span> na barra de endereço</li>
+            <li>Ou use o menu do navegador > <strong>"Instalar ${APP_NAME}"</strong></li>
+          </ol>
+        </div>`;
+    }
+
+    const currentContent = content.innerHTML;
+    if (currentContent.includes("pwa-manual-install")) return;
+
+    const manualDiv = document.createElement("div");
+    manualDiv.id = "pwa-manual-install";
+    manualDiv.style.cssText = "margin-top:16px;padding:12px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.1);";
+    manualDiv.innerHTML = `
+      <div style="text-align:center;margin-bottom:8px;">
+        <i class="bi bi-info-circle" style="font-size:1.2rem;color:#2ecc71;"></i>
+        <span style="font-weight:600;font-size:0.85rem;margin-left:6px;">Instalação Manual</span>
+      </div>
+      ${steps}
+    `;
+    content.appendChild(manualDiv);
   }
 
   function addMenuButton() {
@@ -604,6 +681,52 @@
     banner.querySelector("#pwaUpdateClose").addEventListener("click", () => {
       banner.remove();
     });
+  }
+
+  function getFullAppUrl() {
+    return APP_URL + "instalar.html";
+  }
+
+  async function shareApp() {
+    const url = getFullAppUrl();
+    const text = `🌾 ${APP_NAME} - Sistema Agro Inteligente\n\nInstale o app no seu dispositivo para gerenciar sua fazenda online e offline.\n\n${url}`;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({ title: APP_NAME, text: text, url: url });
+        showShareStatus("Link compartilhado!", "rgba(46,204,113,0.8)");
+      } catch (e) {
+        if (e.name !== "AbortError") {
+          fallbackShare(url);
+        }
+      }
+    } else {
+      fallbackShare(url);
+    }
+  }
+
+  function fallbackShare(url) {
+    const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(`🌾 ${APP_NAME} - Instale o app: ${url}`)}`;
+    window.open(whatsappUrl, "_blank");
+    showShareStatus("WhatsApp aberto em outra janela", "rgba(37,211,102,0.8)");
+  }
+
+  async function copyAppUrl() {
+    const url = getFullAppUrl();
+    try {
+      await navigator.clipboard.writeText(url);
+      showShareStatus("Link copiado! Envie para quem quiser.", "rgba(46,204,113,0.8)");
+    } catch (e) {
+      showShareStatus("Copie manualmente: " + url, "rgba(255,152,0,0.8)");
+    }
+  }
+
+  function showShareStatus(msg, bg) {
+    const el = document.getElementById("pwaShareStatus");
+    if (!el) return;
+    el.textContent = msg;
+    el.style.cssText = `font-size:0.75rem;color:white;margin-top:6px;padding:4px 10px;border-radius:6px;background:${bg};transition:opacity 0.3s;`;
+    setTimeout(() => { el.style.opacity = "0"; }, 4000);
   }
 
   function init() {

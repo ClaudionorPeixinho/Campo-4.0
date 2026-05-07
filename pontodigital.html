@@ -13,14 +13,35 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+<link rel="stylesheet" href="css/StyleApto.css">
 <script src="js/spa-utils.js"></script>
 
 <style>
-  body { 
-    background: #f4f6f9;
+  body {
+    background: #e8f5e9;
   }
   .container {
     max-width: 1200px;
+  }
+
+  .navbar-custom .nav-link {
+    color: white !important;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    transition: background 0.2s;
+  }
+
+  .navbar-custom .nav-link:hover {
+    background: rgba(255,255,255,0.15);
+  }
+
+  .navbar-custom .navbar-brand h3 {
+    margin: 0;
+    font-size: 1.25rem;
   }
 
   /* Responsividade Mobile */
@@ -233,23 +254,27 @@
 
 </head>
 
-<body class="p-4">
+<body>
 
-<div class="container">
+<!-- HEADER -->
+<nav class="navbar navbar-custom px-3">
+  <span class="navbar-brand">
+    <div class="header d-flex justify-content-between align-items-center w-100">
+      <h3><i class="bi bi-clock-fill"></i> Campo 4.0 - Ponto Digital</h3>
+    </div>
+  </span>
+  <a class="nav-link text-white" href="javascript:void(0)" onclick="sair()">
+    <i class="bi bi-box-arrow-left"></i> Sair
+  </a>
+</nav>
 
-  <!-- HEADER -->
-  <div class="header d-flex justify-content-between align-items-center mb-4">
-    <h3><i class="bi bi-clock-fill"></i> Campo 4.0 - Ponto Digital</h3>
-
-    <button class="btn btn-light" onclick="sair()">
-      <i class="bi bi-box-arrow-left"></i> Sair
-    </button>
-  </div>
+<div class="container mt-4">
 
   <!-- FORM -->
-  <div id="formTela" class="card p-4 mb-4">
+  <div id="formTela" class="card shadow card-custom">
+    <div class="card-body">
 
-    <h5><i class="bi bi-pencil-square"></i> Registrar Ponto</h5>
+    <h6 class="mb-3 text-success"><i class="bi bi-pencil-square"></i> Registrar Ponto</h6>
 
     <form id="formPonto">
 
@@ -341,6 +366,7 @@
 
     </form>
 
+    </div>
   </div>
 
   <!-- TABELA -->

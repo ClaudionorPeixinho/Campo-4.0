@@ -19,6 +19,7 @@ const ASSETS_TO_CACHE = [
   './relatorios.html',
   './relatorios_agricolas.html',
   './acesso_externos.html',
+  './instalar.html',
   './fertilizantes_corretivos.html',
   './relatorio_fertilizantes.html',
   './manifest.json',
