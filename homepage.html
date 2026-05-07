@@ -394,15 +394,6 @@
         </div>
     </div>
     
-    <div class="install-prompt" id="installPrompt">
-        <div class="install-prompt-text">
-            <strong>Instalar Campo 4.0</strong>
-            <span>Instale o app para acesso rápido e uso offline</span>
-        </div>
-        <button class="install-btn" id="installBtn">Instalar</button>
-        <button class="install-close" id="installClose">&times;</button>
-    </div>
-    
     <script>
         // Criar partículas flutuantes
         const particlesContainer = document.getElementById('particles');
@@ -414,38 +405,6 @@
             particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
             particlesContainer.appendChild(particle);
         }
-        
-        // PWA Install Prompt
-        let deferredPrompt;
-        const installPrompt = document.getElementById('installPrompt');
-        const installBtn = document.getElementById('installBtn');
-        const installClose = document.getElementById('installClose');
-        
-        window.addEventListener('beforeinstallprompt', (e) => {
-            e.preventDefault();
-            deferredPrompt = e;
-            installPrompt.classList.add('show');
-        });
-        
-        installBtn.addEventListener('click', async () => {
-            if (!deferredPrompt) return;
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                console.log('PWA instalado');
-            }
-            deferredPrompt = null;
-            installPrompt.classList.remove('show');
-        });
-        
-        installClose.addEventListener('click', () => {
-            installPrompt.classList.remove('show');
-        });
-        
-        window.addEventListener('appinstalled', () => {
-            installPrompt.classList.remove('show');
-            console.log('PWA instalado com sucesso!');
-        });
         
         // Registrar Service Worker
         if ('serviceWorker' in navigator) {

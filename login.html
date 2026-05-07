@@ -13,6 +13,9 @@
 <link rel="apple-touch-icon" href="Img/tecnologia-campo5.png">
 <link rel="stylesheet" href="css/app-base.css">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script src="js/offline-sync.js"></script>
+<script src="js/pwa-installer.js"></script>
 
 <style>
 body{
@@ -106,65 +109,110 @@ body{
 </div>
 
 <script>
-const supabaseUrl = "https://szzfqkhibuejhodhkvjj.supabase.co";
-const supabaseKey = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
-
-const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
-
-// Se já estiver logado, vai para home
-document.addEventListener("DOMContentLoaded", async () => {
-    const { data: { session } } = await supabaseClient.auth.getSession();
-        if(session){
-            window.location.href = "home.html";
+// Redireciona se já logado
+async function checkSession() {
+    const client = window.supabaseClient;
+    if (!client) return;
+    try {
+        const { data: { session } } = await client.auth.getSession();
+        if (session) {
+            window.location.href = "index_menu.html";
         }
+    } catch(e) {}
+}
+
+// Aguarda Supabase carregar
+function waitForSupabase(callback, retries = 20) {
+    if (window.supabaseClient) {
+        callback(window.supabaseClient);
+    } else if (retries > 0) {
+        setTimeout(() => waitForSupabase(callback, retries - 1), 200);
+    } else {
+        document.getElementById("mensagem").innerText = "Erro ao carregar. Recarregue a página.";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    waitForSupabase((client) => {
+        checkSession();
+    });
 });
 
-async function registrar(){
-    const email = document.getElementById("email").value;
-    const senha = document.getElementById("senha").value;
+async function registrar() {
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
     const msg = document.getElementById("mensagem");
-
     msg.innerText = "";
 
-    const { data, error } = await supabaseClient.auth.signUp({
-        email: email,
-        password: senha
-    });
-
-    if(error){
-        msg.innerText = error.message;
+    if (!email || !senha) {
+        msg.innerText = "Preencha email e senha.";
         return;
     }
 
-    // cria registro na tabela usuarios
-    await supabaseClient.from("usuarios").insert({
-        id: data.user.id,
-        email: email,
-        nome: email,
-        nivel: "funcionario"
-    });
+    try {
+        const { data, error } = await window.supabaseClient.auth.signUp({
+            email: email,
+            password: senha
+        });
 
-    msg.classList.remove("text-danger");
-    msg.classList.add("text-success");
-    msg.innerText = "Registrado com sucesso!";
+        if (error) {
+            msg.innerText = error.message;
+            return;
+        }
+
+        await window.supabaseClient.from("usuarios").insert([{
+            id: data.user.id,
+            email: email,
+            nome: email,
+            nivel: "funcionario"
+        }]);
+
+        msg.className = "mt-3 text-success text-center";
+        msg.innerText = "Registrado! Verifique seu email.";
+    } catch(e) {
+        msg.innerText = "Erro: " + e.message;
+    }
 }
 
-async function login(){
-    const email = document.getElementById("email").value;
-    const senha = document.getElementById("senha").value;
+async function login() {
+    const email = document.getElementById("email").value.trim();
+    const senha = document.getElementById("senha").value.trim();
     const msg = document.getElementById("mensagem");
-
+    const btn = document.querySelector('.btn-primary');
+    
     msg.innerText = "";
 
-    const { error } = await supabaseClient.auth.signInWithPassword({
-        email: email,
-        password: senha
-    });
+    if (!email || !senha) {
+        msg.innerText = "Preencha email e senha.";
+        return;
+    }
 
-    if(error){
-        msg.innerText = error.message;
-    }else{
-        window.location.href = "home.html";
+    if (!window.supabaseClient) {
+        msg.innerText = "Sistema carregando... Tente novamente.";
+        setTimeout(() => waitForSupabase(() => {}), 500);
+        return;
+    }
+
+    if (btn) {
+        btn.disabled = true;
+        btn.innerHTML = '<i class="bi bi-arrow-repeat"></i> Entrando...';
+    }
+
+    try {
+        const { error } = await window.supabaseClient.auth.signInWithPassword({
+            email: email,
+            password: senha
+        });
+
+        if (error) {
+            msg.innerText = error.message;
+            if (btn) { btn.disabled = false; btn.innerHTML = 'Entrar'; }
+        } else {
+            window.location.href = "index_menu.html";
+        }
+    } catch(e) {
+        msg.innerText = "Erro: " + e.message;
+        if (btn) { btn.disabled = false; btn.innerHTML = 'Entrar'; }
     }
 }
 

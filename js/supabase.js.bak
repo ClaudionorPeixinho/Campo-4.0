@@ -1,15 +1,15 @@
-﻿const SUPABASE_URL = 'https://szzfqkhibuejhodhkvjj.supabase.co';
-const SUPABASE_KEY = 'sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_';
+const SUPABASE_URL = "https://szzfqkhibuejhodhkvjj.supabase.co";
+const SUPABASE_KEY = "sb_publishable_hIEhtwoXoQKvu2SkQYr4Tg_7HuC1-G_";
 
 function initSupabase() {
     if (window.supabaseClient) return window.supabaseClient;
     if (window.supabase && window.supabase.createClient) {
         try {
             window.supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-            console.log('Supabase initialized');
+            console.log("Supabase inicializado");
             return window.supabaseClient;
         } catch(e) {
-            console.error('Supabase init error:', e);
+            console.error("Erro ao criar cliente Supabase:", e);
         }
     }
     return null;

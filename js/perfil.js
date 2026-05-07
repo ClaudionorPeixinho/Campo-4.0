@@ -1,4 +1,8 @@
 document.addEventListener("DOMContentLoaded", async () => {
+  if (!window.supabaseClient) {
+    setTimeout(() => location.reload(), 1000);
+    return;
+  }
 
   const { data: { user } } = await supabaseClient.auth.getUser();
 
@@ -13,12 +17,16 @@ document.addEventListener("DOMContentLoaded", async () => {
     .eq("id", user.id)
     .single();
 
-  document.getElementById("nome").innerText = data.nome;
-  document.getElementById("email").innerText = data.email;
-
+  if (data) {
+    const nomeEl = document.getElementById("nome");
+    const emailEl = document.getElementById("email");
+    if (nomeEl) nomeEl.innerText = data.nome || "";
+    if (emailEl) emailEl.innerText = data.email || "";
+  }
 });
 
 async function logout(){
-  await supabaseClient.auth.signOut();
+  try { await supabaseClient.auth.signOut(); } catch(e) {}
+  try { localStorage.clear(); } catch(e) {}
   window.location.href = "login.html";
 }

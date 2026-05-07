@@ -1,10 +1,11 @@
 {
   "name": "Campo 4.0 - Gestão Agrícola",
   "short_name": "Campo 4.0",
-  "description": "Sistema inteligente de gestão agro para desktop, tablet e mobile.",
+  "description": "Sistema inteligente de gestão agro para desktop, tablet e mobile. Funciona online e offline.",
   "lang": "pt-BR",
   "start_url": "./homepage.html",
   "display": "standalone",
+  "display_override": ["window-controls-overlay"],
   "background_color": "#0a0f0c",
   "theme_color": "#198754",
   "orientation": "any",
@@ -12,15 +13,67 @@
   "icons": [
     {
       "src": "./Img/tecnologia-campo5.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": ["any", "maskable"]
+    },
+    {
+      "src": "./Img/tecnologia-campo5.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": ["any", "maskable"]
+    },
+    {
+      "src": "./Img/tecnologia-campo5.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": ["any", "maskable"]
+    },
+    {
+      "src": "./Img/tecnologia-campo5.png",
       "sizes": "192x192",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": ["any", "maskable"]
     },
     {
       "src": "./Img/tecnologia-campo5.png",
       "sizes": "512x512",
       "type": "image/png",
-      "purpose": "any maskable"
+      "purpose": ["any", "maskable"]
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Abastecimento",
+      "short_name": "Abastecimento",
+      "url": "./abastecimentos.html",
+      "icons": [{"src": "./Img/tecnologia-campo5.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Apontamentos",
+      "short_name": "Apontamentos",
+      "url": "./apontamentos.html",
+      "icons": [{"src": "./Img/tecnologia-campo5.png", "sizes": "192x192"}]
+    },
+    {
+      "name": "Colaboradores",
+      "short_name": "Colaboradores",
+      "url": "./cadastro_colaboradores.html",
+      "icons": [{"src": "./Img/tecnologia-campo5.png", "sizes": "192x192"}]
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./Img/Telas do APP/tela1.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide"
+    },
+    {
+      "src": "./Img/Telas do APP/tela2.png",
+      "sizes": "375x667",
+      "type": "image/png",
+      "form_factor": "narrow"
     }
   ]
 }

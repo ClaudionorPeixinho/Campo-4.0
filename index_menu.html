@@ -13,6 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="js/supabase.js"></script>
     <script src="js/offline-sync.js"></script>
+    <script src="js/pwa-installer.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/apexcharts/dist/apexcharts.min.js"></script>
     
     <style>
@@ -551,9 +552,13 @@
             });
 
             document.getElementById('logout').addEventListener('click', async () => {
-                if (confirm('Deseja realmente sair do sistema?')) { 
-                    await supabaseClient.auth.signOut(); 
-                    window.location.href = 'login.html'; 
+                if (confirm('Deseja realmente sair do sistema?')) {
+                    try {
+                        await supabaseClient.auth.signOut();
+                    } catch(e) {}
+                    // Limpa cache local
+                    try { localStorage.clear(); } catch(e) {}
+                    window.location.href = 'login.html';
                 }
             });
 

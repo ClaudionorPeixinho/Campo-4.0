@@ -8,6 +8,8 @@
     <meta name="theme-color" content="#198754">
     <link rel="stylesheet" href="css/app-base.css">
     <link rel="stylesheet" href="css/style_home.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
     <style>
         :root {
             --green-dark: #145A32;
@@ -284,7 +286,7 @@
         <button type="button" id="retryConnection">Tentar novamente</button>
     </div>
     
-    <button class="exit-float-btn" onclick="exitToMenu()" title="Ir para o menu principal">
+    <button class="exit-float-btn" onclick="fazerLogout()" title="Sair do sistema">
         <i class="bi bi-box-arrow-right"></i>
         <span>SAIR</span>
     </button>
@@ -352,11 +354,19 @@
             }
         }
 
-        function exitToMenu() {
-            if (typeof isSPAMode !== 'undefined' && isSPAMode && window.top) {
-                window.top.location.href = 'index_menu.html';
-            } else {
-                window.location.href = 'index_menu.html';
+        async function fazerLogout() {
+            try {
+                if (isSPAMode && window.parent && window.parent.supabaseClient) {
+                    await window.parent.supabaseClient.auth.signOut();
+                    window.parent.location.href = 'login.html';
+                } else if (window.supabaseClient) {
+                    await supabaseClient.auth.signOut();
+                    window.location.href = 'login.html';
+                } else {
+                    window.location.href = 'login.html';
+                }
+            } catch(e) {
+                window.location.href = 'login.html';
             }
         }
 
