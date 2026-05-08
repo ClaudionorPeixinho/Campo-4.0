@@ -582,7 +582,11 @@
             });
 
             document.getElementById('installBtn').addEventListener('click', () => {
-                if (window.CampoPWA && window.CampoPWA.install) {
+                if (window.CampoPWA) {
+                    if (window.CampoPWA.isInstalled()) {
+                        alert('O aplicativo já está instalado no seu dispositivo!');
+                        return;
+                    }
                     window.CampoPWA.install();
                 } else {
                     window.location.href = 'instalar.html';

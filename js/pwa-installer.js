@@ -439,6 +439,7 @@
   async function installApp() {
     if (!deferredPrompt) {
       showManualInstructions();
+      showModal();
       return;
     }
 

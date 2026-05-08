@@ -36,8 +36,10 @@ body {
 
 /* CAMPOS PADRÃO */
 .form-control, .form-select {
-  height: 42px;
-  font-size: 14px;
+  min-height: 44px;
+  font-size: 15px;
+  padding: 10px 14px;
+  border-radius: 8px;
 }
 
 label {

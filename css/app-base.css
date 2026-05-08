@@ -60,6 +60,13 @@ button, input, select, textarea {
     touch-action: manipulation;
 }
 
+input, select, textarea, .form-control, .form-select {
+    min-height: 44px;
+    font-size: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+}
+
 button, .btn {
     min-height: 44px;
 }
@@ -73,6 +80,18 @@ a {
     .container, .content, .main {
         padding-left: 16px;
         padding-right: 16px;
+    }
+}
+
+/* ========================================
+   TABLET (769px - 1024px)
+   ======================================== */
+
+@media (min-width: 769px) and (max-width: 1024px) {
+    input, select, textarea, .form-control, .form-select {
+        font-size: 15px !important;
+        padding: 12px 16px !important;
+        min-height: 44px;
     }
 }
 
