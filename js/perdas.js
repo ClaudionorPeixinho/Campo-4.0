@@ -161,8 +161,8 @@ window.salvar = async () => {
 
         // Salvar no Supabase ou na fila offline.
         const {data: resultado, error, offline} = window.CampoOfflineSync
-            ? await window.CampoOfflineSync.saveInsert('perdas_cana', dados)
-            : await supabase.from('perdas_cana').insert([dados]);
+            ? await window.CampoOfflineSync.saveInsert('perdas_cana_colhedoras', dados)
+            : await supabase.from('perdas_cana_colhedoras').insert([dados]);
 
         if(error) {
             if(error.code === '42P01') {
@@ -204,7 +204,7 @@ window.listar = async (filtro = {}) => {
 
         // Tentar Supabase primeiro
         try {
-            let query = supabase.from('perdas_cana').select('*');
+            let query = supabase.from('perdas_cana_colhedoras').select('*');
 
             if(filtro.equipamento)
                 query = query.ilike('equipamento', `%${filtro.equipamento}%`);
@@ -306,7 +306,7 @@ window.excluir = async (id) => {
     if(!confirm('Tem certeza que deseja excluir este registro?')) return;
 
     try {
-        const {error} = await supabase.from('perdas_cana').delete().eq('id', id);
+        const {error} = await supabase.from('perdas_cana_colhedoras').delete().eq('id', id);
         
         if(error && error.code !== '42P01') {
             throw error;
@@ -335,7 +335,7 @@ window.editar = async (id) => {
 
         // Procurar no Supabase
         try {
-            const resultado = await supabase.from('perdas_cana').select('*').eq('id', id).single();
+            const resultado = await supabase.from('perdas_cana_colhedoras').select('*').eq('id', id).single();
             registro = resultado.data;
         } catch(e) {
             // Se não encontrar no Supabase, procurar no localStorage
@@ -426,7 +426,7 @@ window.exportarPDF = async () => {
             
             const opt = {
                 margin: 10,
-                filename: `perdas_cana_${new Date().toISOString().split('T')[0]}.pdf`,
+                filename: `perdas_colhedoras_${new Date().toISOString().split('T')[0]}.pdf`,
                 image: { type: 'jpeg', quality: 0.98 },
                 html2canvas: { scale: 2 },
                 jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
@@ -481,7 +481,7 @@ window.exportarExcel = () => {
         const link = document.createElement('a');
         const url = URL.createObjectURL(blob);
         link.setAttribute('href', url);
-        link.setAttribute('download', `perdas_cana_${new Date().toISOString().split('T')[0]}.csv`);
+        link.setAttribute('download', `perdas_colhedoras_${new Date().toISOString().split('T')[0]}.csv`);
         link.style.visibility = 'hidden';
         
         document.body.appendChild(link);

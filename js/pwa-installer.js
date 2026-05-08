@@ -166,39 +166,6 @@
         font-size: 0.9rem;
       }
 
-      .pwa-menu-install-btn {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        width: 100%;
-        padding: 10px 18px;
-        margin: 3px 0;
-        cursor: pointer;
-        border-radius: 12px;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        font-weight: 500;
-        font-size: 0.9rem;
-        font-family: 'Inter', Arial, sans-serif;
-        background: transparent;
-        border: none;
-        color: rgba(255,255,255,0.85);
-        text-align: left;
-      }
-
-      .pwa-menu-install-btn:hover {
-        background: rgba(255,255,255,0.1);
-        transform: translateX(5px);
-        color: white;
-      }
-
-      .pwa-menu-install-btn i {
-        font-size: 1.3rem;
-        width: 28px;
-        text-align: center;
-        flex-shrink: 0;
-        color: inherit;
-      }
-
       .pwa-install-modal-overlay {
         position: fixed;
         inset: 0;
@@ -550,34 +517,7 @@
   }
 
   function addMenuButton() {
-    if (isEmbedded()) return;
-    if (document.getElementById("pwaMenuInstallBtn")) return;
-
-    const sidebarNav = document.querySelector(".sidebar-nav > ul") || document.querySelector(".sidebar-nav");
-    if (!sidebarNav) return;
-
-    const installItem = document.createElement("li");
-    installItem.innerHTML = `
-      <button class="pwa-menu-install-btn" id="pwaMenuInstallBtn">
-        <i class="bi bi-cloud-download"></i>
-        <span>Instalar Aplicativo</span>
-      </button>
-    `;
-
-    const firstItem = sidebarNav.querySelector("li");
-    if (firstItem) {
-      sidebarNav.insertBefore(installItem, firstItem);
-    } else {
-      sidebarNav.appendChild(installItem);
-    }
-
-    installItem.querySelector("#pwaMenuInstallBtn").addEventListener("click", () => {
-      if (deferredPrompt) {
-        installApp();
-      } else {
-        showModal();
-      }
-    });
+    // Botão já inserido estaticamente no HTML do index_menu.html
   }
 
   function addStatusBar() {

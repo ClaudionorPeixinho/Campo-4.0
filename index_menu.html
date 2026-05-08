@@ -50,7 +50,7 @@
         
         .sidebar {
             position: fixed;
-            width: 280px;
+            width: 320px;
             height: 100vh;
             background: linear-gradient(180deg, #1a3320 0%, #0f1a0f 100%);
             color: var(--text-light);
@@ -210,7 +210,7 @@
             white-space: nowrap;
         }
         
-        .main { margin-left: 280px; padding: 20px 30px; min-height: 100vh; transition: var(--transition); }
+        .main { margin-left: 320px; padding: 20px 30px; min-height: 100vh; transition: var(--transition); }
         @media (max-width: 768px) { .main { margin-left: 0; padding: 15px; } }
         
         .topbar {
@@ -383,6 +383,18 @@
                                 <span>Relatorios Entregas</span>
                             </div>
                         </li>
+                        <li>
+                            <div class="menu-item" data-form="perdas_levantamento">
+                                <i class="bi bi-clipboard-data"></i>
+                                <span>Levantamento Perdas</span>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="menu-item" data-form="relatorio_perdas">
+                                <i class="bi bi-file-earmark-bar-graph"></i>
+                                <span>Relatório Perdas</span>
+                            </div>
+                        </li>
                     </ul>
                 </li>
 
@@ -436,6 +448,12 @@
                     </ul>
                 </li>
 
+                <li>
+                    <div class="menu-item" id="installBtn">
+                        <i class="bi bi-cloud-download"></i>
+                        <span>Instalar Aplicativo</span>
+                    </div>
+                </li>
                 <li>
                     <div class="menu-item" id="logout">
                         <i class="bi bi-box-arrow-right"></i>
@@ -501,7 +519,9 @@
                 'relatorio': 'Relatorios Entregas', 'pulverizacao': 'Pulverizacao',
                 'perdas': 'Perdas e Pragas', 'fertilizantes': 'Fertilizantes e Corretivos',
                 'relatorio_agricola': 'Relatorios Agricolas', 'acesso_externos': 'Gerenciar Links',
-                'relatorio_fertilizantes': 'Relatorios Fertilizantes'
+                'relatorio_fertilizantes': 'Relatorios Fertilizantes',
+                'perdas_levantamento': 'Levantamento Perdas',
+                'relatorio_perdas': 'Relatório Perdas'
             };
 
             function closeMenuMobile() { 
@@ -556,9 +576,16 @@
                     try {
                         await supabaseClient.auth.signOut();
                     } catch(e) {}
-                    // Limpa cache local
                     try { localStorage.clear(); } catch(e) {}
                     window.location.href = 'login.html';
+                }
+            });
+
+            document.getElementById('installBtn').addEventListener('click', () => {
+                if (window.CampoPWA && window.CampoPWA.install) {
+                    window.CampoPWA.install();
+                } else {
+                    window.location.href = 'instalar.html';
                 }
             });
 
@@ -621,7 +648,9 @@
                     'ponto': 'pontodigital.html',
                     'perdas': 'perdas_pragas.html',
                     'acesso_externos': 'acesso_externos.html',
-                    'fertilizantes': 'fertilizantes_corretivos.html'
+                    'fertilizantes': 'fertilizantes_corretivos.html',
+                    'perdas_levantamento': 'perdas.html',
+                    'relatorio_perdas': 'relatorio_perdas.html'
                 };
 
                 if (formType === 'dashboard') { await loadDashboardData(); return; }
