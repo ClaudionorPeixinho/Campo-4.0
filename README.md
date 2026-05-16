@@ -63,9 +63,10 @@
 *** Formulario de Perdas - inserir dados do levantamento de Perdas e Registro do Banco Dados:
 
 <img width="1785" height="894" alt="Registros Perdas e Pragas" src="https://github.com/user-attachments/assets/f0fe1d3f-4301-456d-8515-83e842baac47" />
+<img width="1785" height="894" alt="Registro dados Pragas" src="https://github.com/user-attachments/assets/20d73644-1db1-48a8-a5f4-cd532ffa810b" />
 <img width="1785" height="894" alt="Levantamento Perdas 1" src="https://github.com/user-attachments/assets/a97561e6-b077-4d10-986e-f7c22e41de96" />
 <img width="1785" height="894" alt="Registros Levantamento Perdas  - Banco Dados" src="https://github.com/user-attachments/assets/9e1b1cd9-2af7-45b8-a990-e0b30cb6b093" />
-<img width="1785" height="894" alt="Registro dados Pragas" src="https://github.com/user-attachments/assets/20d73644-1db1-48a8-a5f4-cd532ffa810b" />
+
 <img width="1785" height="894" alt="Relatorios Perdas" src="https://github.com/user-attachments/assets/b21cf47a-d9dd-46b2-91e0-1bed6ad3dca6" />
 <img width="1785" height="894" alt="Relatorios Agrícolas 1" src="https://github.com/user-attachments/assets/50505484-fa55-4149-b4df-30d175217e6e" />
 <img width="1785" height="894" alt="Relatorios Agrícolas 2" src="https://github.com/user-attachments/assets/242bc60e-a2b0-4dc5-a3aa-d1d62a4bca7a" />
