@@ -1,6 +1,6 @@
 
 ******************* LINK PARA ACESSAR O VIDEO DEMONSTRATIVO DO APLICATIVO *****************
-
+*** (Observação importante - para melhor qualidade de imagem do video no Youtube, mude para resolução de 1080HD) *** 
 
 https://youtu.be/fxCpLOPYb9E
 
