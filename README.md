@@ -59,6 +59,7 @@
 <img width="1785" height="894" alt="Relatorios Entregas 3" src="https://github.com/user-attachments/assets/34153e74-bd4f-40d7-96c6-638e3df56366" />
 
 
+
 *** Formulario de Perdas - inserir dados do levantamento de Perdas e Registro do Banco Dados:
 
 <img width="1785" height="894" alt="Registros Perdas e Pragas" src="https://github.com/user-attachments/assets/f0fe1d3f-4301-456d-8515-83e842baac47" />
@@ -72,6 +73,8 @@
 <img width="1785" height="894" alt="Relatorios Agrícolas 4" src="https://github.com/user-attachments/assets/edc1a1b6-c961-4bc9-b20f-8bccfdac6c2d" />
 <img width="1785" height="894" alt="Relatorios Agrícolas 5" src="https://github.com/user-attachments/assets/a3075a62-be33-4c1b-b106-d5786287dfa9" />
 <img width="1785" height="894" alt="Relatorios Agrícolas 6" src="https://github.com/user-attachments/assets/b3b5811c-07c6-4fa6-a9c3-b870e04cadc1" />
+
+
 
 *** TRATOS CULTURAIS - Acessar os formulários para preenchimentos dos dados.
 
